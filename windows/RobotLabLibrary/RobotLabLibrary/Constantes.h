@@ -9,6 +9,6 @@ std::string cascadeFacePath = "../../../data/haarcascades/haarcascade_frontalfac
 //std::string cascadeFacePath = "../../../data/lbpcascades/lbpcascade_frontalface.xml";
 std::string cascadeEyePath = "../../../data/haarcascades/haarcascade_eye.xml";
 std::string cascadeSmilePath = "../../../data/haarcascades/haarcascade_smile.xml";
-std::string windowName = "Detect";
+std::string WINDOWSNAME = "Detect";
 
 #endif

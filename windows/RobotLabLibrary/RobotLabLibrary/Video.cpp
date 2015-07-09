@@ -4,15 +4,16 @@
 
 Video::Video(int numberCam)
 {
-	_capture.open(numberCam);
+	_capture.open(numberCam); //Open the cam connection
 }
 
 int Video::start()
 {
-	//cout << "dans start" << endl;
-	int stateOfDetection = 0;
-	_capture >> _frame;
-	imshow(windowName, _frame);
+	_capture >> _frame; //The cam frames are stored in frame variable
+	if (!_detectFaceOn && !_detectCustomOn)
+	{
+		imshow(WINDOWSNAME, _frame); // Print the frames in a windows. The windows name is in Constantes.h
+	}
 
 	if (_frame.empty())
 		return -1;
@@ -21,11 +22,11 @@ int Video::start()
 
 	if (_detectFaceOn)
 	{
-		faceDetect(_frameCopy);
+		faceDetect(_frameCopy); //launch face detection smile and eye detection are launched in facedetect()
 	}
 	if (_detectCustomOn)
 	{
-		customDetect(_frameCopy, 3);
+		customDetect(_frameCopy, 3); // launch custom detection with a precision of 3
 	}
 	waitKey(1);
 	return 0;
@@ -35,10 +36,10 @@ int Video::start()
 
 int Video::faceDetect(Mat& img)
 {
-	//cout << "dans detect and drawn" << endl;
 	int i = 0, visageNumberTemp = 0;
 	double t = 0;
 	vector<Rect> faces;
+	//The differente color use for show face
 	const static Scalar colors[] = { CV_RGB(0, 0, 255),
 		CV_RGB(0, 128, 255),
 		CV_RGB(0, 255, 255),
@@ -47,24 +48,26 @@ int Video::faceDetect(Mat& img)
 		CV_RGB(255, 255, 0),
 		CV_RGB(255, 0, 0),
 		CV_RGB(255, 0, 255) };
-	//cout << img << endl;
-	Mat gray, smallImg(cvRound(img.rows / _scale), cvRound(img.cols / _scale), CV_8UC1);
+	
+	Mat gray, smallImg(cvRound(img.rows / _scale), cvRound(img.cols / _scale), CV_8UC1); //Iniation two matrice for modify cam frame
 
+	//The follows three fonctions transform the cam frame into a comptuter friendly frame for detection. To see it uncomment cv::imshow("test", smallImg);
 	cvtColor(img, gray, COLOR_BGR2GRAY);
 	resize(gray, smallImg, smallImg.size(), 0, 0, INTER_LINEAR);
 	equalizeHist(smallImg, smallImg);
-
 	//cv::imshow("test", smallImg);
 
-	//cout << "ici2" << endl;
-
 	t = (double)cvGetTickCount();
-	_faceCascade.detectMultiScale(smallImg, faces, 1.1, 1, 1, Size(30, 30), Size(400, 400));
+	//detectMultiScale() fund the matching objet with the cascadeClassifier (_faceCascade here) and add Rect type variable into the vector faces here.
+	//for the options go to http://stackoverflow.com/questions/20801015/recommended-values-for-opencv-detectmultiscale-parameters
+	_faceCascade.detectMultiScale(smallImg, faces, 1.1, 1, 1, Size(30, 30), Size(400, 400)); 
 
 	//cout << "ici3" << endl;
 
 	t = (double)cvGetTickCount() - t;
-	printf("detection time = %g ms\n", t / ((double)cvGetTickFrequency()*1000.));
+	//printf("detection time = %g ms\n", t / ((double)cvGetTickFrequency()*1000.));
+
+	//foreach object find with detectMultiScale() we will draw a circle or a rectangle for show what detectMultiScale() have find
 	for (vector<Rect>::const_iterator r = faces.begin(); r != faces.end(); r++, i++)
 	{
 		visageNumberTemp++;
@@ -93,6 +96,7 @@ int Video::faceDetect(Mat& img)
 		cvPoint(cvRound((r->x + r->width - 1)*_scale), cvRound((r->y + r->height - 1)*_scale)),
 		color, 3, 8, 0);*/
 
+		//We transform r into a Mat variable for reuse it for detect eye and smile 
 		smallImgROI = smallImg(*r);
 		if (_detectSmileOn)
 		{
@@ -103,20 +107,24 @@ int Video::faceDetect(Mat& img)
 			eyeDetect(smallImgROI, img, r->x, r->y);
 		}
 
+		//for see what image we send to te function you can uncomment this line
 		//cv::imshow("test4", smallImgROI);
 	}
 	_visageNumber = visageNumberTemp;
+	//In smile or eye detect we already print all the draw so for the optimisation I make this conditions
 	if (!_detectSmileOn && !_detectEyeOn)
 	{
-		cv::imshow(windowName, img);
+		cv::imshow(WINDOWSNAME, img);
 	}
 	return 0;
 }
 
+//For the comment see faceDetect() juste some parameter for precision change
 int Video::smileDetect(Mat& img, Mat& principalFrame, int width, int height)
 {
 	int i = 0;
 	vector<Rect> faces;
+	//The differente color use for show smile
 	const static Scalar colors[] = { CV_RGB(0, 0, 255),
 		CV_RGB(0, 128, 255),
 		CV_RGB(0, 255, 255),
@@ -160,15 +168,17 @@ int Video::smileDetect(Mat& img, Mat& principalFrame, int width, int height)
 
 	if (!_detectEyeOn)
 	{
-		cv::imshow(windowName, principalFrame);
+		cv::imshow(WINDOWSNAME, principalFrame);
 	}
 	return 0;
 }
 
+//For the comment see faceDetect() juste some parameter for precision change
 int Video::eyeDetect(Mat& img, Mat& principalFrame, int width, int height)
 {
 	int i = 0;
 	vector<Rect> faces;
+	//The differente color use for show eye
 	const static Scalar colors[] = { CV_RGB(0, 0, 255),
 		CV_RGB(0, 128, 255),
 		CV_RGB(0, 255, 255),
@@ -220,7 +230,7 @@ int Video::eyeDetect(Mat& img, Mat& principalFrame, int width, int height)
 		//cv::imshow("test2", smallImgROI);
 	}
 
-	cv::imshow(windowName, principalFrame);
+	cv::imshow(WINDOWSNAME, principalFrame);
 	return 0;
 }
 
@@ -263,7 +273,7 @@ int Video::customDetect(Mat& img, int precision)
 			cvPoint(cvRound((r->x + r->width - 1)*_scale), cvRound((r->y + r->height - 1)*_scale)),
 			color, 3, 8, 0);
 	}
-	cv::imshow(windowName, img);
+	cv::imshow(WINDOWSNAME, img);
 	return 0;
 }
 
