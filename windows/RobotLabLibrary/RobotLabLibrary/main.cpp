@@ -26,7 +26,12 @@ int main(int argc, const char** argv)
 			//myVideo.startCustomDetect(MyOwnCascadeClassifierNeedToBeCreateBeforeWhile);
 			done = true;
 		}
-		cout << "nombre de visage detecter : " << myVideo.getVisageNumber() << endl;
+		//Show the number of the spcified object
+		//cout << "nombre de visage detecter : " << myVideo.getFaceNumber() << endl;
+
+		//Says how many faces are detected and if they are smiling or not
+		//myVideo.printVectorSmilingData();
+
 		waitKey(1);
 	}
 
