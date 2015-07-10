@@ -16,8 +16,8 @@ int main(int argc, const char** argv)
 	{
 		myVideo.start(); // Launch the windows for display the video stream
 
-		//We wait two seconds before to use the detection (the programs will bug the time that te detection begin) 
-		if (abs(time(NULL) - timer) > 2 && !done)
+		//We wait two seconds before to use the detection (the programs will wait the time that te detection begin) 
+		if (abs(time(NULL) - timer) > 0 && !done)
 		{
 			//For use the detection program uncomment the follows Line.
 			//Smile and Eye detect works only with face Detect

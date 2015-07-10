@@ -6,7 +6,7 @@ Video::Video(int numberCam)
 {
 	_capture.open(numberCam); //Open the cam connection
 	namedWindow(WINDOWSNAME, WINDOW_NORMAL);
-	time = (double)cvGetTickCount();
+	time = (double)cvGetTickCount(); //initialize time
 }
 
 int Video::start()
@@ -84,7 +84,7 @@ int Video::faceDetect(Mat& img)
 	//t = (double)cvGetTickCount();
 	//detectMultiScale() fund the matching objet with the cascadeClassifier (_faceCascade here) and add Rect type variable into the vector faces here.
 	//for the options go to http://stackoverflow.com/questions/20801015/recommended-values-for-opencv-detectmultiscale-parameters
-	_faceCascade.detectMultiScale(smallImg, _averageFacesRect, 1.1, 2, 1, Size(30, 30), Size(400, 400));
+	_faceCascade.detectMultiScale(smallImg, _averageFacesRect, 1.1, 3, 1, Size(30, 30), Size(400, 400));
 
 	//t = (double)cvGetTickCount() - t;
 	//printf("detection time = %g ms\n", t / ((double)cvGetTickFrequency()*1000.));
@@ -133,8 +133,10 @@ int Video::smileDetect(Mat& img, Mat& principalFrame, int width, int height)
 
 	for (vector<Rect>::iterator r = averageSmilesRectTemp.begin(); r != averageSmilesRectTemp.end(); r++, smileNumberTemp++)
 	{
-		if (r->y > img.size().height / 2)
+		cout << "here" << endl;
+		if (r->y > img.size().height / 2 && r->x + r->width / 2 > img.size().width / 2 - 25 && r->x + r->width / 2 < img.size().width / 2 + 25 && _averageSmilesRect.empty())
 		{
+			cout << "here2" << endl;
 			r->x += width;
 			r->y += height;
 			_averageSmilesRect.push_back(*r);
@@ -264,10 +266,9 @@ void Video::startFaceDetect()
 		}
 		else
 		{
-			cout << "classifier cascade is okay" << endl;
+			cout << "classifier cascade face is okay" << endl;
+			_detectFaceOn = true;
 		}
-		// TODO add a condition for launch facedetect only if cascade is find
-		_detectFaceOn = true;
 	}
 	else
 	{
@@ -292,9 +293,8 @@ void Video::startSmileDetect()
 		else
 		{
 			cout << "classifier cascade smile is okay" << endl;
+			_detectSmileOn = true;
 		}
-		// TODO add a condition for launch facedetect only if cascade is find
-		_detectSmileOn = true;
 	}
 	else
 	{
@@ -319,8 +319,8 @@ void Video::startEyeDetect()
 		else
 		{
 			cout << "classifier cascade eye is okay" << endl;
+			_detectEyeOn = true;
 		}
-		_detectEyeOn = true;
 	}
 	else
 	{
@@ -378,6 +378,7 @@ int Video::getTracking()
 	return _tracking;
 }
 
+//Simple function for print who smile
 void Video::printVectorSmilingData()
 {
 	cout << "There is " << _faceAreSmiling.size() << " face detected :" << endl;
@@ -398,8 +399,7 @@ void Video::printVectorSmilingData()
 //return 0 if the face is in the center, 1 for right and 2 for left.
 int Video::faceTracking(Rect faceToTrack, Mat& frame)
 {
-	cout << "faceToTrack = " << faceToTrack.x << endl;
-	cout << "frame.size = " << frame.size().width << endl;
+	//Simple calcul for know with the rect of an object on where side of the frame is it.
 	if (faceToTrack.x + faceToTrack.width / 2 > frame.size().width * 2 / 3)
 	{
 		return 1;
@@ -421,18 +421,16 @@ void Video::draw(Rect r, Mat& img, Scalar color)
 	int radius;
 
 	double aspect_ratio = (double)r.width / r.height;
-	if (0.75 < aspect_ratio && aspect_ratio < 1.3)
+	if (0.75 < aspect_ratio && aspect_ratio < 1.3) // if the ratio said that the object is square
 	{
 		center.x = cvRound((r.x + r.width*0.5)*_scale);
 		center.y = cvRound((r.y + r.height*0.5)*_scale);
 		radius = cvRound((r.width + r.height)*0.25*_scale);
-		circle(img, center, radius, color, 3, 8, 0);
+		circle(img, center, radius, color, 3, 8, 0); // draw circle
 	}
-	else
+	else // if the object is more rectangle
 	{
-		rectangle(img, cvPoint(cvRound(r.x*_scale), cvRound(r.y*_scale)),
-			cvPoint(cvRound((r.x + r.width - 1)*_scale), cvRound((r.y + r.height - 1)*_scale)),
-			color, 3, 8, 0);
+		rectangle(img, cvPoint(cvRound(r.x*_scale), cvRound(r.y*_scale)), cvPoint(cvRound((r.x + r.width - 1)*_scale), cvRound((r.y + r.height - 1)*_scale)), color, 3, 8, 0); //Draw circle
 	}
 }
 
