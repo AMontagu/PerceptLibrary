@@ -5,11 +5,24 @@
 Video::Video(int numberCam)
 {
 	_capture.open(numberCam); //Open the cam connection
+	namedWindow(WINDOWSNAME, WINDOW_NORMAL);
+	time(&_timer);
 }
 
 int Video::start()
 {
+	
 	_capture >> _frame; //The cam frames are stored in frame variable
+	if (abs(time(NULL) - _timer) > 1)
+	{
+		_timeToDraw = true;
+		time(&_timer);
+	}
+	else
+	{
+		_timeToDraw = false;
+	}
+
 	if (!_detectFaceOn && !_detectCustomOn)
 	{
 		imshow(WINDOWSNAME, _frame); // Print the frames in a windows. The windows name is in Constantes.h
@@ -26,7 +39,7 @@ int Video::start()
 	}
 	if (_detectCustomOn)
 	{
-		customDetect(_frameCopy, 3); // launch custom detection with a precision of 3
+		customDetect(_frameCopy); // launch custom detection
 	}
 	waitKey(1);
 	return 0;
@@ -36,7 +49,7 @@ int Video::start()
 
 int Video::faceDetect(Mat& img)
 {
-	int i = 0, visageNumberTemp = 0;
+	int faceNumberTemp = 0;
 	double t = 0;
 	vector<Rect> faces;
 	//The differente color use for show face
@@ -48,7 +61,7 @@ int Video::faceDetect(Mat& img)
 		CV_RGB(255, 255, 0),
 		CV_RGB(255, 0, 0),
 		CV_RGB(255, 0, 255) };
-	
+
 	Mat gray, smallImg(cvRound(img.rows / _scale), cvRound(img.cols / _scale), CV_8UC1); //Iniation two matrice for modify cam frame
 
 	//The follows three fonctions transform the cam frame into a comptuter friendly frame for detection. To see it uncomment cv::imshow("test", smallImg);
@@ -60,7 +73,7 @@ int Video::faceDetect(Mat& img)
 	t = (double)cvGetTickCount();
 	//detectMultiScale() fund the matching objet with the cascadeClassifier (_faceCascade here) and add Rect type variable into the vector faces here.
 	//for the options go to http://stackoverflow.com/questions/20801015/recommended-values-for-opencv-detectmultiscale-parameters
-	_faceCascade.detectMultiScale(smallImg, faces, 1.1, 1, 1, Size(30, 30), Size(400, 400)); 
+	_faceCascade.detectMultiScale(smallImg, faces, 1.1, 1, 1, Size(30, 30), Size(400, 400));
 
 	//cout << "ici3" << endl;
 
@@ -68,14 +81,12 @@ int Video::faceDetect(Mat& img)
 	//printf("detection time = %g ms\n", t / ((double)cvGetTickFrequency()*1000.));
 
 	//foreach object find with detectMultiScale() we will draw a circle or a rectangle for show what detectMultiScale() have find
-	for (vector<Rect>::const_iterator r = faces.begin(); r != faces.end(); r++, i++)
+	for (vector<Rect>::const_iterator r = faces.begin(); r != faces.end(); r++, faceNumberTemp++)
 	{
-		visageNumberTemp++;
 		//cout << "dans le for on dessine" << endl;
 		Mat smallImgROI;
-		vector<Rect> nestedObjects;
 		Point center;
-		Scalar color = colors[i % 8];
+		Scalar color = colors[faceNumberTemp % 8];
 		int radius;
 
 		double aspect_ratio = (double)r->width / r->height;
@@ -94,23 +105,31 @@ int Video::faceDetect(Mat& img)
 		}
 		/*rectangle(img, cvPoint(cvRound(r->x*_scale), cvRound(r->y*_scale)),
 		cvPoint(cvRound((r->x + r->width - 1)*_scale), cvRound((r->y + r->height - 1)*_scale)),
-		color, 3, 8, 0);*/
+		color, 3, 8, 0); // this is if you prefere rectangle instead of circle*/
 
 		//We transform r into a Mat variable for reuse it for detect eye and smile 
 		smallImgROI = smallImg(*r);
 		if (_detectSmileOn)
 		{
-			smileDetect(smallImgROI, img, r->x, r->y);
+			_faceAreSmiling.clear();
+			_smileNumber = smileDetect(smallImgROI, img, r->x, r->y);
+			if (_smileNumber > 0)
+			{
+				_faceAreSmiling.push_back(true);
+			}
+			else
+			{
+				_faceAreSmiling.push_back(false);
+			}
 		}
 		if (_detectEyeOn)
 		{
-			eyeDetect(smallImgROI, img, r->x, r->y);
+			_eyeNumber = eyeDetect(smallImgROI, img, r->x, r->y);
 		}
-
 		//for see what image we send to te function you can uncomment this line
 		//cv::imshow("test4", smallImgROI);
 	}
-	_visageNumber = visageNumberTemp;
+	_faceNumber = faceNumberTemp;
 	//In smile or eye detect we already print all the draw so for the optimisation I make this conditions
 	if (!_detectSmileOn && !_detectEyeOn)
 	{
@@ -122,7 +141,7 @@ int Video::faceDetect(Mat& img)
 //For the comment see faceDetect() juste some parameter for precision change
 int Video::smileDetect(Mat& img, Mat& principalFrame, int width, int height)
 {
-	int i = 0;
+	int smileNumberTemp = 0;
 	vector<Rect> faces;
 	//The differente color use for show smile
 	const static Scalar colors[] = { CV_RGB(0, 0, 255),
@@ -137,30 +156,30 @@ int Video::smileDetect(Mat& img, Mat& principalFrame, int width, int height)
 	//cv::imshow("test5", img);
 
 
-	_smileCascade.detectMultiScale(img, faces,
-		1.1, 30, 0
-		//|CASCADE_FIND_BIGGEST_OBJECT
-		//|CASCADE_DO_ROUGH_SEARCH
-		| CASCADE_SCALE_IMAGE
-		,
-		Size(30, 30));
+	_smileCascade.detectMultiScale(img, faces, 1.1, 30, 0 | CASCADE_SCALE_IMAGE, Size(30, 30));
 
-	for (vector<Rect>::iterator r = faces.begin(); r != faces.end(); r++, i++)
+	if (!_timeToDraw)
 	{
-		//cout << r->y - img.size().height / 2 << endl;
+
+	}
+	else
+	{
+
+	}
+	for (vector<Rect>::iterator r = faces.begin(); r != faces.end(); r++, smileNumberTemp++)
+	{
 		if (r->y > img.size().height / 2)
 		{
 			//cout << "find a smile !" << endl;
 			Mat smallImgROI;
-			vector<Rect> nestedObjects;
 			Point center;
-			Scalar color = colors[i % 8];
+			Scalar color = colors[smileNumberTemp % 8];
 
 			img.size().height;
 
 			rectangle(principalFrame, cvPoint(cvRound(r->x*_scale) + width, cvRound(r->y*_scale) + height),
 				cvPoint(cvRound((r->x + r->width - 1)*_scale) + width, cvRound((r->y + r->height - 1)*_scale) + height),
-				color, 3, 8, 0);
+				color, 3, 8, 0); // we draw on the principal frame because the img is only the face detected
 
 			//cv::imshow("test2", smallImgROI);
 		}
@@ -170,13 +189,13 @@ int Video::smileDetect(Mat& img, Mat& principalFrame, int width, int height)
 	{
 		cv::imshow(WINDOWSNAME, principalFrame);
 	}
-	return 0;
+	return smileNumberTemp;
 }
 
 //For the comment see faceDetect() juste some parameter for precision change
 int Video::eyeDetect(Mat& img, Mat& principalFrame, int width, int height)
 {
-	int i = 0;
+	int eyeNumberTemp = 0;
 	vector<Rect> faces;
 	//The differente color use for show eye
 	const static Scalar colors[] = { CV_RGB(0, 0, 255),
@@ -188,26 +207,17 @@ int Video::eyeDetect(Mat& img, Mat& principalFrame, int width, int height)
 		CV_RGB(255, 0, 0),
 		CV_RGB(255, 0, 255) };
 
-	//cv::imshow("test5", img);
+	_eyeCascade.detectMultiScale(img, faces, 1.3, 12, 0 | CASCADE_SCALE_IMAGE, Size(20, 20)); // We only change the minNeighbors parameters
 
-
-	_eyeCascade.detectMultiScale(img, faces,
-		1.1, 12, 0
-		//|CASCADE_FIND_BIGGEST_OBJECT
-		//|CASCADE_DO_ROUGH_SEARCH
-		| CASCADE_SCALE_IMAGE
-		,
-		Size(20, 20));
-
-	for (vector<Rect>::iterator r = faces.begin(); r != faces.end(); r++, i++)
+	for (vector<Rect>::iterator r = faces.begin(); r != faces.end(); r++, eyeNumberTemp++)
 	{
 		//cout << "find a eye !" << endl;
+		// if the detected objet is under the half of the face
 		if (r->y < img.size().height / 2)
 		{
 			Mat smallImgROI;
-			vector<Rect> nestedObjects;
 			Point center;
-			Scalar color = colors[i % 8];
+			Scalar color = colors[eyeNumberTemp % 8];
 			int radius;
 
 			double aspect_ratio = (double)r->width / r->height;
@@ -226,19 +236,17 @@ int Video::eyeDetect(Mat& img, Mat& principalFrame, int width, int height)
 			}
 
 		}
-
-		//cv::imshow("test2", smallImgROI);
 	}
 
 	cv::imshow(WINDOWSNAME, principalFrame);
-	return 0;
+	return eyeNumberTemp;
 }
 
 
 //For detect object from a CascadeClassifier object. More precision is up more the 
-int Video::customDetect(Mat& img, int precision)
+int Video::customDetect(Mat& img)
 {
-	int i = 0, visageNumberTemp = 0;
+	int objectNumberTemp = 0;
 	double t = 0;
 	vector<Rect> faces;
 	const static Scalar colors[] = { CV_RGB(0, 0, 255),
@@ -249,7 +257,7 @@ int Video::customDetect(Mat& img, int precision)
 		CV_RGB(255, 255, 0),
 		CV_RGB(255, 0, 0),
 		CV_RGB(255, 0, 255) };
-	//cout << img << endl;
+
 	Mat gray, smallImg(cvRound(img.rows / _scale), cvRound(img.cols / _scale), CV_8UC1);
 
 	cvtColor(img, gray, COLOR_BGR2GRAY);
@@ -257,27 +265,30 @@ int Video::customDetect(Mat& img, int precision)
 	equalizeHist(smallImg, smallImg);
 
 	t = (double)cvGetTickCount();
-	_customCascade.detectMultiScale(smallImg, faces, 1.1, precision, 1, Size(30, 30));
+	_customCascade.detectMultiScale(smallImg, faces, 1.1, _precisionForCustomObject, 1, Size(30, 30)); //_customCascade is charged in startCustomDetect()
 
 	t = (double)cvGetTickCount() - t;
-	printf("detection time = %g ms\n", t / ((double)cvGetTickFrequency()*1000.));
-	for (vector<Rect>::const_iterator r = faces.begin(); r != faces.end(); r++, i++)
+	//printf("detection time = %g ms\n", t / ((double)cvGetTickFrequency()*1000.));
+	for (vector<Rect>::const_iterator r = faces.begin(); r != faces.end(); r++, objectNumberTemp++)
 	{
-		//cout << "dans le for on dessine" << endl;
+		//cout << "find object" << endl;
 		Mat smallImgROI;
-		vector<Rect> nestedObjects;
 		Point center;
-		Scalar color = colors[i % 8];
+		Scalar color = colors[objectNumberTemp % 8];
 
 		rectangle(img, cvPoint(cvRound(r->x*_scale), cvRound(r->y*_scale)),
 			cvPoint(cvRound((r->x + r->width - 1)*_scale), cvRound((r->y + r->height - 1)*_scale)),
 			color, 3, 8, 0);
 	}
+
+	_objectNumber = objectNumberTemp;
+
 	cv::imshow(WINDOWSNAME, img);
 	return 0;
 }
 
 
+//Launch all faces detections
 void Video::startAllDetect()
 {
 	startFaceDetect();
@@ -285,15 +296,14 @@ void Video::startAllDetect()
 	startEyeDetect();
 }
 
+//Load the cascade classifier and turn on the detection
 void Video::startFaceDetect()
 {
-	cout << "dans start" << endl;
 	if (_faceCascade.empty())
 	{
 		if (!_faceCascade.load(cascadeFacePath))
 		{
 			cerr << "ERROR: Could not load classifier Facecascade" << endl;
-			//return -1;
 		}
 		else
 		{
@@ -316,13 +326,11 @@ void Video::stopFaceDetect()
 
 void Video::startSmileDetect()
 {
-	//cout << "dans start smile" << endl;
 	if (_smileCascade.empty())
 	{
 		if (!_smileCascade.load(cascadeSmilePath))
 		{
 			cerr << "ERROR: Could not load classifier smileCascade" << endl;
-			//return -1;
 		}
 		else
 		{
@@ -345,23 +353,21 @@ void Video::stopSmileDetect()
 
 void Video::startEyeDetect()
 {
-	//cout << "dans start eye" << endl;
 	if (_eyeCascade.empty())
 	{
 		if (!_eyeCascade.load(cascadeEyePath))
 		{
-			cerr << "ERROR: Could not load classifier smileCascade" << endl;
-			//return -1;
+			cerr << "ERROR: Could not load classifier eyeCascade" << endl;
 		}
 		else
 		{
-			cout << "classifier cascade smile is okay" << endl;
+			cout << "classifier cascade eye is okay" << endl;
 		}
 		_detectEyeOn = true;
 	}
 	else
 	{
-		cout << "The smile cascade already initialized" << endl;
+		cout << "The eye cascade already initialized" << endl;
 	}
 
 }
@@ -371,9 +377,11 @@ void Video::stopEyeDetect()
 	_detectEyeOn = false;
 }
 
-void Video::startCustomDetect(CascadeClassifier& cascade)
+//We assign the custom cascade and launch the detection
+void Video::startCustomDetect(CascadeClassifier& cascade, int precision)
 {
 	_customCascade = cascade;
+	_precisionForCustomObject = precision;
 	_detectCustomOn = true;
 }
 
@@ -383,11 +391,47 @@ void Video::stopCustomDetect()
 }
 
 
-int Video::getVisageNumber()
+int Video::getFaceNumber()
 {
-	return _visageNumber;
+	return _faceNumber;
 }
 
+int Video::getSmileNumber()
+{
+	return _smileNumber;
+}
+
+int Video::getEyeNumber()
+{
+	return _eyeNumber;
+}
+
+int Video::getObjectNumber()
+{
+	return _objectNumber;
+}
+
+vector<bool> Video::getVectorSmiling()
+{
+	return _faceAreSmiling;
+}
+
+void Video::printVectorSmilingData()
+{
+	cout << "There is " << _faceAreSmiling.size() << " face detected :" << endl;
+	int count = 1;
+	for each (bool smile in _faceAreSmiling)
+	{
+		if (smile)
+		{
+			cout << "The face " << count << " is smiling." << endl;
+		}
+		else
+		{
+			cout << "The face " << count << " is not smiling." << endl;
+		}
+	}
+}
 
 
 Video::~Video()

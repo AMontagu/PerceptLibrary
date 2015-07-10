@@ -24,7 +24,7 @@ public:
 	void stopSmileDetect();
 	void startEyeDetect();
 	void stopEyeDetect();
-	void startCustomDetect(CascadeClassifier& cascade);
+	void startCustomDetect(CascadeClassifier& cascade, int precision);
 	void stopCustomDetect();
 
 	int start();
@@ -32,21 +32,30 @@ public:
 	int faceDetect(Mat& img);
 	int eyeDetect(Mat& img, Mat& principalFrame, int width, int height);
 	int smileDetect(Mat& img, Mat& principalFrame, int width, int height);
-	int customDetect(Mat& img, int precision);
+	int customDetect(Mat& img);
 
-	int getVisageNumber();
+	//print the real number of specified object detected. Some smile or eye detected aren't draw for more accuracy but count in this functions
+	int getFaceNumber();
+	int getSmileNumber();
+	int getEyeNumber();
+	int getObjectNumber();
+	vector<bool> Video::getVectorSmiling();
+
+	void Video::printVectorSmilingData();
 
 	~Video();
 
 
 private:
 	bool _detectFaceOn = false, _detectSmileOn = false, _detectEyeOn = false, _detectCustomOn = false;
-	int _numberCam, _visageNumber = 0;
-	bool _recording = true;
+	int _numberCam, _faceNumber = 0, _smileNumber = 0, _eyeNumber = 0, _objectNumber = 0, _precisionForCustomObject = 3;
+	bool _recording = true, _timeToDraw = false;;
+	vector<bool> _faceAreSmiling ;
 	Mat _frame, _frameCopy;
 	double _scale = 1;
 	CascadeClassifier _faceCascade, _smileCascade, _eyeCascade, _customCascade;
 	VideoCapture _capture;
+	time_t _timer;
 
 };
 
