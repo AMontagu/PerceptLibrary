@@ -9,6 +9,9 @@ int main(int argc, const char** argv)
 	time_t timer;
 	time(&timer); //set timer to the current date in ms in
 
+	/*CascadeClassifier customCascade;
+	customCascade.load("../../../data/haarcascades/haarcascade_frontalface_alt.xml"); //for test Custom detect use with face haar*/
+
 	while (true)
 	{
 		myVideo.start(); // Launch the windows for display the video stream
@@ -23,7 +26,7 @@ int main(int argc, const char** argv)
 			//myVideo.startFaceDetect();
 			//myVideo.startEyeDetect();
 			//myVideo.startSmileDetect();
-			//myVideo.startCustomDetect(MyOwnCascadeClassifierNeedToBeCreateBeforeWhile);
+			//myVideo.startCustomDetect(customCascade,3);
 			done = true;
 		}
 		//Show the number of the spcified object
@@ -31,6 +34,20 @@ int main(int argc, const char** argv)
 
 		//Says how many faces are detected and if they are smiling or not
 		//myVideo.printVectorSmilingData();
+
+		//Says where the bigger face detected is
+		/*if (myVideo.getTracking() == 1)
+		{
+			cout << "the face is on the right" << endl;
+		}
+		else if (myVideo.getTracking() == 2)
+		{
+			cout << "the face is on the left" << endl;
+		}
+		else
+		{
+			cout << "the face is on the center" << endl;
+		}*/
 
 		waitKey(1);
 	}
