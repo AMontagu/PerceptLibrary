@@ -13,6 +13,7 @@ class Video
 {
 public:
 	Video(int numberCam);
+	Video();
 
 	void startAllDetect();
 	void stopAllDetect();
@@ -38,11 +39,11 @@ public:
 	int getSmileNumber();
 	int getEyeNumber();
 	int getObjectNumber();
-	std::vector<bool> Video::getVectorSmiling();
+	std::vector<bool> getVectorSmiling();
 	int faceTracking(cv::Rect faceToTrack, cv::Mat& frame);
 	int getTracking();
 
-	void Video::printVectorSmilingData();
+	void printVectorSmilingData();
 
 	~Video();
 
