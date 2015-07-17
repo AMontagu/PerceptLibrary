@@ -98,7 +98,6 @@ int main(int argc, const char** argv)
 		std::cin >> again;
 	}
 	return 0;
-	//test for git
 }*/
 
 
