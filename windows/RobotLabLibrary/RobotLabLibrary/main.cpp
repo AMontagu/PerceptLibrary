@@ -93,9 +93,9 @@ int main(int argc, const char** argv)
 
 	while (again == "a")
 	{
-	std::string retour(myVoice.recognizeFromMicrophoneWhileTime(10));
-	std::cout << retour << std::endl;
-	std::cin >> again;
+		std::string retour(myVoice.recognizeFromMicrophoneWhileTime(10));
+		std::cout << retour << std::endl;
+		std::cin >> again;
 	}
 	return 0;
 }*/
@@ -115,6 +115,7 @@ int main(int argc, const char** argv)
 	Voice myVoice;
 	Video myVideo(0);
 
+	//Launch video in a thread
 	t[0] = std::thread([&] {myVideo.start(); });
 
 	while (true)
@@ -144,18 +145,6 @@ int main(int argc, const char** argv)
 			myVideo.stopAllDetect();
 		}
 	}
-	/*while (speech != "reconnaissance facial")
-	{
-		speech = myVoice.recognizeFromMicrophoneWhileTime(10);
-		std::cout << speech << std::endl;
-		if (speech == "reconnaissance facial")
-		{
-			std::cout << "super ca marche" << std::endl;
-		}
-	}
-
-	myVideo.start();
-	myVideo.startFaceDetect();*/
 
 	getchar();
 	return 0;

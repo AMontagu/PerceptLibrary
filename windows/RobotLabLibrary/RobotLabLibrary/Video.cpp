@@ -1,6 +1,10 @@
 #include "Video.h"
 #include "Constantes.h"
 
+Video::Video()
+{
+	_numberCam = -1;
+}
 
 Video::Video(int numberCam)
 {
