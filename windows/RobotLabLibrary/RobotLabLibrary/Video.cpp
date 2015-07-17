@@ -4,87 +4,104 @@
 
 Video::Video(int numberCam)
 {
-	_capture.open(numberCam); //Open the cam connection
-	namedWindow(WINDOWSNAME, WINDOW_NORMAL);
-	time = (double)cvGetTickCount(); //initialize time
+	_numberCam = numberCam;
 }
 
 int Video::start()
 {
-	Rect faceToTrack;
-	Mat frame, frameCopy;
-	_capture >> frame; //The cam frames are stored in frame variable
-
-	if (frame.empty())
-		return -1;
-	//cout << (double)cvGetTickCount() - time << endl;
-	if ((double)cvGetTickCount() - time > 150000)
+	if (!_capture.isOpened())
 	{
-		frame.copyTo(frameCopy);
+		_capture.open(_numberCam); //Open the cam connection
+		cv::namedWindow(WINDOWSNAME, cv::WINDOW_NORMAL);
+		time = (double)cvGetTickCount(); //initialize time
+	}
+	cv::Rect faceToTrack;
+	cv::Mat frame, frameCopy;
+	while (true)
+	{
+		_capture >> frame; //The cam frames are stored in frame variable
 
+		if (frame.empty())
+			return -1;
+		//cout << (double)cvGetTickCount() - time << endl;
+		if ((double)cvGetTickCount() - time > 150000)
+		{
+			frame.copyTo(frameCopy);
+
+			if (_detectFaceOn)
+			{
+				_averageFacesRect.clear();
+				_averageSmilesRect.clear();
+				_averageEyesRect.clear();
+				faceDetect(frameCopy); //launch face detection smile and eye detection are launched in facedetect()
+			}
+			if (_detectCustomOn)
+			{
+				_averageCustomRect.clear();
+				customDetect(frameCopy); // launch custom detection
+			}
+			time = (double)cvGetTickCount();
+		}
 		if (_detectFaceOn)
 		{
-			_averageFacesRect.clear();
-			_averageSmilesRect.clear();
-			_averageEyesRect.clear();
-			faceDetect(frameCopy); //launch face detection smile and eye detection are launched in facedetect()
+			for each (cv::Rect r in _averageFacesRect)
+			{
+				draw(r, frame, CV_RGB(0, 255, 255));
+				if (r.area() > faceToTrack.area())
+				{
+					faceToTrack = r;
+				}
+			}
+		}
+		_tracking = faceTracking(faceToTrack, frame);
+		if (_detectEyeOn)
+		{
+			for each (cv::Rect r in _averageEyesRect)
+			{
+				draw(r, frame, CV_RGB(255, 0, 255));
+			}
+		}
+		if (_detectSmileOn)
+		{
+			for each (cv::Rect r in _averageSmilesRect)
+			{
+				draw(r, frame, CV_RGB(255, 255, 0));
+			}
 		}
 		if (_detectCustomOn)
 		{
-			_averageCustomRect.clear();
-			customDetect(frameCopy); // launch custom detection
+			for each (cv::Rect r in _averageCustomRect)
+			{
+				draw(r, frame, CV_RGB(255, 255, 0));
+			}
 		}
-		time = (double)cvGetTickCount();
+		cv::imshow(WINDOWSNAME, frame);
+
+		cv::waitKey(1);
 	}
 	
-	
-	
-	for each (Rect r in _averageFacesRect)
-	{
-		draw(r, frame, CV_RGB(0, 255, 255));
-		if (r.area() > faceToTrack.area())
-		{
-			faceToTrack = r;
-		}
-	}
-	_tracking = faceTracking(faceToTrack, frame);
-	for each (Rect r in _averageEyesRect)
-	{
-		draw(r, frame, CV_RGB(255, 0, 255));
-	}
-	for each (Rect r in _averageSmilesRect)
-	{
-		draw(r, frame, CV_RGB(255, 255, 0));
-	}
-	for each (Rect r in _averageCustomRect)
-	{
-		draw(r, frame, CV_RGB(255, 255, 0));
-	}
-	cv::imshow(WINDOWSNAME, frame);
-	
-	waitKey(1);
 	return 0;
 }
 
 
 
-int Video::faceDetect(Mat& img)
+int Video::faceDetect(cv::Mat& img)
 {
 	int faceNumberTemp = 0;
 	//double t = 0;
 
-	Mat gray, smallImg(cvRound(img.rows / _scale), cvRound(img.cols / _scale), CV_8UC1); //Iniation two matrice for modify cam frame
+	cv::Mat gray, smallImg(cvRound(img.rows / _scale), cvRound(img.cols / _scale), CV_8UC1); //Iniation two matrice for modify cam frame
 
 	//The follows three fonctions transform the cam frame into a comptuter friendly frame for detection. To see it uncomment cv::imshow("test", smallImg);
-	cvtColor(img, gray, COLOR_BGR2GRAY);
-	resize(gray, smallImg, smallImg.size(), 0, 0, INTER_LINEAR);
+	cvtColor(img, gray, cv::COLOR_BGR2GRAY);
+	resize(gray, smallImg, smallImg.size(), 0, 0, cv::INTER_LINEAR);
 	equalizeHist(smallImg, smallImg);
 	//cv::imshow("test", smallImg);
 
 	//t = (double)cvGetTickCount();
 	//detectMultiScale() fund the matching objet with the cascadeClassifier (_faceCascade here) and add Rect type variable into the vector faces here.
 	//for the options go to http://stackoverflow.com/questions/20801015/recommended-values-for-opencv-detectmultiscale-parameters
-	_faceCascade.detectMultiScale(smallImg, _averageFacesRect, 1.1, 3, 1, Size(30, 30), Size(400, 400));
+	_faceCascade.detectMultiScale(smallImg, _averageFacesRect, 1.1, 3, 1, cv::Size(30, 30), cv::Size(400, 400));
 
 	//t = (double)cvGetTickCount() - t;
 	//printf("detection time = %g ms\n", t / ((double)cvGetTickFrequency()*1000.));
@@ -92,10 +109,10 @@ int Video::faceDetect(Mat& img)
 	_faceAreSmiling.clear();
 
 	//foreach object find with detectMultiScale() we will draw a circle or a rectangle for show what detectMultiScale() have find
-	for (vector<Rect>::const_iterator r = _averageFacesRect.begin(); r != _averageFacesRect.end(); r++, faceNumberTemp++)
+	for (std::vector<cv::Rect>::const_iterator r = _averageFacesRect.begin(); r != _averageFacesRect.end(); r++, faceNumberTemp++)
 	{
 		//cout << "find a face" << endl;
-		Mat smallImgROI;
+		cv::Mat smallImgROI;
 
 		//We transform r into a Mat variable for reuse it for detect eye and smile 
 		smallImgROI = smallImg(*r);
@@ -124,19 +141,17 @@ int Video::faceDetect(Mat& img)
 }
 
 //For the comment see faceDetect() juste some parameter for precision change
-int Video::smileDetect(Mat& img, Mat& principalFrame, int width, int height)
+int Video::smileDetect(cv::Mat& img, cv::Mat& principalFrame, int width, int height)
 {
 	int smileNumberTemp = 0;
-	vector<Rect> averageSmilesRectTemp;
+	std::vector<cv::Rect> averageSmilesRectTemp;
 
-	_smileCascade.detectMultiScale(img, averageSmilesRectTemp, 1.4, 30, 0 | CASCADE_SCALE_IMAGE, Size(30, 30));
+	_smileCascade.detectMultiScale(img, averageSmilesRectTemp, 1.4, 30, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30));
 
-	for (vector<Rect>::iterator r = averageSmilesRectTemp.begin(); r != averageSmilesRectTemp.end(); r++, smileNumberTemp++)
+	for (std::vector<cv::Rect>::iterator r = averageSmilesRectTemp.begin(); r != averageSmilesRectTemp.end(); r++, smileNumberTemp++)
 	{
-		cout << "here" << endl;
 		if (r->y > img.size().height / 2 && r->x + r->width / 2 > img.size().width / 2 - 25 && r->x + r->width / 2 < img.size().width / 2 + 25 && _averageSmilesRect.empty())
 		{
-			cout << "here2" << endl;
 			r->x += width;
 			r->y += height;
 			_averageSmilesRect.push_back(*r);
@@ -196,14 +211,14 @@ int Video::smileDetect(Mat& img, Mat& principalFrame, int width, int height)
 }
 
 //For the comment see faceDetect() juste some parameter for precision change
-int Video::eyeDetect(Mat& img, Mat& principalFrame, int width, int height)
+int Video::eyeDetect(cv::Mat& img, cv::Mat& principalFrame, int width, int height)
 {
 	int eyeNumberTemp = 0;
-	vector<Rect> averageEyesRectTemp;
+	std::vector<cv::Rect> averageEyesRectTemp;
 
-	_eyeCascade.detectMultiScale(img, averageEyesRectTemp, 1.3, 12, 0 | CASCADE_SCALE_IMAGE, Size(20, 20)); // We only change the minNeighbors parameters
+	_eyeCascade.detectMultiScale(img, averageEyesRectTemp, 1.3, 12, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(20, 20)); // We only change the minNeighbors parameters
 
-	for (vector<Rect>::iterator r = averageEyesRectTemp.begin(); r != averageEyesRectTemp.end(); r++, eyeNumberTemp++)
+	for (std::vector<cv::Rect>::iterator r = averageEyesRectTemp.begin(); r != averageEyesRectTemp.end(); r++, eyeNumberTemp++)
 	{
 		//cout << "find a eye !" << endl;
 		// if the detected objet is under the half of the face
@@ -219,24 +234,24 @@ int Video::eyeDetect(Mat& img, Mat& principalFrame, int width, int height)
 
 
 //For detect object from a CascadeClassifier object. More precision is up more the 
-int Video::customDetect(Mat& img)
+int Video::customDetect(cv::Mat& img)
 {
 	int objectNumberTemp = 0;
 	//double t = 0;
-	vector<Rect> averageCustomRectTemp;
+	std::vector<cv::Rect> averageCustomRectTemp;
 
-	Mat gray, smallImg(cvRound(img.rows / _scale), cvRound(img.cols / _scale), CV_8UC1);
+	cv::Mat gray, smallImg(cvRound(img.rows / _scale), cvRound(img.cols / _scale), CV_8UC1);
 
-	cvtColor(img, gray, COLOR_BGR2GRAY);
-	resize(gray, smallImg, smallImg.size(), 0, 0, INTER_LINEAR);
+	cvtColor(img, gray, cv::COLOR_BGR2GRAY);
+	resize(gray, smallImg, smallImg.size(), 0, 0, cv::INTER_LINEAR);
 	equalizeHist(smallImg, smallImg);
 
 	//t = (double)cvGetTickCount();
-	_customCascade.detectMultiScale(smallImg, averageCustomRectTemp, 1.1, _precisionForCustomObject, 1, Size(30, 30)); //_customCascade is charged in startCustomDetect()
+	_customCascade.detectMultiScale(smallImg, averageCustomRectTemp, 1.1, _precisionForCustomObject, 1, cv::Size(30, 30)); //_customCascade is charged in startCustomDetect()
 
 	//t = (double)cvGetTickCount() - t;
 	//printf("detection time = %g ms\n", t / ((double)cvGetTickFrequency()*1000.));
-	for (vector<Rect>::const_iterator r = averageCustomRectTemp.begin(); r != averageCustomRectTemp.end(); r++, objectNumberTemp++)
+	for (std::vector<cv::Rect>::const_iterator r = averageCustomRectTemp.begin(); r != averageCustomRectTemp.end(); r++, objectNumberTemp++)
 	{
 		//Your conditions and other things before add the detected objet for drawing them.
 		_averageCustomRect.push_back(*r);
@@ -255,24 +270,32 @@ void Video::startAllDetect()
 	startEyeDetect();
 }
 
+void Video::stopAllDetect()
+{
+	stopEyeDetect();
+	stopSmileDetect();
+	stopFaceDetect();
+}
+
 //Load the cascade classifier and turn on the detection
 void Video::startFaceDetect()
 {
 	if (_faceCascade.empty())
 	{
-		if (!_faceCascade.load(cascadeFacePath))
+		if (!_faceCascade.load(cascadeFacePath))//We load the Haar model here. Other is juste for form
 		{
-			cerr << "ERROR: Could not load classifier Facecascade" << endl;
+			std::cerr << "ERROR: Could not load classifier Facecascade" << std::endl;
 		}
 		else
 		{
-			cout << "classifier cascade face is okay" << endl;
-			_detectFaceOn = true;
+			std::cout << "classifier cascade face is okay" << std::endl;
+			_detectFaceOn = true;//need this for call cognition function and draw.
 		}
 	}
 	else
 	{
-		cout << "The face cascade is already initialized" << endl;
+		std::cout << "The face cascade is already initialized" << std::endl;
+		_detectFaceOn = true;//need this for call cognition function and draw.
 	}
 
 }
@@ -280,6 +303,7 @@ void Video::startFaceDetect()
 void Video::stopFaceDetect()
 {
 	_detectFaceOn = false;
+	_averageFacesRect.clear();
 }
 
 void Video::startSmileDetect()
@@ -288,17 +312,18 @@ void Video::startSmileDetect()
 	{
 		if (!_smileCascade.load(cascadeSmilePath))
 		{
-			cerr << "ERROR: Could not load classifier smileCascade" << endl;
+			std::cerr << "ERROR: Could not load classifier smileCascade" << std::endl;
 		}
 		else
 		{
-			cout << "classifier cascade smile is okay" << endl;
+			std::cout << "classifier cascade smile is okay" << std::endl;
 			_detectSmileOn = true;
 		}
 	}
 	else
 	{
-		cout << "The smile cascade already initialized" << endl;
+		std::cout << "The smile cascade already initialized" << std::endl;
+		_detectSmileOn = true;
 	}
 
 }
@@ -306,6 +331,7 @@ void Video::startSmileDetect()
 void Video::stopSmileDetect()
 {
 	_detectSmileOn = false;
+	_averageSmilesRect.clear();
 }
 
 void Video::startEyeDetect()
@@ -314,17 +340,18 @@ void Video::startEyeDetect()
 	{
 		if (!_eyeCascade.load(cascadeEyePath))
 		{
-			cerr << "ERROR: Could not load classifier eyeCascade" << endl;
+			std::cerr << "ERROR: Could not load classifier eyeCascade" << std::endl;
 		}
 		else
 		{
-			cout << "classifier cascade eye is okay" << endl;
+			std::cout << "classifier cascade eye is okay" << std::endl;
 			_detectEyeOn = true;
 		}
 	}
 	else
 	{
-		cout << "The eye cascade already initialized" << endl;
+		std::cout << "The eye cascade already initialized" << std::endl;
+		_detectEyeOn = true;
 	}
 
 }
@@ -332,10 +359,11 @@ void Video::startEyeDetect()
 void Video::stopEyeDetect()
 {
 	_detectEyeOn = false;
+	_averageEyesRect.clear();
 }
 
 //We assign the custom cascade and launch the detection
-void Video::startCustomDetect(CascadeClassifier& cascade, int precision)
+void Video::startCustomDetect(cv::CascadeClassifier& cascade, int precision)
 {
 	_customCascade = cascade;
 	_precisionForCustomObject = precision;
@@ -345,6 +373,7 @@ void Video::startCustomDetect(CascadeClassifier& cascade, int precision)
 void Video::stopCustomDetect()
 {
 	_detectCustomOn = false;
+	_averageCustomRect.clear();
 }
 
 
@@ -368,7 +397,7 @@ int Video::getObjectNumber()
 	return _objectNumber;
 }
 
-vector<bool> Video::getVectorSmiling()
+std::vector<bool> Video::getVectorSmiling()
 {
 	return _faceAreSmiling;
 }
@@ -381,23 +410,23 @@ int Video::getTracking()
 //Simple function for print who smile
 void Video::printVectorSmilingData()
 {
-	cout << "There is " << _faceAreSmiling.size() << " face detected :" << endl;
+	std::cout << "There is " << _faceAreSmiling.size() << " face detected :" << std::endl;
 	int count = 1;
 	for each (bool smile in _faceAreSmiling)
 	{
 		if (smile)
 		{
-			cout << "The face " << count << " is smiling." << endl;
+			std::cout << "The face " << count << " is smiling." << std::endl;
 		}
 		else
 		{
-			cout << "The face " << count << " is not smiling." << endl;
+			std::cout << "The face " << count << " is not smiling." << std::endl;
 		}
 	}
 }
 
 //return 0 if the face is in the center, 1 for right and 2 for left.
-int Video::faceTracking(Rect faceToTrack, Mat& frame)
+int Video::faceTracking(cv::Rect faceToTrack, cv::Mat& frame)
 {
 	//Simple calcul for know with the rect of an object on where side of the frame is it.
 	if (faceToTrack.x + faceToTrack.width / 2 > frame.size().width * 2 / 3)
@@ -414,14 +443,14 @@ int Video::faceTracking(Rect faceToTrack, Mat& frame)
 	}
 }
 
-void Video::draw(Rect r, Mat& img, Scalar color)
+void Video::draw(cv::Rect r, cv::Mat& img, cv::Scalar color)
 {
 
-	Point center;
+	cv::Point center;
 	int radius;
 
 	double aspect_ratio = (double)r.width / r.height;
-	if (0.75 < aspect_ratio && aspect_ratio < 1.3) // if the ratio said that the object is square
+	if (0.75 < aspect_ratio && aspect_ratio < 1.3) // if the ratio said that the object is more round
 	{
 		center.x = cvRound((r.x + r.width*0.5)*_scale);
 		center.y = cvRound((r.y + r.height*0.5)*_scale);
