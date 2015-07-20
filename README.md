@@ -5,4 +5,4 @@ For the moment only windows solution with Visual Studio 2013 is available.
 
 More informations coming.
 
-You need to have OpenCv installed for use the library
+You need to have OpenCv and pocketsphinx installed for use the library
