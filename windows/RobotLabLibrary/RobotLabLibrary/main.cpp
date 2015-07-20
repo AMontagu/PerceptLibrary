@@ -8,9 +8,10 @@
 #																																#
 #################################################################################################################################*/
 
-/*
-int main(int argc, const char** argv)
+
+/*int main(int argc, const char** argv)
 {
+	std::thread t[1];
 	// Video is the class for use video and detection
 	Video myVideo(0); //0 is the defaut camera, use -1 for any cammera or a number between 1 to 99
 
@@ -21,12 +22,13 @@ int main(int argc, const char** argv)
 	//CascadeClassifier customCascade;
 	//customCascade.load("../../../data/haarcascades/haarcascade_frontalface_alt.xml"); //for test Custom detect use with face haar
 
+	//Launch video in a thread
+	t[0] = std::thread([&] {myVideo.start(); });
+
 	while (true)
 	{
-		myVideo.start(); // Launch the windows for display the video stream
-
 		//We wait two seconds before to use the detection (the programs will wait the time that te detection begin) 
-		if (abs(time(NULL) - timer) > 0 && !done)
+		if (abs(time(NULL) - timer) > 2 && !done)
 		{
 			//For use the detection program uncomment the follows Line.
 			//Smile and Eye detect works only with face Detect
@@ -120,7 +122,6 @@ int main(int argc, const char** argv)
 
 	while (true)
 	{
-		//myVideo.start();
 		std::cout << "You can say reconnaissance facial, reconnaissance sourrire reconnaissance yeux and stop " << std::endl;
 		speech = myVoice.recognizeFromMicrophoneWhileTime(10);
 		std::cout << speech << std::endl;

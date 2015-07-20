@@ -8,9 +8,9 @@ Voice::Voice()
 
 	//Command for set all the config. Here it's for my windows realtek recorder and my roboticModel.
 	config = cmd_ln_init(NULL, ps_args(), TRUE,
-		"-hmm", MODELDIR "/roboticModel/fr-fr",
-		"-lm", MODELDIR "/roboticModel/roboticOrder.lm",
-		"-dict", MODELDIR "/roboticModel/roboticOrder.dic",
+		"-hmm", HMM_PATH,
+		"-lm", LM_PATH,
+		"-dict", DICT_PATH,
 		/*"-hmm", MODELDIR "/en-us/en-us",
 		"-lm", MODELDIR "/en-us/en-us.lm.dmp",
 		"-dict", MODELDIR "/en-us/cmudict-en-us.dict",*/

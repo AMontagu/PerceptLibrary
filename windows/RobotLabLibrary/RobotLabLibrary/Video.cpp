@@ -286,7 +286,7 @@ void Video::startFaceDetect()
 {
 	if (_faceCascade.empty())
 	{
-		if (!_faceCascade.load(cascadeFacePath))//We load the Haar model here. Other is juste for form
+		if (!_faceCascade.load(CASCADE_FACE_PATH))//We load the Haar model here. Other is juste for form
 		{
 			std::cerr << "ERROR: Could not load classifier Facecascade" << std::endl;
 		}
@@ -314,7 +314,7 @@ void Video::startSmileDetect()
 {
 	if (_smileCascade.empty())
 	{
-		if (!_smileCascade.load(cascadeSmilePath))
+		if (!_smileCascade.load(CASCADE_SMILE_PATH))
 		{
 			std::cerr << "ERROR: Could not load classifier smileCascade" << std::endl;
 		}
@@ -342,7 +342,7 @@ void Video::startEyeDetect()
 {
 	if (_eyeCascade.empty())
 	{
-		if (!_eyeCascade.load(cascadeEyePath))
+		if (!_eyeCascade.load(CASCADE_EYE_PATH))
 		{
 			std::cerr << "ERROR: Could not load classifier eyeCascade" << std::endl;
 		}

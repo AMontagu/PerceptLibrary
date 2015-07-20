@@ -4,10 +4,13 @@
 #include <stdio.h>
 #include <iostream>
 
-std::string cascadeFacePath = "../../../data/haarcascades/haarcascade_frontalface_alt.xml";
-//std::string cascadeFacePath = "../../../data/lbpcascades/lbpcascade_frontalface.xml";
-std::string cascadeEyePath = "../../../data/haarcascades/haarcascade_eye.xml";
-std::string cascadeSmilePath = "../../../data/haarcascades/haarcascade_smile.xml";
-std::string WINDOWSNAME = "Detect";
+#define CASCADE_FACE_PATH "../../../data/haarcascades/haarcascade_frontalface_alt.xml"
+#define CASCADE_EYE_PATH "../../../data/haarcascades/haarcascade_eye.xml"
+#define CASCADE_SMILE_PATH "../../../data/haarcascades/haarcascade_smile.xml"
+#define WINDOWSNAME "Detect"
+
+#define HMM_PATH "../../../data/modelPocketSphinx/roboticModel/fr-fr"
+#define LM_PATH "../../../data/modelPocketSphinx/roboticModel/roboticOrder.lm"
+#define DICT_PATH "../../../data/modelPocketSphinx/roboticModel/roboticOrder.dic"
 
 #endif
