@@ -1,5 +1,6 @@
-﻿#include "Video.h"
-#include "Voice.h"
+﻿#include "include/Video.h"
+#include "include/Voice.h"
+#include "include/Recognizer.h"
 #include <thread>
 
 /*###############################################################################################################################
@@ -9,7 +10,7 @@
 #################################################################################################################################*/
 
 
-int main(int argc, const char** argv)
+/*int main(int argc, const char** argv)
 {
 	std::thread t[1];
 	// Video is the class for use video and detection
@@ -64,7 +65,7 @@ int main(int argc, const char** argv)
 	}
 
 	return 0;
-}
+}*/
 
 
 
@@ -150,3 +151,20 @@ int main(int argc, const char** argv)
 	getchar();
 	return 0;
 }*/
+
+
+/*###############################################################################################################################
+#																																#
+#												Sample for face recognition         											#
+#																																#
+#################################################################################################################################*/
+
+
+int main(int argc, const char** argv)
+{
+	Recognizer test;
+
+	test.recognize();
+	getchar();
+}
+
