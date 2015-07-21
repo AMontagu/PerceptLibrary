@@ -1,15 +1,15 @@
-#include "Video.h"
+﻿#include "Video.h"
 #include "Voice.h"
 #include <thread>
 
 /*###############################################################################################################################
 #																																#
-#												Sample for video recognition													#
+#												Sample for video detection  													#
 #																																#
 #################################################################################################################################*/
 
 
-/*int main(int argc, const char** argv)
+int main(int argc, const char** argv)
 {
 	std::thread t[1];
 	// Video is the class for use video and detection
@@ -64,7 +64,7 @@
 	}
 
 	return 0;
-}*/
+}
 
 
 
@@ -74,8 +74,8 @@
 #																																#
 #################################################################################################################################*/
 
-/*
-int main(int argc, const char** argv)
+
+/*int main(int argc, const char** argv)
 {
 	std::string again = "a";
 	Voice myVoice;
@@ -109,7 +109,7 @@ int main(int argc, const char** argv)
 #																																#
 #################################################################################################################################*/
 
-int main(int argc, const char** argv)
+/*int main(int argc, const char** argv)
 {
 	std::thread t[1];
 	std::string speech;
@@ -149,4 +149,4 @@ int main(int argc, const char** argv)
 
 	getchar();
 	return 0;
-}
+}*/

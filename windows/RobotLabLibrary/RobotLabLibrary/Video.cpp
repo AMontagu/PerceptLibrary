@@ -1,4 +1,4 @@
-#include "Video.h"
+﻿#include "Video.h"
 #include "Constantes.h"
 
 Video::Video()
@@ -26,12 +26,14 @@ int Video::start()
 		_capture >> frame; //The cam frames are stored in frame variable
 
 		if (frame.empty())
+		{
+			std::cout << "your camera is not found or is not functional" << std::endl;
 			return -1;
+		}
 		//cout << (double)cvGetTickCount() - time << endl;
 		if ((double)cvGetTickCount() - time > 150000)
 		{
 			frame.copyTo(frameCopy);
-
 			if (_detectFaceOn)
 			{
 				_averageFacesRect.clear();
@@ -48,35 +50,35 @@ int Video::start()
 		}
 		if (_detectFaceOn)
 		{
-			for each (cv::Rect r in _averageFacesRect)
+			for (std::vector<cv::Rect>::iterator r = _averageFacesRect.begin(); r != _averageFacesRect.end(); r++)
 			{
-				draw(r, frame, CV_RGB(0, 255, 255));
-				if (r.area() > faceToTrack.area())
+				draw(*r, frame, CV_RGB(0, 255, 255));
+				if (r->area() > faceToTrack.area())
 				{
-					faceToTrack = r;
+					faceToTrack = *r;
 				}
 			}
 		}
 		_tracking = faceTracking(faceToTrack, frame);
 		if (_detectEyeOn)
 		{
-			for each (cv::Rect r in _averageEyesRect)
+			for (std::vector<cv::Rect>::iterator r = _averageEyesRect.begin(); r != _averageEyesRect.end(); r++)
 			{
-				draw(r, frame, CV_RGB(255, 0, 255));
+				draw(*r, frame, CV_RGB(255, 0, 255));
 			}
 		}
 		if (_detectSmileOn)
 		{
-			for each (cv::Rect r in _averageSmilesRect)
+			for (std::vector<cv::Rect>::iterator r = _averageSmilesRect.begin(); r != _averageSmilesRect.end(); r++)
 			{
-				draw(r, frame, CV_RGB(255, 255, 0));
+				draw(*r, frame, CV_RGB(255, 255, 0));
 			}
 		}
 		if (_detectCustomOn)
 		{
-			for each (cv::Rect r in _averageCustomRect)
+			for (std::vector<cv::Rect>::iterator r = _averageCustomRect.begin(); r != _averageCustomRect.end(); r++)
 			{
-				draw(r, frame, CV_RGB(255, 255, 0));
+				draw(*r, frame, CV_RGB(255, 255, 0));
 			}
 		}
 		cv::imshow(WINDOWSNAME, frame);
@@ -416,9 +418,9 @@ void Video::printVectorSmilingData()
 {
 	std::cout << "There is " << _faceAreSmiling.size() << " face detected :" << std::endl;
 	int count = 1;
-	for each (bool smile in _faceAreSmiling)
+	for (std::vector<bool>::const_iterator smile = _faceAreSmiling.begin(); smile != _faceAreSmiling.end(); smile++)
 	{
-		if (smile)
+		if (*smile)
 		{
 			std::cout << "The face " << count << " is smiling." << std::endl;
 		}
@@ -435,15 +437,15 @@ int Video::faceTracking(cv::Rect faceToTrack, cv::Mat& frame)
 	//Simple calcul for know with the rect of an object on where side of the frame is it.
 	if (faceToTrack.x + faceToTrack.width / 2 > frame.size().width * 2 / 3)
 	{
-		return 1;
+		return 1; //right
 	}
 	else if (faceToTrack.x + faceToTrack.width / 2 < frame.size().width / 3)
 	{
-		return 2;
+		return 2; //left
 	}
 	else
 	{
-		return 0;
+		return 0; //center
 	}
 }
 

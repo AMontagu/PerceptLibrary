@@ -1,4 +1,4 @@
-#ifndef VIDEO_H
+﻿#ifndef VIDEO_H
 #define VIDEO_H
 
 #include <opencv2/objdetect/objdetect.hpp>

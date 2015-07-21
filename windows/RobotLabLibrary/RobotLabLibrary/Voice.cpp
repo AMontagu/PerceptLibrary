@@ -1,4 +1,4 @@
-#include "Voice.h"
+﻿#include "Voice.h"
 #include <pocketsphinx.h>
 
 //Default constructor

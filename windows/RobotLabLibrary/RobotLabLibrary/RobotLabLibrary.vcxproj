@@ -85,11 +85,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Recognizer.cpp" />
     <ClCompile Include="Video.cpp" />
     <ClCompile Include="Voice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constantes.h" />
+    <ClInclude Include="Recognizer.h" />
     <ClInclude Include="Video.h" />
     <ClInclude Include="Voice.h" />
   </ItemGroup>

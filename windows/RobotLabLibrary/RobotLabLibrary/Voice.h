@@ -1,4 +1,4 @@
-#ifndef VOICE_H
+﻿#ifndef VOICE_H
 #define VOICE_H
 
 #include <pocketsphinx.h>
