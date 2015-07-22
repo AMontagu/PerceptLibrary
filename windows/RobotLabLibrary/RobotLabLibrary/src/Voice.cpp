@@ -250,7 +250,7 @@ const char * Voice::recognizeFromFile(char *fname)
 			return "Error";
 		}
 	}
-	std::cout << "ici 2" << std::endl;
+	return "Error";
 }
 
 //Functions for check wav header

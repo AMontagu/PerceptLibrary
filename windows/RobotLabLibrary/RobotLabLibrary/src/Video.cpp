@@ -118,13 +118,12 @@ int Video::faceDetect(cv::Mat& img)
 	for (std::vector<cv::Rect>::const_iterator r = _averageFacesRect.begin(); r != _averageFacesRect.end(); r++, faceNumberTemp++)
 	{
 		//cout << "find a face" << endl;
-		cv::Mat smallImgROI;
 
 		//We transform r into a Mat variable for reuse it for detect eye and smile 
-		smallImgROI = smallImg(*r);
+		_lastFaceDetected = smallImg(*r);
 		if (_detectSmileOn)
 		{
-			_smileNumber = smileDetect(smallImgROI, img, r->x, r->y);
+			_smileNumber = smileDetect(_lastFaceDetected, img, r->x, r->y);
 			if (_smileNumber > 0)
 			{
 				_faceAreSmiling.push_back(true);
@@ -136,7 +135,7 @@ int Video::faceDetect(cv::Mat& img)
 		}
 		if (_detectEyeOn)
 		{
-			_eyeNumber = eyeDetect(smallImgROI, img, r->x, r->y);
+			_eyeNumber = eyeDetect(_lastFaceDetected, img, r->x, r->y);
 		}
 		//for see what image we send to te function you can uncomment this line
 		//cv::imshow("test4", smallImgROI);
@@ -411,6 +410,11 @@ std::vector<bool> Video::getVectorSmiling()
 int Video::getTracking()
 {
 	return _tracking;
+}
+
+cv::Mat Video::getLastFaceDetected()
+{
+	return _lastFaceDetected;
 }
 
 //Simple function for print who smile

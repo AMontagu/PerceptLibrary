@@ -6,66 +6,42 @@ Recognizer::Recognizer()
 }
 
 
-void Recognizer::recognize()
+void Recognizer::addFrameToCurrentTraining(cv::Mat frame,int label, std::string faceName)
 {
-	// Get the path to your CSV.
-	std::string fn_csv = CSV_FACE_RECO;
-	// These vectors hold the images and corresponding labels.
-	std::vector<cv::Mat> images;
-	std::vector<int> labels;
-	std::map<int, std::string> labelsInfo;
-	// Read in the data. This can fail if no valid
-	// input filename is given.
-	try {
-		read_csv(fn_csv, images, labels, labelsInfo);
-	}
-	catch (cv::Exception& e) {
-		std::cerr << "Error opening file \"" << fn_csv << "\". Reason: " << e.msg << std::endl;
-		// nothing more we can do
-		getchar();
-		exit(1);
-	}
+	_trainingFrames.push_back(frame);
+	_labelsFrames.push_back(label);
+	labelsInfo.insert(std::make_pair(label, faceName));
+	_newData = true;
+}
 
-	//std::cout << "image.size = " << images.size() << std::endl;
 
-	// Quit if there are not enough images for this demo.
-	if (images.size() <= 1) {
+
+void Recognizer::recognize(cv::Mat faceToRecognize)
+{
+	if (_trainingFrames.size() <= 1) {
 		std::string error_message = "This demo needs at least 2 images to work. Please add more images to your data set!";
 		CV_Error(cv::Error::StsError, error_message);
 		getchar();
 	}
-	// The following lines simply get the last images from
-	// your dataset and remove it from the vector. This is
-	// done, so that the training data (which we learn the
-	// cv::FaceRecognizer on) and the test data we test
-	// the model with, do not overlap.
-	//cv::Mat testSample = images[images.size() - 1];
-	cv::Mat testSample = cv::imread("C:\\dev\\git\\RobotLabLibrary\\data\\dataForRec\\ATdatabase\\s5\\5.pgm", 0);
-	int nlabels = (int)labels.size();
-	int testLabel = labels[nlabels - 1];
+
+	int nlabels = (int)_labelsFrames.size();
+	int testLabel = _labelsFrames[nlabels - 1];
 	//images.pop_back();
 	//labels.pop_back();
-	// The following lines create an Eigenfaces model for
-	// face recognition and train it with the images and
-	// labels read from the given CSV file.
-	// This here is a full PCA, if you just want to keep
-	// 10 principal components (read Eigenfaces), then call
-	// the factory method like this:
-	//
-	//      cv::createEigenFaceRecognizer(10);
-	//
-	// If you want to create a FaceRecognizer with a
-	// confidennce threshold, call it with:
-	//
-	//      cv::createEigenFaceRecognizer(10, 123.0);
-	//
-	cv::Ptr<cv::face::BasicFaceRecognizer> model = cv::face::createEigenFaceRecognizer(10,123.0);
+
 	for (int i = 0; i < nlabels; i++)
-		model->setLabelInfo(i, labelsInfo[i]);
-	model->train(images, labels);
-	std::string saveModelPath = "face-rec-model.txt";
-	std::cout << "Saving the trained model to " << saveModelPath << std::endl;
-	//model->save(saveModelPath);
+	{
+		_model->setLabelInfo(i, labelsInfo[i]);
+	}
+	std::cout << "before train" << std::endl;
+
+	if (_newData)
+	{
+		std::cout << "train new data" << std::endl;
+		train();
+	}
+	std::cout << "after train" << std::endl;
+	//saveModel("face-rec-model.txt");
 
 	// The following line predicts the label of a given
 	// test image:
@@ -75,16 +51,17 @@ void Recognizer::recognize()
 	//
 	int predictedLabel = -1;
 	double confidence = 0.0;
-	model->predict(testSample, predictedLabel, confidence);
+	_model->predict(faceToRecognize, predictedLabel, confidence);
 
 	std::cout << "predictedLabel : " << predictedLabel << " confidence = " << confidence << std::endl;
 
 	std::string result_message = cv::format("Predicted class = %d / Actual class = %d.", predictedLabel, testLabel);
 	std::cout << result_message << std::endl;
-	if ((predictedLabel == testLabel) && !model->getLabelInfo(predictedLabel).empty())
-		std::cout << cv::format("%d-th label's info: %s", predictedLabel, model->getLabelInfo(predictedLabel).c_str()) << std::endl;
+	if ((predictedLabel == testLabel) && !_model->getLabelInfo(predictedLabel).empty())
+	{
+		std::cout << cv::format("%d-th label's info: %s", predictedLabel, _model->getLabelInfo(predictedLabel).c_str()) << std::endl;
+	}
 
-	// advanced stuff
 	/*if (5>2) {
 		// Sometimes you'll need to get/set internal model data,
 		// which isn't exposed by the public cv::FaceRecognizer.
@@ -123,7 +100,7 @@ void Recognizer::recognize()
 	}*/
 }
 
-void Recognizer::read_csv(const std::string& filename, std::vector<cv::Mat>& images, std::vector<int>& labels, std::map<int, std::string>& labelsInfo, char separator)
+void Recognizer::read_csv(const std::string& filename, char separator)
 {
 	std::ifstream file(filename.c_str(), std::ifstream::in);
 	if (!file) {
@@ -133,112 +110,67 @@ void Recognizer::read_csv(const std::string& filename, std::vector<cv::Mat>& ima
 	std::string line, path, classlabel;
 	while (getline(file, line)) {
 		std::stringstream liness(line);
-		getline(liness, path, separator);
-		getline(liness, classlabel);
+		std::getline(liness, path, separator);
+		std::getline(liness, classlabel);
 		if (!path.empty() && !classlabel.empty()) {
-			images.push_back(cv::imread(path, 0));
-			labels.push_back(atoi(classlabel.c_str()));
+			_trainingFrames.push_back(cv::imread(path, 0));
+			_labelsFrames.push_back(atoi(classlabel.c_str()));
 		}
 	}
-	/*std::cout << filename << filename.c_str() << std::endl;
-	std::ifstream csv(filename.c_str());
-	if (!csv) CV_Error(cv::Error::StsBadArg, "No valid input file was given, please check the given filename.");
-	std::string line, path, classlabel, info;
-	while (getline(csv, line)) {
-		std::stringstream liness(line);
-		path.clear(); classlabel.clear(); info.clear();
-		getline(liness, path, separator);
-		getline(liness, classlabel, separator);
-		getline(liness, info, separator);
-		if (!path.empty() && !classlabel.empty()) {
-			std::cout << "Processing " << path << std::endl;
-			int label = atoi(classlabel.c_str());
-			if (!info.empty())
-				labelsInfo.insert(std::make_pair(label, info));
-			// 'path' can be file, dir or wildcard path
-			cv::String root(path.c_str());
-			std::vector<cv::String> files;
-			std::cout << root << std::endl;
-			cv::glob(root, files, true);
-			if (files.empty())
-			{
-				std::cout << "files is empty" << std::endl;
-			}
-			for (std::vector<cv::String>::const_iterator f = files.begin(); f != files.end(); ++f) {
-				std::cout << "\t" << *f << std::endl;
-				cv::Mat img = imread(*f, cv::IMREAD_GRAYSCALE);
-				static int w = -1, h = -1;
-				static bool showSmallSizeWarning = true;
-				if (w>0 && h>0 && (w != img.cols || h != img.rows)) std::cout << "\t* Warning: images should be of the same size!" << std::endl;
-				if (showSmallSizeWarning && (img.cols<50 || img.rows<50)) {
-					std::cout << "* Warning: for better results images should be not smaller than 50x50!" << std::endl;
-					showSmallSizeWarning = false;
-				}
-				images.push_back(img);
-				labels.push_back(label);
-			}
-		}
-	}
-	std::cout << "end of processing" << std::endl;*/
+	_frameWidth = _trainingFrames[0].cols;
+	_frameHeight = _trainingFrames[0].rows;
+}
+
+void Recognizer::saveModel(std::string fileNamePath)
+{
+	_model->save(fileNamePath);
+}
+
+void Recognizer::train()
+{
+	_isTrained = true;
+	_model->train(_trainingFrames, _labelsFrames);
+	std::cout << " Recognizer model sucessfully charged !" << std::endl;
+	_newData = false;
+	_isTrained = false;
+}
+
+void Recognizer::saveModel()
+{
+	_model->save("testSave");
+}
+
+void Recognizer::loadModel()
+{
+	_model->load("testSave");
+}
+
+void Recognizer::saveImg(std::string path, cv::Mat faceToSave)
+{
+	cv::imwrite(IMG_DIR + path, faceToSave);
 }
 
 
-/*cv::Mat Recognizer::processImage(cv::Mat& image)
+
+
+bool Recognizer::isTrained()
 {
-	cv::Mat resized;
-	cv::Size originalSize = image.size();
-
-	if (_keepAspectRatio)
-	{
-		float ratio = static_cast<float>(_goalSize.height) / originalSize.height;
-		cv::Size newSize((int)(originalSize.width * ratio), (int)(originalSize.height * ratio));
-
-		//fix possible rounding error by float
-		if (newSize.height != _goalSize.height) newSize.height = _goalSize.height;
-
-		cv::resize(image, resized, newSize);
-
-		if (resized.size().width != _goalSize.width)
-		{
-			if (_keepAspectRatio)
-			{
-				int delta = _goalSize.width - resized.size().width;
-
-				if (delta < 0)
-				{
-					cv::Rect clipRect(std::abs(delta) / 2, 0, _goalSize.width, resized.size().height);
-					resized = resized(clipRect);
-				}
-				else if (delta > 0)
-				{
-					//width needs to be widened, create bigger mat, get region of 
-					//interest at the center that matches the size of the resized   
-					//image, and copy the resized image into that ROI
-
-					cv::Mat widened(_goalSize, resized.type());
-					cv::Rect widenRect(delta / 2, 0, _goalSize.width, _goalSize.height);
-					cv::Mat widenedCenter = widened(widenRect);
-					resized.copyTo(widenedCenter);
-					resized = widened; //we return resized, so set widened to resized
-				}
-			}
-		}
-	}
-	else
-		cv::resize(image, resized, _goalSize);
-
-	cv::Mat grayFrame;
-	cv::cvtColor(resized, grayFrame, CV_BGR2GRAY);
-
-	return grayFrame;
+	return _isTrained;
 }
 
-bool Recognizer::processAndSaveImage(cv::Mat& image, const std::string& name)
+cv::Ptr<cv::face::FaceRecognizer> Recognizer::getModel()
 {
-	cv::Mat processed = processImage(image);
+	return _model;
+}
 
-	return cv::imwrite(_directoryPath + name, processed);
-}*/
+int Recognizer::getFrameWidth()
+{
+	return _frameWidth;
+}
+int Recognizer::getFrameHeight()
+{
+	return _frameHeight;
+}
 
 Recognizer::~Recognizer()
 {

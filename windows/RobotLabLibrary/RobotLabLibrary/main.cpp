@@ -162,9 +162,50 @@
 
 int main(int argc, const char** argv)
 {
-	Recognizer test;
+	std::thread t[2];
+	// Video is the class for use video and detection
+	Video myVideo(0); //0 is the defaut camera, use -1 for any cammera or a number between 1 to 99
+	Recognizer myRecognizer;
 
-	test.recognize();
-	getchar();
+	cv::Mat faceResized;
+	bool done = false;
+	time_t timer;
+	time(&timer); //set timer to the current date in ms in
+
+	//cv::Mat currentFrame;
+
+	//Launch video in a thread
+	t[0] = std::thread([&] {myVideo.start(); });
+	myVideo.startFaceDetect();
+
+	/*Load and existing facedatabase*/
+	/*try {
+		myRecognizer.read_csv(CSV_FACE_RECO);
+	}
+	catch (cv::Exception& e) {
+		std::cerr << "Error opening file \"" << CSV_FACE_RECO << "\". Reason: " << e.msg << std::endl;
+		// nothing more we can do
+		getchar();
+		exit(1);
+	}*/
+	myRecognizer.load();
+	t[1] = std::thread([&] {myRecognizer.train(); });
+	std::cout << "database succesfully charged" << std::endl;
+
+	while (true)
+	{
+		if (abs(time(NULL) - timer) > 5 && !myRecognizer.isTrained())
+		{
+			std::cout << "ici" << std::endl;
+			//currentFrame = myVideo.getCurrentFrame();
+			time(&timer);
+			//myRecognizer.recognize(cv::imread("C:\\dev\\git\\RobotLabLibrary\\data\\dataForRec\\ATdatabase\\s5\\5.pgm", 0));
+			cv::resize(myVideo.getLastFaceDetected(), faceResized, cv::Size(myRecognizer.getFrameWidth(), myRecognizer.getFrameHeight()), 1.0, 1.0, cv::INTER_CUBIC);
+			myRecognizer.recognize(faceResized);
+			myRecognizer.save();
+		}
+		cv::waitKey(1);
+	}
+	return 0;
 }
 

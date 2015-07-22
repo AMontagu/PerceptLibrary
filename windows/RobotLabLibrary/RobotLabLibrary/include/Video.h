@@ -13,12 +13,15 @@
 #include <time.h>
 
 #include "Constantes.h"
+#include "Recognizer.h"
 
 class Video
 {
 public:
 	Video(int numberCam);
 	Video();
+
+	int start();
 
 	void startAllDetect();
 	void stopAllDetect();
@@ -31,8 +34,6 @@ public:
 	void startCustomDetect(cv::CascadeClassifier& cascade, int precision);
 	void stopCustomDetect();
 
-	int start();
-
 	int faceDetect(cv::Mat& img);
 	int eyeDetect(cv::Mat& img, cv::Mat& principalFrame, int width, int height);
 	int smileDetect(cv::Mat& img, cv::Mat& principalFrame, int width, int height);
@@ -44,11 +45,14 @@ public:
 	int getSmileNumber();
 	int getEyeNumber();
 	int getObjectNumber();
+	cv::Mat getLastFaceDetected();
 	std::vector<bool> getVectorSmiling();
 	int faceTracking(cv::Rect faceToTrack, cv::Mat& frame);
 	int getTracking();
-
 	void printVectorSmilingData();
+
+	//for facial recognition
+	void saveNextGoodFrameForRecognition(std::string name);
 
 	~Video();
 
@@ -64,8 +68,8 @@ private:
 	cv::VideoCapture _capture;
 	double time;
 	std::vector<std::vector<cv::Rect>> _storeSmileDetected;
+	cv::Mat _lastFaceDetected;
 	std::vector<cv::Rect> _averageSmilesRect, _averageFacesRect, _averageEyesRect, _averageCustomRect;
-
 };
 
 #endif

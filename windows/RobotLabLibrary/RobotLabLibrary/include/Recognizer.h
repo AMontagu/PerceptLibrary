@@ -20,25 +20,32 @@ public:
 
 	~Recognizer();
 
-	void recognize();
-	void read_csv(const std::string& filename, std::vector<cv::Mat>& images, std::vector<int>& labels, std::map<int, std::string>& labelsInfo, char separator = ';');
-
-	/*cv::Mat processImage(cv::Mat& image);
-	bool processAndSaveImage(cv::Mat& image, const std::string& name);
-
-	virtual bool addTrainingImage(const std::string &filename, const std::string &name) = 0;
-
-	virtual bool train() = 0;
-	virtual std::string recognize(cv::Mat &face) = 0;
-	virtual std::size_t numTrainingImages() = 0;
-	bool trained() { return _isTrained; }
+	void addFrameToCurrentTraining(cv::Mat frame, int label, std::string faceName);
+	cv::Ptr<cv::face::FaceRecognizer> getModel();
 
 	
+	void recognize(cv::Mat faceToRecognize);
+	void read_csv(const std::string& filename, char separator = ';');
+
+	void saveModel(std::string fileName = "face-rec-model.txt");
+	void train();
+	void saveModel();
+	void loadModel();
+	void saveImg(std::string path, cv::Mat faceToSave);
+
+	bool isTrained();
+	int getFrameWidth();
+	int getFrameHeight();
+
 private :
-	std::string _directoryPath;
-	cv::Size _goalSize;
-	bool _keepAspectRatio;
-	bool _isTrained;*/
+	std::vector<cv::Mat> _trainingFrames, _trainingFramesInTrain;
+	std::vector<int> _labelsFrames, _labelsFramesInTrain;
+	std::map<int, std::string> labelsInfo; // use labelsInfo.insert(std::make_pair(label, info));
+
+	cv::Ptr<cv::face::FaceRecognizer> _model = cv::face::createEigenFaceRecognizer();
+
+	bool _newData = true, _isTrained = false;
+	int _frameWidth, _frameHeight;
 };
 
 #endif
