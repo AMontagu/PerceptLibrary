@@ -26,22 +26,25 @@ void Recognizer::recognize()
 		exit(1);
 	}
 
+	//std::cout << "image.size = " << images.size() << std::endl;
+
 	// Quit if there are not enough images for this demo.
 	if (images.size() <= 1) {
 		std::string error_message = "This demo needs at least 2 images to work. Please add more images to your data set!";
-		getchar();
 		CV_Error(cv::Error::StsError, error_message);
+		getchar();
 	}
 	// The following lines simply get the last images from
 	// your dataset and remove it from the vector. This is
 	// done, so that the training data (which we learn the
 	// cv::FaceRecognizer on) and the test data we test
 	// the model with, do not overlap.
-	cv::Mat testSample = images[images.size() - 1];
+	//cv::Mat testSample = images[images.size() - 1];
+	cv::Mat testSample = cv::imread("C:\\dev\\git\\RobotLabLibrary\\data\\dataForRec\\ATdatabase\\s5\\5.pgm", 0);
 	int nlabels = (int)labels.size();
 	int testLabel = labels[nlabels - 1];
-	images.pop_back();
-	labels.pop_back();
+	//images.pop_back();
+	//labels.pop_back();
 	// The following lines create an Eigenfaces model for
 	// face recognition and train it with the images and
 	// labels read from the given CSV file.
@@ -56,31 +59,33 @@ void Recognizer::recognize()
 	//
 	//      cv::createEigenFaceRecognizer(10, 123.0);
 	//
-	cv::Ptr<cv::face::BasicFaceRecognizer> model = cv::face::createEigenFaceRecognizer();
+	cv::Ptr<cv::face::BasicFaceRecognizer> model = cv::face::createEigenFaceRecognizer(10,123.0);
 	for (int i = 0; i < nlabels; i++)
 		model->setLabelInfo(i, labelsInfo[i]);
 	model->train(images, labels);
 	std::string saveModelPath = "face-rec-model.txt";
 	std::cout << "Saving the trained model to " << saveModelPath << std::endl;
-	model->save(saveModelPath);
+	//model->save(saveModelPath);
 
 	// The following line predicts the label of a given
 	// test image:
-	int predictedLabel = model->predict(testSample);
+	//int predictedLabel = model->predict(testSample, -1, 0.0);
 	//
 	// To get the confidence of a prediction call the model with:
 	//
-	//      int predictedLabel = -1;
-	//      double confidence = 0.0;
-	//      model->predict(testSample, predictedLabel, confidence);
-	//
+	int predictedLabel = -1;
+	double confidence = 0.0;
+	model->predict(testSample, predictedLabel, confidence);
+
+	std::cout << "predictedLabel : " << predictedLabel << " confidence = " << confidence << std::endl;
+
 	std::string result_message = cv::format("Predicted class = %d / Actual class = %d.", predictedLabel, testLabel);
 	std::cout << result_message << std::endl;
 	if ((predictedLabel == testLabel) && !model->getLabelInfo(predictedLabel).empty())
 		std::cout << cv::format("%d-th label's info: %s", predictedLabel, model->getLabelInfo(predictedLabel).c_str()) << std::endl;
 
 	// advanced stuff
-	if (5>2) {
+	/*if (5>2) {
 		// Sometimes you'll need to get/set internal model data,
 		// which isn't exposed by the public cv::FaceRecognizer.
 		// Since each cv::FaceRecognizer is derived from a
@@ -115,11 +120,27 @@ void Recognizer::recognize()
 			imshow(cv::format("%d", i), cgrayscale);
 		}
 		cv::waitKey(1);
-	}
+	}*/
 }
 
 void Recognizer::read_csv(const std::string& filename, std::vector<cv::Mat>& images, std::vector<int>& labels, std::map<int, std::string>& labelsInfo, char separator)
 {
+	std::ifstream file(filename.c_str(), std::ifstream::in);
+	if (!file) {
+		std::string error_message = "No valid input file was given, please check the given filename.";
+		CV_Error(CV_StsBadArg, error_message);
+	}
+	std::string line, path, classlabel;
+	while (getline(file, line)) {
+		std::stringstream liness(line);
+		getline(liness, path, separator);
+		getline(liness, classlabel);
+		if (!path.empty() && !classlabel.empty()) {
+			images.push_back(cv::imread(path, 0));
+			labels.push_back(atoi(classlabel.c_str()));
+		}
+	}
+	/*std::cout << filename << filename.c_str() << std::endl;
 	std::ifstream csv(filename.c_str());
 	if (!csv) CV_Error(cv::Error::StsBadArg, "No valid input file was given, please check the given filename.");
 	std::string line, path, classlabel, info;
@@ -137,7 +158,12 @@ void Recognizer::read_csv(const std::string& filename, std::vector<cv::Mat>& ima
 			// 'path' can be file, dir or wildcard path
 			cv::String root(path.c_str());
 			std::vector<cv::String> files;
+			std::cout << root << std::endl;
 			cv::glob(root, files, true);
+			if (files.empty())
+			{
+				std::cout << "files is empty" << std::endl;
+			}
 			for (std::vector<cv::String>::const_iterator f = files.begin(); f != files.end(); ++f) {
 				std::cout << "\t" << *f << std::endl;
 				cv::Mat img = imread(*f, cv::IMREAD_GRAYSCALE);
@@ -153,6 +179,7 @@ void Recognizer::read_csv(const std::string& filename, std::vector<cv::Mat>& ima
 			}
 		}
 	}
+	std::cout << "end of processing" << std::endl;*/
 }
 
 

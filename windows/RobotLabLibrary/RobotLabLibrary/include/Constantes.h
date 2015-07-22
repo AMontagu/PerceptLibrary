@@ -14,6 +14,6 @@
 #define DICT_PATH "../../../data/modelPocketSphinx/roboticModel/roboticOrder.dic"
 
 #define TMP_FOLDER "../../../data/tmp/"
-#define CSV_FACE_RECO "faceCsv.txt"
+#define CSV_FACE_RECO "C:/dev/git/RobotLabLibrary/windows/RobotLabLibrary/RobotLabLibrary/src/faceCsv.txt"
 
 #endif
