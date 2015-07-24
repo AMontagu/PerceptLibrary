@@ -19,7 +19,7 @@ void Recognizer::addFrameToCurrentTraining(cv::Mat frame,int label, std::string 
 
 void Recognizer::addFrameToCurrentTrainingAndSave(cv::Mat frame, int label, std::string faceName, std::string fileName, std::string pathToFolder)
 {
-	_trainingFrames.push_back(frame);
+	_trainingFrames.push_back(processFrame(frame));
 	_labelsFrames.push_back(label);
 	_labelsInfo.insert(std::make_pair(label, faceName));
 	_pathToFrame.insert(std::make_pair(_trainingFrames.size()-1, IMG_DIR+pathToFolder+fileName));
@@ -126,7 +126,7 @@ void Recognizer::readCsv(const std::string& filename, char separator)
 			}
 			else
 			{
-				std::cout << "erreur de sale pute" << std::endl;
+				std::cerr << "error in the reading file process" << std::endl;
 			}
 			_pathToFrame.insert(std::make_pair(_trainingFrames.size()-1, path));
 			_labelsFrames.push_back(atoi(classlabel.c_str()));
@@ -140,9 +140,8 @@ void Recognizer::readCsv(const std::string& filename, char separator)
 void Recognizer::train()
 {
 	_isTrained = true;
-	std::cout << " before train!" << std::endl;
 	_model->train(_trainingFrames, _labelsFrames);
-	std::cout << " Recognizer model sucessfully charged !" << std::endl;
+	std::cout << "Recognizer model sucessfully charged !" << std::endl;
 	_newData = false;
 	_isTrained = false;
 }
@@ -157,8 +156,6 @@ void Recognizer::saveCsv(std::string fileName)
 	}
 
 	int element = 0;
-
-	std::cout << _labelsFrames[0] << std::endl;
 
 	for (std::vector<cv::Mat>::iterator frame = _trainingFrames.begin(); frame != _trainingFrames.end(); frame++, element++)
 	{
@@ -178,7 +175,7 @@ void Recognizer::saveCsv(std::string fileName)
 
 void Recognizer::saveImg(std::string pathToDir, std::string nameOfFile, cv::Mat faceToSave)
 {
-	//Process Image here TODO
+	cv::Mat tmp = processFrame(faceToSave);
 	bool save = cv::imwrite(IMG_DIR + pathToDir + nameOfFile, faceToSave);
 	if (!save)
 	{
@@ -195,20 +192,6 @@ void Recognizer::saveImg(std::string pathToDir, std::string nameOfFile, cv::Mat 
 	}
 }
 
-void Recognizer::saveImg(std::string nameOfFile, cv::Mat faceToSave)
-{
-	cv::Mat tmp = processFrame(faceToSave);
-	bool save = cv::imwrite(IMG_DIR + nameOfFile, tmp);
-	if (save)
-	{
-		std::cout << "file saved" << std::endl;
-	}
-	else
-	{
-		std::cout << "error in saved process" << std::endl;
-	}
-}
-
 
 // TODO
 cv::Mat Recognizer::processFrame(cv::Mat frameToProcess)
@@ -216,8 +199,6 @@ cv::Mat Recognizer::processFrame(cv::Mat frameToProcess)
 	cv::Mat rezizedFrame, grayRezizedFrame;
 
 	cv::resize(frameToProcess, rezizedFrame, _frameSize, 1.0, 1.0, cv::INTER_CUBIC);
-	std::cout << rezizedFrame.size().height << std::endl;
-	std::cout << rezizedFrame.size().width << std::endl;
 
 	if (rezizedFrame.channels() == 3)
 	{

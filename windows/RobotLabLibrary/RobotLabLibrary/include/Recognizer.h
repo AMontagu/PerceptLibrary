@@ -44,7 +44,6 @@ public:
 	void saveCsv(std::string fileName = "modelSaved");
 	void train();
 	void saveImg(std::string pathToDir, std::string nameOfFile, cv::Mat faceToSave);
-	void saveImg(std::string nameOfFile, cv::Mat faceToSave);
 	cv::Mat processFrame(cv::Mat frameToProcess);
 
 	bool isTrained();
