@@ -41,6 +41,11 @@ String FaceRecognizer::getLabelInfo(int label) const
     return iter != _labelsInfo.end() ? iter->second : "";
 }
 
+std::map<int, String> FaceRecognizer::getVectorLabelInfo() const
+{
+	return _labelsInfo;
+}
+
 void FaceRecognizer::setLabelInfo(int label, const String &strInfo)
 {
     _labelsInfo[label] = strInfo;

@@ -167,7 +167,7 @@ int main(int argc, const char** argv)
 	Video myVideo(0); //0 is the defaut camera, use -1 for any cammera or a number between 1 to 99
 	Recognizer myRecognizer;
 
-	cv::Mat faceResized;
+	cv::Mat faceResized, lastFaceDetected;
 	bool done = false;
 	time_t timer;
 	time(&timer); //set timer to the current date in ms in
@@ -178,9 +178,9 @@ int main(int argc, const char** argv)
 	t[0] = std::thread([&] {myVideo.start(); });
 	myVideo.startFaceDetect();
 
-	/*Load and existing facedatabase*/
+	//Load and existing facedatabase
 	/*try {
-		myRecognizer.read_csv(CSV_FACE_RECO);
+		myRecognizer.readCsv(CSV_FACE_RECO);
 	}
 	catch (cv::Exception& e) {
 		std::cerr << "Error opening file \"" << CSV_FACE_RECO << "\". Reason: " << e.msg << std::endl;
@@ -188,24 +188,51 @@ int main(int argc, const char** argv)
 		getchar();
 		exit(1);
 	}*/
-	myRecognizer.load();
+
+	//myRecognizer.printConf();
+
+	cv::Mat person1 = cv::imread("C:/dev/git/RobotLabLibrary/data/dataForRec/face/person1.jpeg", 0);
+	cv::Mat person2 = cv::imread("C:/dev/git/RobotLabLibrary/data/dataForRec/face/person2.jpeg", 0);
+	cv::Mat person3 = cv::imread("C:/dev/git/RobotLabLibrary/data/dataForRec/face/person3.jpeg", 0);
+	cv::Mat person4 = cv::imread("C:/dev/git/RobotLabLibrary/data/dataForRec/face/person4.jpeg", 0);
+	cv::Mat person5 = cv::imread("C:/dev/git/RobotLabLibrary/data/dataForRec/face/person5.jpeg", 0);
+	//cv::Mat adrien = cv::imread("C:/dev/git/RobotLabLibrary/data/dataForRec/face/adrien.pgm", 0);
+
+	/*myRecognizer.addFrameToCurrentTrainingAndSave(person1, 1, "person1", "person1.jpeg", "face/");
+	myRecognizer.addFrameToCurrentTrainingAndSave(person2, 2, "person2", "person2.jpeg", "face/");
+	myRecognizer.addFrameToCurrentTrainingAndSave(person3, 3, "person3", "person3.jpeg", "face/");
+	myRecognizer.addFrameToCurrentTrainingAndSave(person4, 4, "person4", "person4.jpeg", "face/");
+	myRecognizer.addFrameToCurrentTrainingAndSave(person5, 5, "person5", "person5.jpeg", "face/");*/
+	//myRecognizer.addFrameToCurrentTrainingAndSave(adrien, 6, "adrien", "adrien.pgm", "face/");
+
+	myRecognizer.addFrameToCurrentTraining(person1,1,"person1");
+	myRecognizer.addFrameToCurrentTraining(person2, 2, "person2");
+	myRecognizer.addFrameToCurrentTraining(person3, 3, "person3");
+	myRecognizer.addFrameToCurrentTraining(person4, 4, "person4");
+	myRecognizer.addFrameToCurrentTraining(person5, 5, "person5");
+	//myRecognizer.addFrameToCurrentTraining(adrien, 6, "adrien");
+
+	//myRecognizer.loadModel("testSave");
+
+	std::cout << "width = " << myRecognizer.getFrameWidth() << " height = " << myRecognizer.getFrameHeight() << std::endl;
+	std::cout << "trainingFrame size = " << myRecognizer.getTrainingFramesSize() << " labelFrameSize = " << myRecognizer.getLabelFrameSize() << std::endl;
+
 	t[1] = std::thread([&] {myRecognizer.train(); });
-	std::cout << "database succesfully charged" << std::endl;
+	
+
+	//myRecognizer.saveCsv("testSave.txt");
+	//std::cout << "model saved" << std::endl;
 
 	while (true)
 	{
-		if (abs(time(NULL) - timer) > 5 && !myRecognizer.isTrained())
+		if (abs(time(NULL) - timer) > 5 && !myRecognizer.isTrained() && !myVideo.getLastFaceDetected().empty())
 		{
-			std::cout << "ici" << std::endl;
-			//currentFrame = myVideo.getCurrentFrame();
+			lastFaceDetected = myVideo.getLastFaceDetected();
+			myRecognizer.recognize(lastFaceDetected);
+			myRecognizer.addFrameToCurrentTrainingAndSave(lastFaceDetected, 6, "adrien", "adrien.jpeg", "face/");
 			time(&timer);
-			//myRecognizer.recognize(cv::imread("C:\\dev\\git\\RobotLabLibrary\\data\\dataForRec\\ATdatabase\\s5\\5.pgm", 0));
-			cv::resize(myVideo.getLastFaceDetected(), faceResized, cv::Size(myRecognizer.getFrameWidth(), myRecognizer.getFrameHeight()), 1.0, 1.0, cv::INTER_CUBIC);
-			myRecognizer.recognize(faceResized);
-			myRecognizer.save();
 		}
 		cv::waitKey(1);
 	}
 	return 0;
 }
-

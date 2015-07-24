@@ -346,6 +346,8 @@ public:
      */
     CV_WRAP virtual std::vector<int> getLabelsByString(const String& str) const;
 
+	CV_WRAP virtual std::map<int, String> getVectorLabelInfo() const;
+
 protected:
     // Stored pairs "label id - string info"
     std::map<int, String> _labelsInfo;

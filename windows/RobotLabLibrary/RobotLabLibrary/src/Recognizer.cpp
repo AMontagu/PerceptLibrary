@@ -1,8 +1,10 @@
-#include "../include/Recognizer.h"
+﻿#include "../include/Recognizer.h"
 
 
 Recognizer::Recognizer()
 {
+	_frameSize.width = 92;
+	_frameSize.height = 112;
 }
 
 
@@ -10,54 +12,53 @@ void Recognizer::addFrameToCurrentTraining(cv::Mat frame,int label, std::string 
 {
 	_trainingFrames.push_back(frame);
 	_labelsFrames.push_back(label);
-	labelsInfo.insert(std::make_pair(label, faceName));
+	_labelsInfo.insert(std::make_pair(label, faceName));
+	_model->setLabelInfo(label, faceName);
 	_newData = true;
+}
+
+void Recognizer::addFrameToCurrentTrainingAndSave(cv::Mat frame, int label, std::string faceName, std::string fileName, std::string pathToFolder)
+{
+	_trainingFrames.push_back(frame);
+	_labelsFrames.push_back(label);
+	_labelsInfo.insert(std::make_pair(label, faceName));
+	_pathToFrame.insert(std::make_pair(_trainingFrames.size()-1, IMG_DIR+pathToFolder+fileName));
+	_model->setLabelInfo(label, faceName);
+	_newData = true;
+	saveImg(pathToFolder, fileName, frame);
 }
 
 
 
 void Recognizer::recognize(cv::Mat faceToRecognize)
 {
+	cv::Mat faceToRecognizeGood = processFrame(faceToRecognize);
 	if (_trainingFrames.size() <= 1) {
 		std::string error_message = "This demo needs at least 2 images to work. Please add more images to your data set!";
 		CV_Error(cv::Error::StsError, error_message);
 		getchar();
 	}
 
-	int nlabels = (int)_labelsFrames.size();
-	int testLabel = _labelsFrames[nlabels - 1];
-	//images.pop_back();
-	//labels.pop_back();
-
-	for (int i = 0; i < nlabels; i++)
-	{
-		_model->setLabelInfo(i, labelsInfo[i]);
-	}
-	std::cout << "before train" << std::endl;
-
 	if (_newData)
 	{
-		std::cout << "train new data" << std::endl;
+		//std::cout << "train new data" << std::endl;
 		train();
 	}
-	std::cout << "after train" << std::endl;
 	//saveModel("face-rec-model.txt");
 
 	// The following line predicts the label of a given
 	// test image:
-	//int predictedLabel = model->predict(testSample, -1, 0.0);
+	//int predictedLabel = model->predict(faceToRecognize, -1, 0.0);
 	//
 	// To get the confidence of a prediction call the model with:
 	//
 	int predictedLabel = -1;
-	double confidence = 0.0;
-	_model->predict(faceToRecognize, predictedLabel, confidence);
+	_confidence = 0.0;
+	_model->predict(faceToRecognizeGood, predictedLabel, _confidence);
 
-	std::cout << "predictedLabel : " << predictedLabel << " confidence = " << confidence << std::endl;
+	std::cout << "predictedLabel : " << predictedLabel << " confidence = " << _confidence << std::endl;
 
-	std::string result_message = cv::format("Predicted class = %d / Actual class = %d.", predictedLabel, testLabel);
-	std::cout << result_message << std::endl;
-	if ((predictedLabel == testLabel) && !_model->getLabelInfo(predictedLabel).empty())
+	if (!_model->getLabelInfo(predictedLabel).empty())
 	{
 		std::cout << cv::format("%d-th label's info: %s", predictedLabel, _model->getLabelInfo(predictedLabel).c_str()) << std::endl;
 	}
@@ -100,56 +101,132 @@ void Recognizer::recognize(cv::Mat faceToRecognize)
 	}*/
 }
 
-void Recognizer::read_csv(const std::string& filename, char separator)
+void Recognizer::readCsv(const std::string& filename, char separator)
 {
 	std::ifstream file(filename.c_str(), std::ifstream::in);
-	if (!file) {
-		std::string error_message = "No valid input file was given, please check the given filename.";
+	if (!file) 
+	{
+		std::string error_message = "No valid input file was given, please check the given filename. ";
 		CV_Error(CV_StsBadArg, error_message);
 	}
-	std::string line, path, classlabel;
-	while (getline(file, line)) {
+	std::string line, path, classlabel, infoLabel;
+	cv::Mat tmp;
+	while (getline(file, line)) 
+	{
 		std::stringstream liness(line);
 		std::getline(liness, path, separator);
-		std::getline(liness, classlabel);
-		if (!path.empty() && !classlabel.empty()) {
-			_trainingFrames.push_back(cv::imread(path, 0));
+		std::getline(liness, classlabel, separator);
+		std::getline(liness, infoLabel);
+		if (!path.empty() && !classlabel.empty()) 
+		{
+			tmp = cv::imread(path, 0);
+			if (tmp.data != NULL)
+			{
+				_trainingFrames.push_back(processFrame(tmp));
+			}
+			else
+			{
+				std::cout << "erreur de sale pute" << std::endl;
+			}
+			_pathToFrame.insert(std::make_pair(_trainingFrames.size()-1, path));
 			_labelsFrames.push_back(atoi(classlabel.c_str()));
+			_labelsInfo.insert(std::make_pair(atoi(classlabel.c_str()), infoLabel));
 		}
 	}
 	_frameWidth = _trainingFrames[0].cols;
 	_frameHeight = _trainingFrames[0].rows;
 }
 
-void Recognizer::saveModel(std::string fileNamePath)
-{
-	_model->save(fileNamePath);
-}
-
 void Recognizer::train()
 {
 	_isTrained = true;
+	std::cout << " before train!" << std::endl;
 	_model->train(_trainingFrames, _labelsFrames);
 	std::cout << " Recognizer model sucessfully charged !" << std::endl;
 	_newData = false;
 	_isTrained = false;
 }
 
-void Recognizer::saveModel()
+void Recognizer::saveCsv(std::string fileName)
 {
-	_model->save("testSave");
+	std::ofstream fichier(fileName, std::ios::out | std::ios::trunc);  //déclaration du flux et ouverture du fichier
+
+	if (!fichier)  // si l'ouverture a réussi
+	{
+		std::cerr << "Error in the openning process" << std::endl;
+	}
+
+	int element = 0;
+
+	std::cout << _labelsFrames[0] << std::endl;
+
+	for (std::vector<cv::Mat>::iterator frame = _trainingFrames.begin(); frame != _trainingFrames.end(); frame++, element++)
+	{
+		if (!_pathToFrame[element].empty())
+		{
+			fichier << _pathToFrame[element] << ";" << _labelsFrames[element] << ";" << _labelsInfo[_labelsFrames[element]] << std::endl;
+		}
+		else
+		{
+			std::cout << "image of " << _labelsInfo[element] << " not sauved when trained" << std::endl;
+		}
+	}
+
+		
+	fichier.close();
 }
 
-void Recognizer::loadModel()
+void Recognizer::saveImg(std::string pathToDir, std::string nameOfFile, cv::Mat faceToSave)
 {
-	_model->load("testSave");
+	//Process Image here TODO
+	bool save = cv::imwrite(IMG_DIR + pathToDir + nameOfFile, faceToSave);
+	if (!save)
+	{
+		createDirectory(pathToDir);
+		save = cv::imwrite(IMG_DIR + pathToDir + nameOfFile, faceToSave);
+	}
+	if (save)
+	{
+		std::cout << "file " << nameOfFile << " saved" << std::endl;
+	}
+	else
+	{
+		std::cout << "error in saved process" << std::endl;
+	}
 }
 
-void Recognizer::saveImg(std::string path, cv::Mat faceToSave)
+void Recognizer::saveImg(std::string nameOfFile, cv::Mat faceToSave)
 {
-	cv::imwrite(IMG_DIR + path, faceToSave);
+	cv::Mat tmp = processFrame(faceToSave);
+	bool save = cv::imwrite(IMG_DIR + nameOfFile, tmp);
+	if (save)
+	{
+		std::cout << "file saved" << std::endl;
+	}
+	else
+	{
+		std::cout << "error in saved process" << std::endl;
+	}
 }
 
+
+// TODO
+cv::Mat Recognizer::processFrame(cv::Mat frameToProcess)
+{
+	cv::Mat rezizedFrame, grayRezizedFrame;
+
+	cv::resize(frameToProcess, rezizedFrame, _frameSize, 1.0, 1.0, cv::INTER_CUBIC);
+	std::cout << rezizedFrame.size().height << std::endl;
+	std::cout << rezizedFrame.size().width << std::endl;
+
+	if (rezizedFrame.channels() == 3)
+	{
+		cv::cvtColor(rezizedFrame, grayRezizedFrame, cv::COLOR_BGR2GRAY);
+		return grayRezizedFrame;
+	}
+
+	return rezizedFrame;
+}
 
 
 
@@ -163,14 +240,78 @@ cv::Ptr<cv::face::FaceRecognizer> Recognizer::getModel()
 	return _model;
 }
 
+double Recognizer::getLastConfidence()
+{
+	return _confidence;
+}
+
 int Recognizer::getFrameWidth()
 {
-	return _frameWidth;
+	return _frameSize.width;
 }
 int Recognizer::getFrameHeight()
 {
-	return _frameHeight;
+	return _frameSize.height;
 }
+
+cv::Size Recognizer::getFrameSize()
+{
+	return _frameSize;
+}
+
+int Recognizer::getLabelFrameSize()
+{
+	return _labelsFrames.size();
+}
+int Recognizer::getTrainingFramesSize()
+{
+	return _trainingFrames.size();
+}
+
+int Recognizer::getNumberOfFacePerLabel()
+{
+	return -1;
+}
+int Recognizer::getNumberOfFaceSauvegarded()
+{
+	return -1;
+}
+
+void Recognizer::printConf()
+{
+	int element = 0;
+	for (std::vector<cv::Mat>::iterator frame = _trainingFrames.begin(); frame != _trainingFrames.end(); frame++, element++)
+	{
+		std::cout << "path : " << _pathToFrame[element] << std::endl;
+		std::cout << "label : " << _labelsFrames[element] << std::endl;
+		std::cout << "label info : " << _labelsInfo[_labelsFrames[element]] << std::endl;
+	}	
+}
+
+
+
+#ifdef _WIN32
+void Recognizer::createDirectory(std::string folderName)
+{
+	std::string tmp = IMG_DIR + folderName;
+	int len;
+	int slength = (int)tmp.length() + 1;
+	len = MultiByteToWideChar(CP_ACP, 0, tmp.c_str(), slength, 0, 0);
+	wchar_t* buf = new wchar_t[len];
+	MultiByteToWideChar(CP_ACP, 0, tmp.c_str(), slength, buf, len);
+	std::wstring stemp(buf);
+	LPCWSTR result = stemp.c_str();
+	CreateDirectory(result, NULL);
+	delete[] buf;
+}
+#endif
+
+#ifdef __linux__ 
+void Recognizer::createDirectory(std::string pathName)
+{
+	mkdir(IMG_DIR + pathName, 01777);
+}
+#endif
 
 Recognizer::~Recognizer()
 {
