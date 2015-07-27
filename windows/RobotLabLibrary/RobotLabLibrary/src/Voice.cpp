@@ -6,7 +6,7 @@ Voice::Voice()
 {
 	err_set_logfp(NULL); //Toggle the pocketShpinx log info. Comment this line for see the log
 
-	//Command for set all the config. Here it's for my windows realtek recorder and my roboticModel.
+	//Command for set all the config. Here it's for my windows realtek recorder and my roboticModel. All the _PATH are in Constantes.h
 	config = cmd_ln_init(NULL, ps_args(), TRUE,
 		"-hmm", HMM_PATH,
 		"-lm", LM_PATH,
@@ -82,14 +82,14 @@ Voice::Voice(const char* hmm, const char* lm, const char* dict, const char* samp
 
 const char * Voice::recognizeFromMicrophoneWhileTime(int timeToWait)
 {
-	ad_rec_t *ad;
-	int16 adbuf[65536];
-	uint8 utt_started, in_speech;
+	ad_rec_t *ad; //pointer to the audio device
+	int16 adbuf[65536]; //buffer for stock data before convertion
+	uint8 utt_started, in_speech; //utt_started go to true when speaker begin to speek. in_speech is true while the speaker talk.
 	int32 k;
-	const char *hyp;
-	time_t timer;
+	const char *hyp; // is the result of vocal recognition in const char* format
+	time_t timer; //For stop the listening 
 
-	//Some secutity check :
+	//Some secutity check when we open the audio device:
 	if ((ad = ad_open_dev(cmd_ln_str_r(config, "-adcdev"), (int)cmd_ln_float32_r(config, "-samprate"))) == NULL)
 		E_FATAL("Failed to open audio device\n");
 	if (ad_start_rec(ad) < 0)
@@ -136,7 +136,7 @@ void Voice::recognizeFromMicrophone()
 	int32 k;
 	char const *hyp;
 
-	//some security check
+	//some security check when we open the audio device:
 	if ((ad = ad_open_dev(cmd_ln_str_r(config, "-adcdev"), (int)cmd_ln_float32_r(config, "-samprate"))) == NULL)
 		E_FATAL("Failed to open audio device\n");
 	if (ad_start_rec(ad) < 0)
@@ -226,6 +226,7 @@ const char * Voice::recognizeFromFile(char *fname)
 			hyp = ps_get_hyp(ps, NULL);
 			if (hyp != NULL)
 			{
+				std::cout << "return when silence need test" << std::endl;
 				return hyp;
 			}
 			else
@@ -253,7 +254,7 @@ const char * Voice::recognizeFromFile(char *fname)
 	return "Error";
 }
 
-//Functions for check wav header
+//Function for check wav header
 int Voice::check_wav_header(char *header, int expected_sr)
 {
 	int sr;
