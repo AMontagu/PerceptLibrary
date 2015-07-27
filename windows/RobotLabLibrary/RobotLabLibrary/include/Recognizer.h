@@ -32,7 +32,6 @@ public:
 	Recognizer();
 
 	~Recognizer();
-	cv::Ptr<cv::face::FaceRecognizer> getModel();
 
 	void addFrameToCurrentTraining(cv::Mat frame, int label, std::string faceName);
 	void addFrameToCurrentTrainingAndSave(cv::Mat frame, int label, std::string faceName, std::string fileName, std::string folderName = "face/");
@@ -55,6 +54,7 @@ public:
 	int getTrainingFramesSize();
 	int getNumberOfFaceSauvegarded();
 	void printConf();
+	cv::Ptr<cv::face::FaceRecognizer> getModel();
 
 	bool imageExist(const std::string name, const std::string folderName = "face/");
 	void createDirectory(std::string folderName);
