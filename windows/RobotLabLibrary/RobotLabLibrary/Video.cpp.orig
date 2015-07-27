@@ -26,10 +26,12 @@ int Video::start()
 		_capture >> frame; //The cam frames are stored in frame variable
 
 		if (frame.empty())
+<<<<<<< master:windows/RobotLabLibrary/RobotLabLibrary/Video.cpp
+=======
 		{
 			std::cout << "your camera is not found or is not functional" << std::endl;
+>>>>>>> local:linux/RobotLabLibrary/Video.cpp
 			return -1;
-		}
 		//cout << (double)cvGetTickCount() - time << endl;
 		if ((double)cvGetTickCount() - time > 150000)
 		{
@@ -50,35 +52,35 @@ int Video::start()
 		}
 		if (_detectFaceOn)
 		{
-			for (std::vector<cv::Rect>::iterator r = _averageFacesRect.begin(); r != _averageFacesRect.end(); r++)
+			for each (cv::Rect r in _averageFacesRect)
 			{
-				draw(*r, frame, CV_RGB(0, 255, 255));
-				if (r->area() > faceToTrack.area())
+				draw(r, frame, CV_RGB(0, 255, 255));
+				if (r.area() > faceToTrack.area())
 				{
-					faceToTrack = *r;
+					faceToTrack = r;
 				}
 			}
 		}
 		_tracking = faceTracking(faceToTrack, frame);
 		if (_detectEyeOn)
 		{
-			for (std::vector<cv::Rect>::iterator r = _averageEyesRect.begin(); r != _averageEyesRect.end(); r++)
+			for each (cv::Rect r in _averageEyesRect)
 			{
-				draw(*r, frame, CV_RGB(255, 0, 255));
+				draw(r, frame, CV_RGB(255, 0, 255));
 			}
 		}
 		if (_detectSmileOn)
 		{
-			for (std::vector<cv::Rect>::iterator r = _averageSmilesRect.begin(); r != _averageSmilesRect.end(); r++)
+			for each (cv::Rect r in _averageSmilesRect)
 			{
-				draw(*r, frame, CV_RGB(255, 255, 0));
+				draw(r, frame, CV_RGB(255, 255, 0));
 			}
 		}
 		if (_detectCustomOn)
 		{
-			for (std::vector<cv::Rect>::iterator r = _averageCustomRect.begin(); r != _averageCustomRect.end(); r++)
+			for each (cv::Rect r in _averageCustomRect)
 			{
-				draw(*r, frame, CV_RGB(255, 255, 0));
+				draw(r, frame, CV_RGB(255, 255, 0));
 			}
 		}
 		cv::imshow(WINDOWSNAME, frame);
@@ -288,7 +290,7 @@ void Video::startFaceDetect()
 {
 	if (_faceCascade.empty())
 	{
-		if (!_faceCascade.load(CASCADE_FACE_PATH))//We load the Haar model here. Other is juste for form
+		if (!_faceCascade.load(cascadeFacePath))//We load the Haar model here. Other is juste for form
 		{
 			std::cerr << "ERROR: Could not load classifier Facecascade" << std::endl;
 		}
@@ -316,7 +318,7 @@ void Video::startSmileDetect()
 {
 	if (_smileCascade.empty())
 	{
-		if (!_smileCascade.load(CASCADE_SMILE_PATH))
+		if (!_smileCascade.load(cascadeSmilePath))
 		{
 			std::cerr << "ERROR: Could not load classifier smileCascade" << std::endl;
 		}
@@ -344,7 +346,7 @@ void Video::startEyeDetect()
 {
 	if (_eyeCascade.empty())
 	{
-		if (!_eyeCascade.load(CASCADE_EYE_PATH))
+		if (!_eyeCascade.load(cascadeEyePath))
 		{
 			std::cerr << "ERROR: Could not load classifier eyeCascade" << std::endl;
 		}
@@ -418,9 +420,9 @@ void Video::printVectorSmilingData()
 {
 	std::cout << "There is " << _faceAreSmiling.size() << " face detected :" << std::endl;
 	int count = 1;
-	for (std::vector<bool>::const_iterator smile = _faceAreSmiling.begin(); smile != _faceAreSmiling.end(); smile++)
+	for each (bool smile in _faceAreSmiling)
 	{
-		if (*smile)
+		if (smile)
 		{
 			std::cout << "The face " << count << " is smiling." << std::endl;
 		}

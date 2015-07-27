@@ -27,7 +27,11 @@ int Video::start()
 
 		if (frame.empty())
 		{
+<<<<<<< testOptimisation:linux/RobotLabLibrary/Video.cpp
+			std::cout << "no camera found" << std::endl;
+=======
 			std::cout << "your camera is not found or is not functional" << std::endl;
+>>>>>>> local:windows/RobotLabLibrary/RobotLabLibrary/Video.cpp
 			return -1;
 		}
 		//cout << (double)cvGetTickCount() - time << endl;
