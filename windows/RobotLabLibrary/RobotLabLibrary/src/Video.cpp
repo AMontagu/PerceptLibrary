@@ -107,7 +107,7 @@ int Video::faceDetect(cv::Mat& img)
 	//t = (double)cvGetTickCount();
 	//detectMultiScale() fund the matching objet with the cascadeClassifier (_faceCascade here) and add Rect type variable into the vector faces here.
 	//for the options go to http://stackoverflow.com/questions/20801015/recommended-values-for-opencv-detectmultiscale-parameters
-	_faceCascade.detectMultiScale(smallImg, _averageFacesRect, 1.1, 3, 1, cv::Size(30, 30), cv::Size(400, 400));
+	_faceCascade.detectMultiScale(smallImg, _averageFacesRect, 1.1, 5, 1, cv::Size(30, 30), cv::Size(400, 400));
 
 	//t = (double)cvGetTickCount() - t;
 	//printf("detection time = %g ms\n", t / ((double)cvGetTickFrequency()*1000.));
@@ -162,56 +162,6 @@ int Video::smileDetect(cv::Mat& img, cv::Mat& principalFrame, int width, int hei
 			_averageSmilesRect.push_back(*r);
 		}
 	}
-
-	/*if (!_timeToDraw)
-	{
-		vector<Rect> smileDetected;
-		for each (Rect rect in averageSmilesRectTemp)
-		{
-			smileDetected.push_back(rect);
-		}
-		_storeSmileDetected.push_back(smileDetected);
-	}
-	else
-	{
-		_averageSmilesRect.clear();
-		vector<int> averageX, averageY, averageWidth, averageHeight, smileNumberInCaptation;
-		int captationNumber = 0, smileCaptationNumber = 0, MaxNumberOfSmileDetecting = 0;
-		for each (vector<Rect> vectorRect in _storeSmileDetected)
-		{
-			for each (Rect smile in vectorRect)
-			{
-				if (smileCaptationNumber == MaxNumberOfSmileDetecting)
-				{
-					averageHeight.push_back(smile.height);
-					averageWidth.push_back(smile.width);
-					averageX.push_back(smile.x);
-					averageY.push_back(smile.y);
-				}
-				else
-				{
-					averageHeight[smileCaptationNumber] += smile.height;
-					averageWidth[smileCaptationNumber] += smile.width;
-					averageX[smileCaptationNumber] += smile.x;
-					averageY[smileCaptationNumber] += smile.y;
-				}
-				smileCaptationNumber++;
-			}
-			smileNumberInCaptation.push_back(smileCaptationNumber);
-			smileCaptationNumber = 0;
-			captationNumber++;
-			for (int i = 0; i < MaxNumberOfSmileDetecting; i++)
-			{
-				//Rect rectTemp(averageX[i] / captationNumber, averageY[i] / captationNumber, averageWidth[i] / captationNumber, averageHeight[i] / captationNumber);
-				//cout << " le sourire numero " << MaxNumberOfSmileDetecting << " a pour coordonnees :" << endl;
-				//cout << " X : " << rectTemp.x << "  Y : " << rectTemp.y << "  widht : " << rectTemp.width << "  height : " << rectTemp.height << endl;
-				//cout << endl;
-				//_averageSmilesRect.push_back(rectTemp);
-			}
-		}
-		_timeToDraw = false;
-	}*/
-	
 	return smileNumberTemp;
 }
 

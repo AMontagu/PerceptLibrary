@@ -25,6 +25,9 @@ droite(10) dd rr ww aa tt yy ei rr
 droite(11) dd rr ww aa tt yy ai rr
 droite(12) dd rr ww aa tt yy ai rr ee
 droite(14) dd rr ww aa zz
+detection dd ai tt ai kk ss yy on
+detection(2) dd ai tt ai kk tt ee
+detection(3) dd ai tt ai kk tt ei
 gauche gg au ch
 gauche(2) gg au ch ee
 gauche(3) gg oo ch ei
@@ -39,27 +42,27 @@ reconnaissance(3) rr ee cc oo nn ai ss an ss ee
 reconnaissance(4) rr ee cc oo nn ai ss an ss
 reconnaissance(5) rr ee kk oo nn ai ss en ss
 reconnaissance(6) rr ee kk oo nn ei ss an ss
-facial ff aa ss
-facial(2) ff aa ss ee
-facial(3) ff aa ss aa ff aa ss
-facial(4) ff aa ss aa ff aa ss ee
-facial(5) ff aa ss aa
-facial(6) ff aa ss aa ff aa ss
-facial(7) ff aa ss
-facial(8) ff aa ss ee
-facial(9) ff aa ss ee zz
-facial(10) ff aa ss ai tt
-facial(11) ff aa ss ai tt ee
-facial(12) ff aa ss ai tt
-facial(13) ff aa ss ai tt ee
-facial(14) ff aa ss ai tt ee zz
-facial(15) ff aa ss ai tt zz
-facial(16) ff aa ss yy aa ll
-facial(17) ff aa ss yy aa ll
-facial(18) ff aa ss yy aa ll ee
-facial(19) ff aa ss yy aa ll ee mm an
-facial(20) ff aa ss ii ll
-facial(21) ff aa ss ii ll ee
+faciale ff aa ss
+faciale(2) ff aa ss ee
+faciale(3) ff aa ss aa ff aa ss
+faciale(4) ff aa ss aa ff aa ss ee
+faciale(5) ff aa ss aa
+faciale(6) ff aa ss aa ff aa ss
+faciale(7) ff aa ss
+faciale(8) ff aa ss ee
+faciale(9) ff aa ss ee zz
+faciale(10) ff aa ss ai tt
+faciale(11) ff aa ss ai tt ee
+faciale(12) ff aa ss ai tt
+faciale(13) ff aa ss ai tt ee
+faciale(14) ff aa ss ai tt ee zz
+faciale(15) ff aa ss ai tt zz
+faciale(16) ff aa ss yy aa ll
+faciale(17) ff aa ss yy aa ll
+faciale(18) ff aa ss yy aa ll ee
+faciale(19) ff aa ss yy aa ll ee mm an
+faciale(20) ff aa ss ii ll
+faciale(21) ff aa ss ii ll ee
 yeux yy eu
 yeux(2) yy eu nn
 yeux(3) yy oe tt ai rr

@@ -10,181 +10,136 @@ Recognizer::Recognizer()
 
 void Recognizer::addFrameToCurrentTraining(cv::Mat frame,int label, std::string faceName)
 {
-	_trainingFrames.push_back(frame);
-	_labelsFrames.push_back(label);
-	_labelsInfo.insert(std::make_pair(label, faceName));
-	_model->setLabelInfo(label, faceName);
-	_newData = true;
+	_trainingFrames.push_back(processFrame(frame));//Add frame to the vector of frame that are used for recognition
+	_labelsFrames.push_back(label);//add the corresponding label
+	_labelsInfo.insert(std::make_pair(label, faceName));//make correspondance between the label and the name of the person
+	_model->setLabelInfo(label, faceName);// Do the same but in the model
+	_newData = true; // the next recognize time we will train the new added data
 }
 
-void Recognizer::addFrameToCurrentTrainingAndSave(cv::Mat frame, int label, std::string faceName, std::string fileName, std::string pathToFolder)
+void Recognizer::addFrameToCurrentTrainingAndSave(cv::Mat frame, int label, std::string faceName, std::string fileName, std::string folderName)
 {
-	_trainingFrames.push_back(processFrame(frame));
-	_labelsFrames.push_back(label);
-	_labelsInfo.insert(std::make_pair(label, faceName));
-	_pathToFrame.insert(std::make_pair(_trainingFrames.size()-1, IMG_DIR+pathToFolder+fileName));
-	_model->setLabelInfo(label, faceName);
-	_newData = true;
-	saveImg(pathToFolder, fileName, frame);
+	_trainingFrames.push_back(processFrame(frame));//Add a normalized frame (size and color) to the vector of frame that are used for recognition
+	_labelsFrames.push_back(label);//add the corresponding label
+	_labelsInfo.insert(std::make_pair(label, faceName));//make correspondance between the label and the name of the person
+	_model->setLabelInfo(label, faceName);// Do the same but in the model
+	_pathToFrame.insert(std::make_pair(_trainingFrames.size() - 1, IMG_DIR + folderName + fileName));//associate the frame vector index to a path for the sauvegarde process
+	_newData = true; // the next recognize time we will train the new added data
+	saveImg(folderName, fileName, frame); //save the frame to a specified folder in IMG_DIR with a specified name
 }
 
 
 
-void Recognizer::recognize(cv::Mat faceToRecognize)
+double Recognizer::recognize(cv::Mat faceToRecognize)
 {
-	cv::Mat faceToRecognizeGood = processFrame(faceToRecognize);
-	if (_trainingFrames.size() <= 1) {
+	cv::Mat faceToRecognizeGood = processFrame(faceToRecognize); //Ajust size and color of the frame for matching with the database
+	if (_trainingFrames.size() <= 1) //Check if we have add image to the trainingFrame vector
+	{
 		std::string error_message = "This demo needs at least 2 images to work. Please add more images to your data set!";
 		CV_Error(cv::Error::StsError, error_message);
 		getchar();
 	}
 
-	if (_newData)
+	if (_newData) //when we add a frame in a vector _newData is set to true.
 	{
 		//std::cout << "train new data" << std::endl;
-		train();
+		train();//Function that call model->train() in faceRecognizer contibution
+		_newData = false;
 	}
-	//saveModel("face-rec-model.txt");
 
-	// The following line predicts the label of a given
-	// test image:
-	//int predictedLabel = model->predict(faceToRecognize, -1, 0.0);
-	//
-	// To get the confidence of a prediction call the model with:
-	//
 	int predictedLabel = -1;
 	_confidence = 0.0;
-	_model->predict(faceToRecognizeGood, predictedLabel, _confidence);
+	_model->predict(faceToRecognizeGood, predictedLabel, _confidence); // This function in faceRecognizer contibution will give us the label associated to the nearest face recognized and the approximation. More confidence is high less the recognition is sure.
 
 	std::cout << "predictedLabel : " << predictedLabel << " confidence = " << _confidence << std::endl;
 
-	if (!_model->getLabelInfo(predictedLabel).empty())
-	{
-		std::cout << cv::format("%d-th label's info: %s", predictedLabel, _model->getLabelInfo(predictedLabel).c_str()) << std::endl;
-	}
+	std::cout << "The face detected belongs to : " << _labelsInfo[predictedLabel] << std::endl;
 
-	/*if (5>2) {
-		// Sometimes you'll need to get/set internal model data,
-		// which isn't exposed by the public cv::FaceRecognizer.
-		// Since each cv::FaceRecognizer is derived from a
-		// cv::Algorithm, you can query the data.
-		//
-		// First we'll use it to set the threshold of the FaceRecognizer
-		// to 0.0 without retraining the model. This can be useful if
-		// you are evaluating the model:
-		//
-		model->setThreshold(0.0);
-		// Now the threshold of this model is set to 0.0. A prediction
-		// now returns -1, as it's impossible to have a distance below
-		// it
-		predictedLabel = model->predict(testSample);
-		std::cout << "Predicted class = " << predictedLabel << std::endl;
-		// Here is how to get the eigenvalues of this Eigenfaces model:
-		cv::Mat eigenvalues = model->getEigenValues();
-		// And we can do the same to display the Eigenvectors (read Eigenfaces):
-		cv::Mat W = model->getEigenVectors();
-		// From this we will display the (at most) first 10 Eigenfaces:
-		for (int i = 0; i < cv::min(10, W.cols); i++) {
-			std::string msg = cv::format("Eigenvalue #%d = %.5f", i, eigenvalues.at<double>(i));
-			std::cout << msg << std::endl;
-			// get eigenvector #i
-			cv::Mat ev = W.col(i).clone();
-			// Reshape to original size & normalize to [0...255] for imshow.
-			cv::Mat grayscale;
-			normalize(ev.reshape(1), grayscale, 0, 255, cv::NORM_MINMAX, CV_8UC1);
-			// Show the image & apply a Jet colormap for better sensing.
-			cv::Mat cgrayscale;
-			applyColorMap(grayscale, cgrayscale, cv::COLORMAP_JET);
-			imshow(cv::format("%d", i), cgrayscale);
-		}
-		cv::waitKey(1);
-	}*/
+	return _confidence;
 }
 
+//load face and label for trainning a database
 void Recognizer::readCsv(const std::string& filename, char separator)
 {
-	std::ifstream file(filename.c_str(), std::ifstream::in);
+	std::ifstream file(filename.c_str(), std::ifstream::in); //open a file in lecture mode
 	if (!file) 
 	{
 		std::string error_message = "No valid input file was given, please check the given filename. ";
 		CV_Error(CV_StsBadArg, error_message);
 	}
-	std::string line, path, classlabel, infoLabel;
+	std::string line, path, classLabel, infoLabel;
 	cv::Mat tmp;
-	while (getline(file, line)) 
+	while (getline(file, line)) //get line by line what contains the file
 	{
 		std::stringstream liness(line);
-		std::getline(liness, path, separator);
-		std::getline(liness, classlabel, separator);
-		std::getline(liness, infoLabel);
-		if (!path.empty() && !classlabel.empty()) 
+		std::getline(liness, path, separator); //get the value until the separator and store in path variable
+		std::getline(liness, classLabel, separator); //get the value until the separator and store in classLabel variable
+		std::getline(liness, infoLabel); //get the value until the separator and store in path variable
+		if (!path.empty() && !classLabel.empty()) 
 		{
-			tmp = cv::imread(path, 0);
+			tmp = cv::imread(path, 0); //We load the img associate to a line into tmp and check that it's not null (path wrong)
 			if (tmp.data != NULL)
 			{
-				_trainingFrames.push_back(processFrame(tmp));
+				_trainingFrames.push_back(processFrame(tmp)); //add to the current vector for training frame and make sur that the image is good (size and color)
 			}
 			else
 			{
 				std::cerr << "error in the reading file process" << std::endl;
 			}
-			_pathToFrame.insert(std::make_pair(_trainingFrames.size()-1, path));
-			_labelsFrames.push_back(atoi(classlabel.c_str()));
-			_labelsInfo.insert(std::make_pair(atoi(classlabel.c_str()), infoLabel));
+			_pathToFrame.insert(std::make_pair(_trainingFrames.size()-1, path));//associate the frame vector index to a path for the sauvegarde process
+			_labelsFrames.push_back(atoi(classLabel.c_str()));//add the corresponding label
+			_labelsInfo.insert(std::make_pair(atoi(classLabel.c_str()), infoLabel));//make correspondance between the label and the name of the person
 		}
 	}
-	_frameWidth = _trainingFrames[0].cols;
-	_frameHeight = _trainingFrames[0].rows;
 }
 
 void Recognizer::train()
 {
-	_isTrained = true;
-	_model->train(_trainingFrames, _labelsFrames);
+	_isTrained = true; // trainning make few second to execute so it is executes ind a threads. We need to know when it is trainned for not use the predict function
+	_model->train(_trainingFrames, _labelsFrames); //load the frame and label into a model created in faceRecognizer contrib
 	std::cout << "Recognizer model sucessfully charged !" << std::endl;
-	_newData = false;
 	_isTrained = false;
 }
 
 void Recognizer::saveCsv(std::string fileName)
 {
-	std::ofstream fichier(fileName, std::ios::out | std::ios::trunc);  //déclaration du flux et ouverture du fichier
+	std::ofstream fichier(IMG_DIR + fileName, std::ios::out | std::ios::trunc);  //open file in write mode. If the file exist we remove all the contains
 
 	if (!fichier)  // si l'ouverture a réussi
 	{
 		std::cerr << "Error in the openning process" << std::endl;
 	}
 
-	int element = 0;
+	int element = 0; // just an indexer
 
-	for (std::vector<cv::Mat>::iterator frame = _trainingFrames.begin(); frame != _trainingFrames.end(); frame++, element++)
+	for (std::vector<cv::Mat>::iterator frame = _trainingFrames.begin(); frame != _trainingFrames.end(); frame++, element++) // for every frame using in the training model
 	{
 		if (!_pathToFrame[element].empty())
 		{
-			fichier << _pathToFrame[element] << ";" << _labelsFrames[element] << ";" << _labelsInfo[_labelsFrames[element]] << std::endl;
+			fichier << _pathToFrame[element] << ";" << _labelsFrames[element] << ";" << _labelsInfo[_labelsFrames[element]] << std::endl; // parse the data like we want : path;label;labelinfo(name of faces)
 		}
 		else
 		{
-			std::cout << "image of " << _labelsInfo[element] << " not sauved when trained" << std::endl;
+			std::cout << "image of " << _labelsInfo[element] << " not sauved when trained" << std::endl; //if we have used faces imaged just for these time and we don't choose to save them when we added them to the training vector
 		}
-	}
-
-		
+	}	
 	fichier.close();
 }
 
-void Recognizer::saveImg(std::string pathToDir, std::string nameOfFile, cv::Mat faceToSave)
+//save the frame used for recognition into a specified folder into IMG_DIR (Constantes.h) with a specified name 
+void Recognizer::saveImg(std::string folderName, std::string nameOfFile, cv::Mat faceToSave)
 {
-	cv::Mat tmp = processFrame(faceToSave);
-	bool save = cv::imwrite(IMG_DIR + pathToDir + nameOfFile, faceToSave);
+	cv::Mat tmp = processFrame(faceToSave); //make sur the image format is good
+	bool save = cv::imwrite(IMG_DIR + folderName + nameOfFile, tmp); //save the image
 	if (!save)
 	{
-		createDirectory(pathToDir);
-		save = cv::imwrite(IMG_DIR + pathToDir + nameOfFile, faceToSave);
+		createDirectory(folderName);//if save doesn't work it's because the path is wrong so we try to create the specified folder
+		save = cv::imwrite(IMG_DIR + folderName + nameOfFile, faceToSave);//save again
 	}
 	if (save)
 	{
 		std::cout << "file " << nameOfFile << " saved" << std::endl;
+		saveCsv("customFaceCsv.txt");
 	}
 	else
 	{
@@ -193,27 +148,56 @@ void Recognizer::saveImg(std::string pathToDir, std::string nameOfFile, cv::Mat 
 }
 
 
-// TODO
 cv::Mat Recognizer::processFrame(cv::Mat frameToProcess)
 {
 	cv::Mat rezizedFrame, grayRezizedFrame;
 
-	cv::resize(frameToProcess, rezizedFrame, _frameSize, 1.0, 1.0, cv::INTER_CUBIC);
+	cv::resize(frameToProcess, rezizedFrame, _frameSize, 1.0, 1.0, cv::INTER_CUBIC); //rezize
 
-	if (rezizedFrame.channels() == 3)
+	if (rezizedFrame.channels() == 3)// 3 channel = BGR != gray
 	{
-		cv::cvtColor(rezizedFrame, grayRezizedFrame, cv::COLOR_BGR2GRAY);
+		cv::cvtColor(rezizedFrame, grayRezizedFrame, cv::COLOR_BGR2GRAY); // change color to gray
 		return grayRezizedFrame;
 	}
 
 	return rezizedFrame;
 }
 
+// in main.cpp if the confidence is too high we call this function because may the face detected is not good so we had a new people
+void Recognizer::askForAddImageToCurrentTrainingAndSave(cv::Mat noRecognizedFace)
+{
+	std::string answer, fileName;
+	int i;
+	std::cout << "The confidence is high this is maybe because you are not in our database. Would you like to join our Database ? y/n" << std::endl;
+	std::cin >> answer;
+	if (answer == "y" || answer == "Y")
+	{
+		std::cout << "We are going to add your face to the database what is your name ? " << std::endl;
+		std::cin >> answer;
+		if (!imageExist(answer + ".jpeg"))//if someone have already the same name or we want more image of the same person we will have already a file named like "firstname.jpeg" so we check for no overrided 
+		{
+			fileName = answer + ".jpeg";
+			addFrameToCurrentTrainingAndSave(noRecognizedFace, getLabelFrameSize() + 1, answer, fileName, "face/"); //add face to current training and save it
+		}
+		else //if there is already a face for this name we had a number for not overrided
+		{
+			i = 2;
+			while (imageExist(answer + std::to_string(i) + ".jpeg"))
+			{
+				i++;
+			}
+			fileName = answer + std::to_string(i) + ".jpeg";
+			addFrameToCurrentTrainingAndSave(noRecognizedFace, getLabelFrameSize() + 1, answer, fileName, "face/"); //add face to current training and save it
+		}
+	}
+}
+
+
 
 
 bool Recognizer::isTrained()
 {
-	return _isTrained;
+	return _isTrained; //we can't use model->predict() when model is trained
 }
 
 cv::Ptr<cv::face::FaceRecognizer> Recognizer::getModel()
@@ -223,41 +207,39 @@ cv::Ptr<cv::face::FaceRecognizer> Recognizer::getModel()
 
 double Recognizer::getLastConfidence()
 {
-	return _confidence;
+	return _confidence; //get the precision of face recognition 
 }
 
 int Recognizer::getFrameWidth()
 {
-	return _frameSize.width;
+	return _frameSize.width; //If we need to know wich with size is used for the image
 }
 int Recognizer::getFrameHeight()
 {
-	return _frameSize.height;
+	return _frameSize.height; //If we need to know wich height size is used for the image
 }
 
 cv::Size Recognizer::getFrameSize()
 {
-	return _frameSize;
+	return _frameSize; //for rezize function is faster than call the both function above
 }
 
 int Recognizer::getLabelFrameSize()
 {
-	return _labelsFrames.size();
+	return _labelsFrames.size(); //Usefull for information on the size of current training 
 }
 int Recognizer::getTrainingFramesSize()
 {
-	return _trainingFrames.size();
+	return _trainingFrames.size(); //Usefull for information on the size of current training 
 }
 
-int Recognizer::getNumberOfFacePerLabel()
-{
-	return -1;
-}
+//TODO get the number of different person face sauvegarded with a code like contains or with if name != then thera are a new face
 int Recognizer::getNumberOfFaceSauvegarded()
 {
 	return -1;
 }
 
+//return what we save : path of a frame, her label and her name, large information if big training data more usefull for debugging when learning 
 void Recognizer::printConf()
 {
 	int element = 0;
@@ -269,8 +251,22 @@ void Recognizer::printConf()
 	}	
 }
 
+//check if an image exist with her name and the folder inside IMG_DIR given
+bool Recognizer::imageExist(const std::string name, const std::string folderName) 
+{
+	cv::Mat image = cv::imread(IMG_DIR + folderName + name, 0);
 
+	if (image.data)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
+//function for create a directory depending on the operating system
 #ifdef _WIN32
 void Recognizer::createDirectory(std::string folderName)
 {

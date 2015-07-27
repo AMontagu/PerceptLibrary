@@ -32,19 +32,19 @@ public:
 	Recognizer();
 
 	~Recognizer();
-
-	void addFrameToCurrentTraining(cv::Mat frame, int label, std::string faceName);
-	void addFrameToCurrentTrainingAndSave(cv::Mat frame, int label, std::string faceName, std::string fileName, std::string pathToFolder = "face/");
 	cv::Ptr<cv::face::FaceRecognizer> getModel();
 
-	
-	void recognize(cv::Mat faceToRecognize);
-	void readCsv(const std::string& filename, char separator = ';');
+	void addFrameToCurrentTraining(cv::Mat frame, int label, std::string faceName);
+	void addFrameToCurrentTrainingAndSave(cv::Mat frame, int label, std::string faceName, std::string fileName, std::string folderName = "face/");
 
-	void saveCsv(std::string fileName = "modelSaved");
-	void train();
-	void saveImg(std::string pathToDir, std::string nameOfFile, cv::Mat faceToSave);
+	double recognize(cv::Mat faceToRecognize);
+	void readCsv(const std::string& filename, char separator = ';');
+	void saveCsv(std::string fileName = "customFaceCsv.txt");
+	void saveImg(std::string folderName, std::string nameOfFile, cv::Mat faceToSave);
 	cv::Mat processFrame(cv::Mat frameToProcess);
+	void askForAddImageToCurrentTrainingAndSave(cv::Mat noRecognizedFace);
+
+	void train();
 
 	bool isTrained();
 	int getFrameWidth();
@@ -53,10 +53,10 @@ public:
 	double getLastConfidence();
 	int getLabelFrameSize();
 	int getTrainingFramesSize();
-	int getNumberOfFacePerLabel();
 	int getNumberOfFaceSauvegarded();
 	void printConf();
 
+	bool imageExist(const std::string name, const std::string folderName = "face/");
 	void createDirectory(std::string folderName);
 private :
 	std::vector<cv::Mat> _trainingFrames, _trainingFramesInTrain;
