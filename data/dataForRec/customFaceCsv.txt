@@ -1,0 +1,17 @@
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/person1.jpeg;1;person1
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/person2.jpeg;2;person2
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/person3.jpeg;3;person3
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/person4.jpeg;4;person4
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/person5.jpeg;5;person5
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/adrien.jpeg;6;adrien
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/adrien2.jpeg;7;adrien
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/adrien3.jpeg;8;adrien
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/adrien4.jpeg;9;adrien
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/adrien5.jpeg;10;adrien
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/adrien6.jpeg;11;adrien
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/adrien7.jpeg;12;adrien
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/adrien8.jpeg;13;adrien
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/adrien9.jpeg;14;adrien
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/adrien10.jpeg;15;adrien
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/adrien11.jpeg;16;adrien
+C:/dev/git/RobotLabLibrary/data/dataForRec/face/adrien12.jpeg;17;adrien
