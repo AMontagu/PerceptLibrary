@@ -35,15 +35,15 @@ public:
 
 	void addFrameToCurrentTraining(cv::Mat frame, int label, std::string faceName);
 	void addFrameToCurrentTrainingAndSave(cv::Mat frame, int label, std::string faceName, std::string fileName, std::string folderName = "face/");
+	void askForAddImageToCurrentTrainingAndSave(cv::Mat noRecognizedFace);
 
 	double recognize(cv::Mat faceToRecognize);
+	void train();
+
 	void readCsv(const std::string& filename, char separator = ';');
 	void saveCsv(std::string fileName = "customFaceCsv.txt");
 	void saveImg(std::string folderName, std::string nameOfFile, cv::Mat faceToSave);
 	cv::Mat processFrame(cv::Mat frameToProcess);
-	void askForAddImageToCurrentTrainingAndSave(cv::Mat noRecognizedFace);
-
-	void train();
 
 	bool isTrained();
 	int getFrameWidth();
