@@ -5,38 +5,78 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Fichiers d%27en-tête">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="Fichiers sources\include">
+      <UniqueIdentifier>{6df2b7e3-48d6-42da-acce-278682a3af91}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers de ressources">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Fichiers sources\src">
+      <UniqueIdentifier>{2d466e52-3aca-4105-b8d1-952aa27c7c66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="faceRecognizerContrib">
+      <UniqueIdentifier>{99507da0-4d8e-46dc-8406-9cfb9e736283}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="faceRecognizerContrib\src">
+      <UniqueIdentifier>{1547fb62-66b4-4223-805b-c51f36da1e9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="faceRecognizerContrib\include">
+      <UniqueIdentifier>{c6a366eb-2554-4a92-9566-75af7cde1ce7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="faceRecognizerContrib\include\face">
+      <UniqueIdentifier>{094747e1-288a-4b8b-b4c1-af3364ed659f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Video.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="src\Recognizer.cpp">
+      <Filter>Fichiers sources\src</Filter>
     </ClCompile>
-    <ClCompile Include="Voice.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="src\Video.cpp">
+      <Filter>Fichiers sources\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Voice.cpp">
+      <Filter>Fichiers sources\src</Filter>
+    </ClCompile>
+    <ClCompile Include="faceRecognizerContrib\src\eigen_faces.cpp">
+      <Filter>faceRecognizerContrib\src</Filter>
+    </ClCompile>
+    <ClCompile Include="faceRecognizerContrib\src\facerec.cpp">
+      <Filter>faceRecognizerContrib\src</Filter>
+    </ClCompile>
+    <ClCompile Include="faceRecognizerContrib\src\fisher_faces.cpp">
+      <Filter>faceRecognizerContrib\src</Filter>
+    </ClCompile>
+    <ClCompile Include="faceRecognizerContrib\src\lbph_faces.cpp">
+      <Filter>faceRecognizerContrib\src</Filter>
     </ClCompile>
     <ClCompile Include="Recognizer.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Video.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="include\Constantes.h">
+      <Filter>Fichiers sources\include</Filter>
     </ClInclude>
-    <ClInclude Include="Constantes.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="include\Recognizer.h">
+      <Filter>Fichiers sources\include</Filter>
     </ClInclude>
-    <ClInclude Include="Voice.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="include\Video.h">
+      <Filter>Fichiers sources\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Voice.h">
+      <Filter>Fichiers sources\include</Filter>
+    </ClInclude>
+    <ClInclude Include="faceRecognizerContrib\include\face\facerec.hpp">
+      <Filter>faceRecognizerContrib\include\face</Filter>
+    </ClInclude>
+    <ClInclude Include="faceRecognizerContrib\include\face.hpp">
+      <Filter>faceRecognizerContrib\include</Filter>
+    </ClInclude>
+    <ClInclude Include="faceRecognizerContrib\src\face_basic.hpp">
+      <Filter>faceRecognizerContrib\src</Filter>
+    </ClInclude>
+    <ClInclude Include="faceRecognizerContrib\src\precomp.hpp">
+      <Filter>faceRecognizerContrib\src</Filter>
     </ClInclude>
     <ClInclude Include="Recognizer.h">
       <Filter>Fichiers d%27en-tête</Filter>

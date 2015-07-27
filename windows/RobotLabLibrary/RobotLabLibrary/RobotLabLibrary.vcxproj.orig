@@ -51,7 +51,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\pocketSphynx\pocketsphinx\include;C:\pocketSphynx\sphinxbase\include\win32;C:\pocketSphynx\pocketsphinx\src;C:\pocketSphynx\sphinxbase\src\libsphinxad;C:\pocketSphynx\sphinxbase\include;$(OPENCV_DIR32)\..\..\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -70,7 +70,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\pocketSphynx\sphinxbase\include\win32;C:\pocketSphynx\pocketsphinx\src;C:\pocketSphynx\sphinxbase\src\libsphinxad;C:\pocketSphynx\sphinxbase\include;C:\pocketSphynx\pocketsphinx\include;$(OPENCV_DIR32)\..\..\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -84,30 +84,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="faceRecognizerContrib\src\eigen_faces.cpp" />
+    <ClCompile Include="faceRecognizerContrib\src\facerec.cpp" />
+    <ClCompile Include="faceRecognizerContrib\src\fisher_faces.cpp" />
+    <ClCompile Include="faceRecognizerContrib\src\lbph_faces.cpp" />
     <ClCompile Include="main.cpp" />
-<<<<<<< master
-    <ClCompile Include="Video.cpp" />
+<<<<<<< HEAD
+    <ClCompile Include="Recognizer.cpp" />
     <ClCompile Include="Voice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constantes.h" />
-    <ClInclude Include="Video.h" />
+    <ClInclude Include="Recognizer.h" />
     <ClInclude Include="Voice.h" />
 =======
-    <ClCompile Include="Recognizer.cpp" />
+    <ClCompile Include="src\Recognizer.cpp" />
     <ClCompile Include="src\Video.cpp" />
     <ClCompile Include="src\Voice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="faceRecognizerContrib\include\face.hpp" />
-    <ClInclude Include="Recognizer.h" />
+    <ClInclude Include="faceRecognizerContrib\include\face\facerec.hpp" />
     <ClInclude Include="faceRecognizerContrib\src\face_basic.hpp" />
     <ClInclude Include="faceRecognizerContrib\src\precomp.hpp" />
     <ClInclude Include="include\Constantes.h" />
     <ClInclude Include="include\Recognizer.h" />
     <ClInclude Include="include\Video.h" />
     <ClInclude Include="include\Voice.h" />
->>>>>>> local
+>>>>>>> testOptimisation
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
