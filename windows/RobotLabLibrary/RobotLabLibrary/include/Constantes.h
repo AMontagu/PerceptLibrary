@@ -11,8 +11,8 @@
 
 #define HMM_PATH "../../../data/modelPocketSphinx/roboticModel/fr-fr"
 #define LM_PATH "../../../data/modelPocketSphinx/roboticModel/roboticOrder.lm"
-//#define DICT_PATH "../../../data/modelPocketSphinx/roboticModel/roboticOrder.dic"
-#define DICT_PATH "../../../data/modelPocketSphinx/roboticModel/frenchWords62K.dic"
+#define DICT_PATH "../../../data/modelPocketSphinx/roboticModel/roboticOrder.dic"
+//#define DICT_PATH "../../../data/modelPocketSphinx/roboticModel/frenchWords62K.dic"
 
 #define TMP_FOLDER "../../../data/tmp/"
 //#define CSV_FACE_RECO "C:/dev/git/RobotLabLibrary/data/dataForRec/faceCsv.txt"
