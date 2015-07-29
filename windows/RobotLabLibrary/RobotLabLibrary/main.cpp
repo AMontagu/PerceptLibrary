@@ -1,7 +1,6 @@
 ﻿#include "include/Video.h"
 #include "include/Voice.h"
 #include "include/Recognizer.h"
-#include <thread>
 
 /*###############################################################################################################################
 #																																#
@@ -76,7 +75,7 @@
 #################################################################################################################################*/
 
 
-int main(int argc, const char** argv)
+/*int main(int argc, const char** argv)
 {
 	std::string again = "a";
 	Voice myVoice;
@@ -107,7 +106,7 @@ int main(int argc, const char** argv)
 		std::cin >> again;
 	}
 	return 0;
-}
+}*/
 
 
 /*###############################################################################################################################
@@ -129,20 +128,20 @@ int main(int argc, const char** argv)
 
 	while (true)
 	{
-		std::cout << "You can say reconnaissance facial, reconnaissance sourrire reconnaissance yeux and stop " << std::endl;
+		std::cout << "You can say detection faciale, detection sourrire detection yeux and stop " << std::endl;
 		speech = myVoice.recognizeFromMicrophoneWhileTime(10);
 		std::cout << speech << std::endl;
-		if (speech == "reconnaissance faciale")
+		if (speech == "detection faciale")
 		{
 			std::cout << "Begin face detect" << std::endl;
 			myVideo.startFaceDetect();
 		}
-		if (speech == "reconnaissance sourires")
+		if (speech == "detection sourires")
 		{
 			std::cout << "Begin smile detect" << std::endl;
 			myVideo.startSmileDetect();
 		}
-		if (speech == "reconnaissance yeux")
+		if (speech == "detection yeux")
 		{
 			std::cout << "Begin eyes detect" << std::endl;
 			myVideo.startEyeDetect();
@@ -165,7 +164,7 @@ int main(int argc, const char** argv)
 #################################################################################################################################*/
 
 
-/*int main(int argc, const char** argv)
+int main(int argc, const char** argv)
 {
 	//----------------------------------- variables initialisation ---------------------------------------------------------
 	std::thread t[2];
@@ -173,10 +172,10 @@ int main(int argc, const char** argv)
 	Video myVideo(0); //0 is the defaut camera, use -1 for any cammera or a number between 1 to 99
 	Recognizer myRecognizer;
 
-	cv::Mat faceResized, lastFaceDetected;
+	std::vector<cv::Mat> lastFacesDetected;
 	bool done = false;
-	double confidence;
-	int i;
+	int i = 0;
+	std::string namePersonRecognized, goodName;
 	time_t timer;
 	time(&timer); //set timer to the current date in ms in
 
@@ -197,7 +196,6 @@ int main(int argc, const char** argv)
 	//myRecognizer.addFrameToCurrentTraining(person3, 3, "person3");
 	//myRecognizer.addFrameToCurrentTraining(person4, 4, "person4");
 	//myRecognizer.addFrameToCurrentTraining(person5, 5, "person5");
-	//myRecognizer.addFrameToCurrentTraining(adrien, 6, "adrien");
 
 	// ------------------------------- second option load a model automatically with csv file --------------------------------
 
@@ -226,20 +224,39 @@ int main(int argc, const char** argv)
 	while (true)
 	{
 		//dont recognize if the model is not trained or if no face never get Recognize
-		if (abs(time(NULL) - timer) > 5 && !myRecognizer.isTrained() && !myVideo.getLastFaceDetected().empty() && myVideo.getLastFaceDetected().data != lastFaceDetected.data)//Maybe add myVideo.getLastFaceDetected() != oldLastFaceDetected for not recognize the same image again and again
+		if (abs(time(NULL) - timer) > 1 && !myRecognizer.isTrained() && !myVideo.getLastFacesDetected().empty() && !myRecognizer.equalTest(myVideo.getLastFacesDetected(), lastFacesDetected))//Maybe add myVideo.getLastFacesDetected() != oldLastFacesDetected for not recognize the same image again and again
 		{
-			lastFaceDetected = myVideo.getLastFaceDetected();
-			confidence = myRecognizer.recognize(lastFaceDetected);//launch the recognition
-			if (confidence > 2500)
+			lastFacesDetected = myVideo.getLastFacesDetected();
+			i = 0;
+			myVideo.clearLabel();
+			for (std::vector<cv::Mat>::iterator face = lastFacesDetected.begin(); face != lastFacesDetected.end(); face++, i++)
 			{
-				myRecognizer.askForAddImageToCurrentTrainingAndSave(lastFaceDetected);//Function ask the user if he want to add his face to the database and do it if the answer is positif
+				namePersonRecognized = myRecognizer.recognize(*face);//launch the recognition
+				myVideo.addLabel(namePersonRecognized, i);
+				if (myRecognizer.getLastConfidence() > 3000 && !myRecognizer.askForAddImageInProcess())
+				{
+					myVideo.imgToPrint = *face;
+					myRecognizer.askForAddImageToCurrentTrainingAndSave(*face);//Function ask the user if he want to add his face to the database and do it if the answer is positif
+					//t[2] = std::thread([&] {myRecognizer.askForAddImageToCurrentTrainingAndSave(*face); }); // if you want to use multi threading but you need to use this differently to use when you implement your GUI
+					myVideo.imgToPrint.data = NULL;
+				}
+				else
+				{
+					std::cout << "Good Name ? y/n" << std::endl;
+					std::cin >> goodName;
+					if (goodName == "n" || goodName == "N")
+					{
+						myRecognizer.askForAddImageToCurrentTrainingAndSave(*face);
+					}
+				}
 			}
+			//std::cout << "face analyzed = " << i << std::endl;
 			time(&timer);
 		}
 		cv::waitKey(1);
 	}
 	return 0;
-}*/
+}
 
 
 /*###############################################################################################################################

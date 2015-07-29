@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <sstream>
+#include <thread>
 
 class Recognizer
 {
@@ -37,7 +38,7 @@ public:
 	void addFrameToCurrentTrainingAndSave(cv::Mat frame, int label, std::string faceName, std::string fileName, std::string folderName = "face/");
 	void askForAddImageToCurrentTrainingAndSave(cv::Mat noRecognizedFace);
 
-	double recognize(cv::Mat faceToRecognize);
+	std::string Recognizer::recognize(cv::Mat faceToRecognize);
 	void train();
 
 	void readCsv(const std::string& filename, char separator = ';');
@@ -46,6 +47,7 @@ public:
 	cv::Mat processFrame(cv::Mat frameToProcess);
 
 	bool isTrained();
+	bool askForAddImageInProcess();
 	int getFrameWidth();
 	int getFrameHeight();
 	cv::Size getFrameSize();
@@ -56,6 +58,8 @@ public:
 	void printConf();
 	cv::Ptr<cv::face::FaceRecognizer> getModel();
 
+	bool equalTest(std::vector<cv::Mat> vec1, std::vector<cv::Mat> vec2);
+
 	bool imageExist(const std::string name, const std::string folderName = "face/");
 	void createDirectory(std::string folderName);
 private :
@@ -64,11 +68,11 @@ private :
 	std::map<int, std::string> _pathToFrame;
 	std::map<int, cv::String> _labelsInfo; // use labelsInfo.insert(std::make_pair(label, info));
 
-	cv::Ptr<cv::face::FaceRecognizer> _model = cv::face::createEigenFaceRecognizer();
+	cv::Ptr<cv::face::FaceRecognizer> _model = cv::face::createEigenFaceRecognizer();//look like fisher face recognition algorithm doesn't work when two image have the same label
 
 	cv::Size _frameSize;
 
-	bool _newData = true, _isTrained = false;
+	bool _newData = true, _isTrained = false, _askForAddImageInProcess = false;
 	int _frameWidth = 92, _frameHeight = 112;
 	double _confidence = 0.0;
 };

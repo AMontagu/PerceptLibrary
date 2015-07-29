@@ -21,6 +21,11 @@ int Video::start()
 	}
 	cv::Rect faceToTrack;
 	cv::Mat frame, frameCopy;
+	int i = 0;
+
+	std::vector<std::string> label;
+	std::vector<int>  labelIndex;
+
 	while (true)
 	{
 		_capture >> frame; //The cam frames are stored in frame variable
@@ -81,7 +86,33 @@ int Video::start()
 				draw(*r, frame, CV_RGB(255, 255, 0));
 			}
 		}
+		if (_labelOn)
+		{
+			label = _label; //For avoid to use the value when the vector is clean in a other thread
+			labelIndex = _labelIndex; //For avoid to use the value when the vector is clean in a other thread
+			i = 0;
+			for (std::vector<std::string>::iterator lab = label.begin(); lab != label.end(); lab++, i++)
+			{
+				if (labelIndex.empty())
+				{
+					std::cout << "a strange error occur please add a condition here !" << std::endl;
+				}
+				if (_lastFacesDetected.size() > labelIndex[i])
+				{
+					cv::putText(frame, *lab, cv::Point(_posX[labelIndex[i]], _posY[labelIndex[i]]), cv::FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0, 255, 255), 2);
+				}
+			}
+		}
 		cv::imshow(WINDOWSNAME, frame);
+
+		if (imgToPrint.data != NULL)
+		{
+			cv::imshow("Face to save", imgToPrint);
+		}
+		else
+		{
+			cv::destroyWindow("Face to save");
+		}
 
 		cv::waitKey(1);
 	}
@@ -107,12 +138,15 @@ int Video::faceDetect(cv::Mat& img)
 	//t = (double)cvGetTickCount();
 	//detectMultiScale() fund the matching objet with the cascadeClassifier (_faceCascade here) and add Rect type variable into the vector faces here.
 	//for the options go to http://stackoverflow.com/questions/20801015/recommended-values-for-opencv-detectmultiscale-parameters
-	_faceCascade.detectMultiScale(smallImg, _averageFacesRect, 1.1, 5, 1, cv::Size(30, 30), cv::Size(400, 400));
+	_faceCascade.detectMultiScale(smallImg, _averageFacesRect, 1.1, 2, 1, cv::Size(30, 30), cv::Size(400, 400));
 
 	//t = (double)cvGetTickCount() - t;
 	//printf("detection time = %g ms\n", t / ((double)cvGetTickFrequency()*1000.));
 
 	_faceAreSmiling.clear();
+	_lastFacesDetected.clear();
+	_posX.clear();
+	_posY.clear();
 
 	//foreach object find with detectMultiScale() we will draw a circle or a rectangle for show what detectMultiScale() have find
 	for (std::vector<cv::Rect>::const_iterator r = _averageFacesRect.begin(); r != _averageFacesRect.end(); r++, faceNumberTemp++)
@@ -120,10 +154,13 @@ int Video::faceDetect(cv::Mat& img)
 		//cout << "find a face" << endl;
 
 		//We transform r into a Mat variable for reuse it for detect eye and smile 
-		_lastFaceDetected = smallImg(*r);
+		_lastFacesDetected.push_back(smallImg(*r));
+		//we save the face postion for maybe add a label
+		_posX.push_back(r->x);
+		_posY.push_back(r->y);
 		if (_detectSmileOn)
 		{
-			_smileNumber = smileDetect(_lastFaceDetected, img, r->x, r->y);
+			_smileNumber = smileDetect(_lastFacesDetected[faceNumberTemp], img, r->x, r->y);
 			if (_smileNumber > 0)
 			{
 				_faceAreSmiling.push_back(true);
@@ -135,7 +172,7 @@ int Video::faceDetect(cv::Mat& img)
 		}
 		if (_detectEyeOn)
 		{
-			_eyeNumber = eyeDetect(_lastFaceDetected, img, r->x, r->y);
+			_eyeNumber = eyeDetect(_lastFacesDetected[faceNumberTemp], img, r->x, r->y);
 		}
 		//for see what image we send to te function you can uncomment this line
 		//cv::imshow("test4", smallImgROI);
@@ -331,6 +368,24 @@ void Video::stopCustomDetect()
 	_averageCustomRect.clear();
 }
 
+void Video::addLabel(std::string label, int index)
+{
+	_label.push_back(label);
+	_labelIndex.push_back(index);
+	_labelOn = true;
+}
+
+void Video::clearLabel()
+{
+	_label.clear();
+	_labelIndex.clear();
+	_labelOn = false;
+}
+
+
+
+
+
 
 int Video::getFaceNumber()
 {
@@ -362,9 +417,9 @@ int Video::getTracking()
 	return _tracking;
 }
 
-cv::Mat Video::getLastFaceDetected()
+std::vector<cv::Mat> Video::getLastFacesDetected()
 {
-	return _lastFaceDetected;
+	return _lastFacesDetected;
 }
 
 //Simple function for print who smile

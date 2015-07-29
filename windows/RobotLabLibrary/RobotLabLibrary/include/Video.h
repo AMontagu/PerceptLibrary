@@ -33,6 +33,8 @@ public:
 	void stopEyeDetect();
 	void startCustomDetect(cv::CascadeClassifier& cascade, int precision);
 	void stopCustomDetect();
+	void addLabel(std::string label, int index);
+	void clearLabel();
 
 	int faceDetect(cv::Mat& img);
 	int eyeDetect(cv::Mat& img, cv::Mat& principalFrame, int width, int height);
@@ -45,7 +47,7 @@ public:
 	int getSmileNumber();
 	int getEyeNumber();
 	int getObjectNumber();
-	cv::Mat getLastFaceDetected();
+	std::vector<cv::Mat> getLastFacesDetected();
 	std::vector<bool> getVectorSmiling();
 	int faceTracking(cv::Rect faceToTrack, cv::Mat& frame);
 	int getTracking();
@@ -56,9 +58,10 @@ public:
 
 	~Video();
 
+	cv::Mat imgToPrint;
 
 private:
-	bool _detectFaceOn = false, _detectSmileOn = false, _detectEyeOn = false, _detectCustomOn = false;
+	bool _detectFaceOn = false, _detectSmileOn = false, _detectEyeOn = false, _detectCustomOn = false, _labelOn = false;
 	int _numberCam, _faceNumber = 0, _smileNumber = 0, _eyeNumber = 0, _objectNumber = 0, _precisionForCustomObject = 3;
 	int _tracking = 0;
 	bool _recording = true, _timeToDraw = false;
@@ -68,8 +71,11 @@ private:
 	cv::VideoCapture _capture;
 	double time;
 	std::vector<std::vector<cv::Rect>> _storeSmileDetected;
-	cv::Mat _lastFaceDetected;
+	std::vector<cv::Mat> _lastFacesDetected;
 	std::vector<cv::Rect> _averageSmilesRect, _averageFacesRect, _averageEyesRect, _averageCustomRect;
+
+	std::vector<std::string> _label;
+	std::vector<int> _posX, _posY, _labelIndex;
 };
 
 #endif

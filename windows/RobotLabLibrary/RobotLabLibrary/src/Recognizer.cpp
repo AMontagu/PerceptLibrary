@@ -30,7 +30,7 @@ void Recognizer::addFrameToCurrentTrainingAndSave(cv::Mat frame, int label, std:
 
 
 
-double Recognizer::recognize(cv::Mat faceToRecognize)
+std::string Recognizer::recognize(cv::Mat faceToRecognize)
 {
 	cv::Mat faceToRecognizeGood = processFrame(faceToRecognize); //Ajust size and color of the frame for matching with the database
 	if (_trainingFrames.size() <= 1) //Check if we have add image to the trainingFrame vector
@@ -55,7 +55,7 @@ double Recognizer::recognize(cv::Mat faceToRecognize)
 
 	std::cout << "The face detected belongs to : " << _labelsInfo[predictedLabel] << std::endl;
 
-	return _confidence;
+	return _labelsInfo[predictedLabel];
 }
 
 //load face and label for trainning a database
@@ -89,6 +89,7 @@ void Recognizer::readCsv(const std::string& filename, char separator)
 			_pathToFrame.insert(std::make_pair(_trainingFrames.size()-1, path));//associate the frame vector index to a path for the sauvegarde process
 			_labelsFrames.push_back(atoi(classLabel.c_str()));//add the corresponding label
 			_labelsInfo.insert(std::make_pair(atoi(classLabel.c_str()), infoLabel));//make correspondance between the label and the name of the person
+			_model->setLabelInfo(atoi(classLabel.c_str()), infoLabel);
 		}
 	}
 }
@@ -96,8 +97,9 @@ void Recognizer::readCsv(const std::string& filename, char separator)
 void Recognizer::train()
 {
 	_isTrained = true; // trainning make few second to execute so it is executes ind a threads. We need to know when it is trainned for not use the predict function
+	//std::cout << "before train" << std::endl; //keep these many error occurs in train functions if the images doesn't match. If you have a opencv assertion failed with something around the size the colRange or the row of an image uncomment this line for confirm that the error is created in train function
 	_model->train(_trainingFrames, _labelsFrames); //load the frame and label into a model created in faceRecognizer contrib
-	std::cout << "Recognizer model sucessfully charged !" << std::endl;
+	std::cout << "Recognizer model sucessfully trained !" << std::endl;
 	_isTrained = false;
 }
 
@@ -157,23 +159,30 @@ cv::Mat Recognizer::processFrame(cv::Mat frameToProcess)
 	if (rezizedFrame.channels() == 3)// 3 channel = BGR != gray
 	{
 		cv::cvtColor(rezizedFrame, grayRezizedFrame, cv::COLOR_BGR2GRAY); // change color to gray
+
 		return grayRezizedFrame;
 	}
+	
 
 	return rezizedFrame;
 }
 
+
 // in main.cpp if the confidence is too high we call this function because may the face detected is not good so we had a new people
 void Recognizer::askForAddImageToCurrentTrainingAndSave(cv::Mat noRecognizedFace)
 {
+	_askForAddImageInProcess = true;
 	std::string answer, fileName;
 	int i;
-	std::cout << "The confidence is high this is maybe because you are not in our database. Would you like to join our Database ? y/n" << std::endl;
+	std::cout << "The confidence is high this is maybe because you are not in our database. Would you like to join our Database (the image to save is in the new windows) ? y/n" << std::endl;
 	std::cin >> answer;
 	if (answer == "y" || answer == "Y")
 	{
 		std::cout << "We are going to add your face to the database what is your name ? " << std::endl;
 		std::cin >> answer;
+
+
+
 		if (!imageExist(answer + ".jpeg"))//if someone have already the same name or we want more image of the same person we will have already a file named like "firstname.jpeg" so we check for no overrided 
 		{
 			fileName = answer + ".jpeg";
@@ -187,17 +196,38 @@ void Recognizer::askForAddImageToCurrentTrainingAndSave(cv::Mat noRecognizedFace
 				i++;
 			}
 			fileName = answer + std::to_string(i) + ".jpeg";
-			addFrameToCurrentTrainingAndSave(noRecognizedFace, getLabelFrameSize() + 1, answer, fileName, "face/"); //add face to current training and save it
+			std::vector<int> label;
+			cv::String test(answer);
+			label = _model->getLabelsByString("adrien");
+			//printConf();
+			/*for (int j = 0; j < label.size(); j++)
+			{
+				std::cout << "label[" <<j<<"] = " << label[j] << std::endl;
+			}*/
+			if (!label.empty())
+			{
+				//std::cout << "label = " << label[0] << std::endl;
+				addFrameToCurrentTrainingAndSave(noRecognizedFace, label[0], answer, fileName, "face/");
+			}
+			else
+			{
+				addFrameToCurrentTrainingAndSave(noRecognizedFace, getLabelFrameSize() + 1, answer, fileName, "face/"); //add face to current training and save it
+			}
 		}
 	}
+	_askForAddImageInProcess = false;
 }
-
 
 
 
 bool Recognizer::isTrained()
 {
 	return _isTrained; //we can't use model->predict() when model is trained
+}
+
+bool Recognizer::askForAddImageInProcess()
+{
+	return _askForAddImageInProcess;
 }
 
 cv::Ptr<cv::face::FaceRecognizer> Recognizer::getModel()
@@ -292,4 +322,21 @@ void Recognizer::createDirectory(std::string pathName)
 
 Recognizer::~Recognizer()
 {
+}
+
+
+bool Recognizer::equalTest(std::vector<cv::Mat> vec1, std::vector<cv::Mat> vec2)
+{
+	if (vec1.size() != vec2.size())
+	{
+		return false;
+	}
+	for (int i = 0; i < vec1.size(); i++)
+	{
+		if (vec1[i].data != vec2[i].data)
+		{
+			return false;
+		}
+	}
+	return true;
 }
