@@ -16,6 +16,9 @@ The library is constitued to 3 classes : [Video](https://github.com/AMontagu/Rob
 * [Troubleshooting](#troubleshooting)
 * [What Do The Sample](#what-do-the-sample)
 
+#Video presentation
+
+See our video at this adress : (coming soon)
 
 # How to install it
 
