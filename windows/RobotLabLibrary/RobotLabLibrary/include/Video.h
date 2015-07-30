@@ -47,6 +47,7 @@ public:
 	int getSmileNumber();
 	int getEyeNumber();
 	int getObjectNumber();
+	bool getDetectFaceOn();
 	std::vector<cv::Mat> getLastFacesDetected();
 	std::vector<bool> getVectorSmiling();
 	int faceTracking(cv::Rect faceToTrack, cv::Mat& frame);

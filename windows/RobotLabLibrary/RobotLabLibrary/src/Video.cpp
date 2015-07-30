@@ -36,7 +36,7 @@ int Video::start()
 			return -1;
 		}
 		//cout << (double)cvGetTickCount() - time << endl;
-		if ((double)cvGetTickCount() - time > 150000)
+		if ((double)cvGetTickCount() - time > 400000)
 		{
 			frame.copyTo(frameCopy);
 			if (_detectFaceOn)
@@ -83,7 +83,7 @@ int Video::start()
 		{
 			for (std::vector<cv::Rect>::iterator r = _averageCustomRect.begin(); r != _averageCustomRect.end(); r++)
 			{
-				draw(*r, frame, CV_RGB(255, 255, 0));
+				draw(*r, frame, CV_RGB(100, 100, 100));
 			}
 		}
 		if (_labelOn)
@@ -188,7 +188,7 @@ int Video::smileDetect(cv::Mat& img, cv::Mat& principalFrame, int width, int hei
 	int smileNumberTemp = 0;
 	std::vector<cv::Rect> averageSmilesRectTemp;
 
-	_smileCascade.detectMultiScale(img, averageSmilesRectTemp, 1.4, 30, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30));
+	_smileCascade.detectMultiScale(img, averageSmilesRectTemp, 1.3, 10, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(20, 20));
 
 	for (std::vector<cv::Rect>::iterator r = averageSmilesRectTemp.begin(); r != averageSmilesRectTemp.end(); r++, smileNumberTemp++)
 	{
@@ -208,17 +208,21 @@ int Video::eyeDetect(cv::Mat& img, cv::Mat& principalFrame, int width, int heigh
 	int eyeNumberTemp = 0;
 	std::vector<cv::Rect> averageEyesRectTemp;
 
-	_eyeCascade.detectMultiScale(img, averageEyesRectTemp, 1.3, 12, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(20, 20)); // We only change the minNeighbors parameters
+	_eyeCascade.detectMultiScale(img, averageEyesRectTemp, 1.2, 10, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(5, 5)); // We only change the minNeighbors parameters
 
-	for (std::vector<cv::Rect>::iterator r = averageEyesRectTemp.begin(); r != averageEyesRectTemp.end(); r++, eyeNumberTemp++)
+	for (std::vector<cv::Rect>::iterator r = averageEyesRectTemp.begin(); r != averageEyesRectTemp.end(); r++)
 	{
 		//cout << "find a eye !" << endl;
 		// if the detected objet is under the half of the face
-		if (r->y < img.size().height / 2)
+		if (eyeNumberTemp < 2)
 		{
-			r->x += width;
-			r->y += height;
-			_averageEyesRect.push_back(*r);
+			if (r->y < img.size().height / 2)
+			{
+				r->x += width;
+				r->y += height;
+				_averageEyesRect.push_back(*r);
+				eyeNumberTemp++;
+			}
 		}
 	}
 	return eyeNumberTemp;
@@ -405,6 +409,11 @@ int Video::getEyeNumber()
 int Video::getObjectNumber()
 {
 	return _objectNumber;
+}
+
+bool Video:: getDetectFaceOn()
+{
+	return _detectFaceOn;
 }
 
 std::vector<bool> Video::getVectorSmiling()

@@ -94,20 +94,10 @@ void Recognizer::readCsv(const std::string& filename, char separator)
 	}
 }
 
-void Recognizer::train()
+void Recognizer::saveCsv(std::string pathToFile)
 {
-	_isTrained = true; // trainning make few second to execute so it is executes ind a threads. We need to know when it is trainned for not use the predict function
-	//std::cout << "before train" << std::endl; //keep these many error occurs in train functions if the images doesn't match. If you have a opencv assertion failed with something around the size the colRange or the row of an image uncomment this line for confirm that the error is created in train function
-	_model->train(_trainingFrames, _labelsFrames); //load the frame and label into a model created in faceRecognizer contrib
-	std::cout << "Recognizer model sucessfully trained !" << std::endl;
-	_isTrained = false;
-}
-
-void Recognizer::saveCsv(std::string fileName)
-{
-	std::ofstream fichier(IMG_DIR + fileName, std::ios::out | std::ios::trunc);  //open file in write mode. If the file exist we remove all the contains
-
-	if (!fichier)  // si l'ouverture a réussi
+	std::ofstream fichier(pathToFile, std::ios::out | std::ios::trunc);  //open file in write mode. If the file exist we remove all the contains
+	if (!fichier)
 	{
 		std::cerr << "Error in the openning process" << std::endl;
 	}
@@ -124,14 +114,24 @@ void Recognizer::saveCsv(std::string fileName)
 		{
 			std::cout << "image of " << _labelsInfo[element] << " not sauved when trained" << std::endl; //if we have used faces imaged just for these time and we don't choose to save them when we added them to the training vector
 		}
-	}	
+	}
 	fichier.close();
+}
+
+void Recognizer::train()
+{
+	_isTrained = true; // trainning make few second to execute so it is executes ind a threads. We need to know when it is trainned for not use the predict function
+	//std::cout << "before train" << std::endl; //keep these many error occurs in train functions if the images doesn't match. If you have a opencv assertion failed with something around the size the colRange or the row of an image uncomment this line for confirm that the error is created in train function
+	_model->train(_trainingFrames, _labelsFrames); //load the frame and label into a model created in faceRecognizer contrib
+	std::cout << "Recognizer model sucessfully trained !" << std::endl;
+	_isTrained = false;
 }
 
 //save the frame used for recognition into a specified folder into IMG_DIR (Constantes.h) with a specified name 
 void Recognizer::saveImg(std::string folderName, std::string nameOfFile, cv::Mat faceToSave)
 {
 	cv::Mat tmp = processFrame(faceToSave); //make sur the image format is good
+	std::cout << "path :" << IMG_DIR + folderName + nameOfFile << std::endl;
 	bool save = cv::imwrite(IMG_DIR + folderName + nameOfFile, tmp); //save the image
 	if (!save)
 	{
@@ -141,7 +141,7 @@ void Recognizer::saveImg(std::string folderName, std::string nameOfFile, cv::Mat
 	if (save)
 	{
 		std::cout << "file " << nameOfFile << " saved" << std::endl;
-		saveCsv("customFaceCsv.txt");
+		saveCsv(CSV_FACE_RECO);
 	}
 	else
 	{

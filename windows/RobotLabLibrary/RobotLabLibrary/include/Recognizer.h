@@ -42,7 +42,7 @@ public:
 	void train();
 
 	void readCsv(const std::string& filename, char separator = ';');
-	void saveCsv(std::string fileName = "customFaceCsv.txt");
+	void saveCsv(std::string pathToFile = CSV_FACE_RECO);
 	void saveImg(std::string folderName, std::string nameOfFile, cv::Mat faceToSave);
 	cv::Mat processFrame(cv::Mat frameToProcess);
 
