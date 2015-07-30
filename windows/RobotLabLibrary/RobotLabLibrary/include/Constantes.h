@@ -16,7 +16,8 @@
 
 #define TMP_FOLDER "../../../data/tmp/"
 //#define CSV_FACE_RECO "C:/dev/git/RobotLabLibrary/data/dataForRec/faceCsv.txt"
-#define CSV_FACE_RECO "C:/dev/git/RobotLabLibrary/data/dataForRec/customFaceCsv.txt"
+//#define CSV_FACE_RECO "C:/dev/git/RobotLabLibrary/data/dataForRec/customFaceCsv.txt"
+#define CSV_FACE_RECO "C:/dev/git/RobotLabLibrary/data/dataForRec/customFaceCsvTest.txt"
 //#define IMG_DIR "C:/dev/git/RobotLabLibrary/data/dataForRec/customDatabase/"
 #define IMG_DIR "C:/dev/git/RobotLabLibrary/data/dataForRec/"
 

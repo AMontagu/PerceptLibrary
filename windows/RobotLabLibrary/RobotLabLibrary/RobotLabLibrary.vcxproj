@@ -53,12 +53,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\pocketSphynx\pocketsphinx\include;C:\pocketSphynx\sphinxbase\include\win32;C:\pocketSphynx\pocketsphinx\src;C:\pocketSphynx\sphinxbase\src\libsphinxad;C:\pocketSphynx\sphinxbase\include;$(OPENCV_DIR32)\..\..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\pocketSphynx\pocketsphinx\include;C:\pocketSphynx\sphinxbase\include\win32;C:\pocketSphynx\sphinxbase\include;C:\opencv\build\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\pocketSphynx\pocketsphinx\bin\Debug;$(OPENCV_DIR32)\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\pocketSphynx\pocketsphinx\bin\Debug;$(OPENCV_DIR32)\lib;</AdditionalLibraryDirectories>
       <AdditionalDependencies>opencv_world300d.lib;opencv_ts300d.lib;%(AdditionalDependencies);sphinxbase.lib;pocketsphinx.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -79,7 +79,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\pocketSphynx\pocketsphinx\bin\Release;$(OPENCV_DIR32)\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR32)\lib;C:\pocketSphynx\pocketsphinx\bin\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>opencv_world300.lib;opencv_ts300.lib;%(AdditionalDependencies);sphinxbase.lib;pocketsphinx.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

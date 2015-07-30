@@ -49,9 +49,6 @@
     <ClCompile Include="faceRecognizerContrib\src\lbph_faces.cpp">
       <Filter>faceRecognizerContrib\src</Filter>
     </ClCompile>
-    <ClCompile Include="Recognizer.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Constantes.h">
@@ -77,9 +74,6 @@
     </ClInclude>
     <ClInclude Include="faceRecognizerContrib\src\precomp.hpp">
       <Filter>faceRecognizerContrib\src</Filter>
-    </ClInclude>
-    <ClInclude Include="Recognizer.h">
-      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

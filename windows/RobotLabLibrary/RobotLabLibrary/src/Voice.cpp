@@ -18,7 +18,7 @@ Voice::Voice()
 		"-lm", MODELDIR "/fr-fr/french3g62K.lm.dmp",
 		"-dict", MODELDIR "/fr-fr/frenchWords62K.dic",*/
 		"-samprate", "44100", "-nfft", "2048",
-		"-rawlogdir", TMP_FOLDER,//This is for save the data you say in a file for listen it after
+		//"-rawlogdir", TMP_FOLDER,//This is for save the data you say in a file for listen it after
 		NULL);
 
 	if (config == NULL)

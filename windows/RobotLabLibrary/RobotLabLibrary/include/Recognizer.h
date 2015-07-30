@@ -30,13 +30,13 @@
 class Recognizer
 {
 public:
-	Recognizer();
+	Recognizer(int widht = 92, int heihgt = 112);
 
 	~Recognizer();
 
 	void addFrameToCurrentTraining(cv::Mat frame, int label, std::string faceName);
 	void addFrameToCurrentTrainingAndSave(cv::Mat frame, int label, std::string faceName, std::string fileName, std::string folderName = "face/");
-	void askForAddImageToCurrentTrainingAndSave(cv::Mat noRecognizedFace);
+	void askForAddImageToCurrentTrainingAndSave(cv::Mat noRecognizedFace, std::string folderName = "face/");
 
 	std::string Recognizer::recognize(cv::Mat faceToRecognize);
 	void train();
@@ -73,7 +73,6 @@ private :
 	cv::Size _frameSize;
 
 	bool _newData = true, _isTrained = false, _askForAddImageInProcess = false;
-	int _frameWidth = 92, _frameHeight = 112;
 	double _confidence = 0.0;
 };
 

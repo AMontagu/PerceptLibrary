@@ -97,7 +97,7 @@ int Video::start()
 				{
 					std::cout << "a strange error occur please add a condition here !" << std::endl;
 				}
-				if (_lastFacesDetected.size() > labelIndex[i])
+				if ((int)_lastFacesDetected.size() > labelIndex[i])
 				{
 					cv::putText(frame, *lab, cv::Point(_posX[labelIndex[i]], _posY[labelIndex[i]]), cv::FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0, 255, 255), 2);
 				}
@@ -105,9 +105,9 @@ int Video::start()
 		}
 		cv::imshow(WINDOWSNAME, frame);
 
-		if (imgToPrint.data != NULL)
+		if (!_imgToPrint.empty())
 		{
-			cv::imshow("Face to save", imgToPrint);
+			cv::imshow("Face to save", _imgToPrint);
 		}
 		else
 		{
@@ -476,6 +476,17 @@ void Video::draw(cv::Rect r, cv::Mat& img, cv::Scalar color)
 	{
 		rectangle(img, cvPoint(cvRound(r.x*_scale), cvRound(r.y*_scale)), cvPoint(cvRound((r.x + r.width - 1)*_scale), cvRound((r.y + r.height - 1)*_scale)), color, 3, 8, 0); //Draw circle
 	}
+}
+
+
+void Video::setImgToPrint(cv::Mat img)
+{
+	_imgToPrint = img;
+}
+
+cv::Mat Video::getImgToPrint()
+{
+	return _imgToPrint;
 }
 
 

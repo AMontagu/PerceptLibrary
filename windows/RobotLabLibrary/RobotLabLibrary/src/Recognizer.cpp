@@ -1,10 +1,10 @@
 ﻿#include "../include/Recognizer.h"
 
 
-Recognizer::Recognizer()
+Recognizer::Recognizer(int width, int height)
 {
-	_frameSize.width = 92;
-	_frameSize.height = 112;
+	_frameSize.width = width;
+	_frameSize.height = height;
 }
 
 
@@ -169,7 +169,7 @@ cv::Mat Recognizer::processFrame(cv::Mat frameToProcess)
 
 
 // in main.cpp if the confidence is too high we call this function because may the face detected is not good so we had a new people
-void Recognizer::askForAddImageToCurrentTrainingAndSave(cv::Mat noRecognizedFace)
+void Recognizer::askForAddImageToCurrentTrainingAndSave(cv::Mat noRecognizedFace, std::string folderName)
 {
 	_askForAddImageInProcess = true;
 	std::string answer, fileName;
@@ -183,15 +183,15 @@ void Recognizer::askForAddImageToCurrentTrainingAndSave(cv::Mat noRecognizedFace
 
 
 
-		if (!imageExist(answer + ".jpeg"))//if someone have already the same name or we want more image of the same person we will have already a file named like "firstname.jpeg" so we check for no overrided 
+		if (!imageExist(answer + ".jpeg", folderName))//if someone have already the same name or we want more image of the same person we will have already a file named like "firstname.jpeg" so we check for no overrided 
 		{
 			fileName = answer + ".jpeg";
-			addFrameToCurrentTrainingAndSave(noRecognizedFace, getLabelFrameSize() + 1, answer, fileName, "face/"); //add face to current training and save it
+			addFrameToCurrentTrainingAndSave(noRecognizedFace, getLabelFrameSize() + 1, answer, fileName, folderName); //add face to current training and save it
 		}
 		else //if there is already a face for this name we had a number for not overrided
 		{
 			i = 2;
-			while (imageExist(answer + std::to_string(i) + ".jpeg"))
+			while (imageExist(answer + std::to_string(i) + ".jpeg", folderName))
 			{
 				i++;
 			}
@@ -207,11 +207,11 @@ void Recognizer::askForAddImageToCurrentTrainingAndSave(cv::Mat noRecognizedFace
 			if (!label.empty())
 			{
 				//std::cout << "label = " << label[0] << std::endl;
-				addFrameToCurrentTrainingAndSave(noRecognizedFace, label[0], answer, fileName, "face/");
+				addFrameToCurrentTrainingAndSave(noRecognizedFace, label[0], answer, fileName, folderName);
 			}
 			else
 			{
-				addFrameToCurrentTrainingAndSave(noRecognizedFace, getLabelFrameSize() + 1, answer, fileName, "face/"); //add face to current training and save it
+				addFrameToCurrentTrainingAndSave(noRecognizedFace, getLabelFrameSize() + 1, answer, fileName, folderName); //add face to current training and save it
 			}
 		}
 	}
@@ -331,7 +331,7 @@ bool Recognizer::equalTest(std::vector<cv::Mat> vec1, std::vector<cv::Mat> vec2)
 	{
 		return false;
 	}
-	for (int i = 0; i < vec1.size(); i++)
+	for (int i = 0; i < (int)vec1.size(); i++)
 	{
 		if (vec1[i].data != vec2[i].data)
 		{

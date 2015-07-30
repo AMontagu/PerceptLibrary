@@ -53,12 +53,10 @@ public:
 	int getTracking();
 	void printVectorSmilingData();
 
-	//for facial recognition
-	void saveNextGoodFrameForRecognition(std::string name);
+	void setImgToPrint(cv::Mat img);
+	cv::Mat getImgToPrint();
 
 	~Video();
-
-	cv::Mat imgToPrint;
 
 private:
 	bool _detectFaceOn = false, _detectSmileOn = false, _detectEyeOn = false, _detectCustomOn = false, _labelOn = false;
@@ -76,6 +74,8 @@ private:
 
 	std::vector<std::string> _label;
 	std::vector<int> _posX, _posY, _labelIndex;
+
+	cv::Mat _imgToPrint;
 };
 
 #endif
