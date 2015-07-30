@@ -4,6 +4,8 @@
 
 Here we are to talk more about the RobotLabLibrary and how to use it. For the moment only source are available and you will need to include directly the project or the file in your project. Soon a .lib will be available.
 
+The library help you in your development of voice recognition, image detection and face recognition. It based on openCV and PocketSphinx and provides some classes for does it quickly.
+
 The library is constitued to 3 classes : [Video](https://github.com/AMontagu/RobotLabLibrary/wiki/Video), [Recognizer](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice) and [Voice](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer)
 
 **For documentation please see the links above and go to our [wiki](https://github.com/AMontagu/RobotLabLibrary/wiki)**
