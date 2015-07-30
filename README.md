@@ -6,7 +6,7 @@ Here we are to talk more about the RobotLabLibrary and how to use it. For the mo
 
 The library is constitued to 3 classes : [Video](https://github.com/AMontagu/RobotLabLibrary/wiki/Video), [Recognizer](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice) and [Voice](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer)
 
-**For documentation please see the links above.**
+**For documentation please see the links above and go to our [wiki](https://github.com/AMontagu/RobotLabLibrary/wiki)**
 
 # Sommaire : 
 
