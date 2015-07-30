@@ -87,7 +87,7 @@ If you have an error go to [troubleshooting](https://github.com/AMontagu/RobotLa
 ### Linux 
 
 
-### Troubleshooting : 
+### Troubleshooting
 
 **If you have this error : Can't launch the program because it miss *.dll on your computer.**
 
