@@ -1,6 +1,6 @@
 
 
-# Welcome to the RobotLabLibrary wiki!
+# Welcome to the RobotLabLibrary !
 
 Here we are to talk more about the RobotLabLibrary and how to use it. For the moment only source are available and you will need to include directly the project or the file in your project. Soon a .lib will be available.
 
@@ -162,6 +162,35 @@ A mix between the three classes. Is the same that the Sample for voice & video b
 I recommended you to launch this sample before any other sample using face recognition. It will allow you to use your own database and use the good size for the recognition. 
 
 
+# Wiki Sommarie :
+
+* [Home](https://github.com/AMontagu/RobotLabLibrary/wiki)
+    * [How To Install it](https://github.com/AMontagu/RobotLabLibrary/wiki#how-to-install-it)
+        * [Windows](https://github.com/AMontagu/RobotLabLibrary/wiki#windows)
+        * [Linux](https://github.com/AMontagu/RobotLabLibrary/wiki#linux)
+    * [Troubleshooting](https://github.com/AMontagu/RobotLabLibrary/wiki#troubleshooting)
+    * [What Do The Sample](https://github.com/AMontagu/RobotLabLibrary/wiki#what-do-the-sample) 
+
+* [Recognizer](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer)
+    * [Class Overview](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer#class-overview)
+    * [Public Constructors](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer#public-constructors)
+    * [Public Methods](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer#public-methods)
+    * [Sample](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer#sample)
+    * [How To Personnalize](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer#how-to-personnalize)
+
+* [Video](https://github.com/AMontagu/RobotLabLibrary/wiki/Video)
+    * [Class Overview](https://github.com/AMontagu/RobotLabLibrary/wiki/Video#class-overview)
+    * [Public Constructors](https://github.com/AMontagu/RobotLabLibrary/wiki/Video#public-constructors)
+    * [Public Methods](https://github.com/AMontagu/RobotLabLibrary/wiki/Video#public-methods)
+    * [Sample](https://github.com/AMontagu/RobotLabLibrary/wiki/Video#sample)
+    * [How To Personnalize](https://github.com/AMontagu/RobotLabLibrary/wiki/Video#how-to-personnalize)
+
+* [Voice](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice)
+    * [Class Overview](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice#class-overview)
+    * [Public Constructors](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice#public-constructors)
+    * [Public Methods](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice#public-methods)
+    * [Sample](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice#sample)
+    * [How To Personnalize](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice#how-to-personnalize)
 
 
 
