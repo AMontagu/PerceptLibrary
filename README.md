@@ -10,6 +10,7 @@ The library is constitued to 3 classes : [Video](https://github.com/AMontagu/Rob
 
 # Sommaire : 
 
+* [Video Presentation](#video-presentation)
 * [How To Install it](#how-to-install-it)
     * [Windows](#windows)
     * [Linux](#linux)
@@ -168,6 +169,7 @@ I recommended you to launch this sample before any other sample using face recog
 # Wiki Sommarie :
 
 * [Home](https://github.com/AMontagu/RobotLabLibrary/wiki)
+    * [Video Presentation](https://github.com/AMontagu/RobotLabLibrary/wiki#video-presentation)
     * [How To Install it](https://github.com/AMontagu/RobotLabLibrary/wiki#how-to-install-it)
         * [Windows](https://github.com/AMontagu/RobotLabLibrary/wiki#windows)
         * [Linux](https://github.com/AMontagu/RobotLabLibrary/wiki#linux)
