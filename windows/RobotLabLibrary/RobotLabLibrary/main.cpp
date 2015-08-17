@@ -102,7 +102,7 @@
 	while (again == "y" || again =="Y")
 	{
 		std::cout << "The world recognized are avant, derierre, droite, gauche, detection, faciale, sourire, yeux, reconnaissance and stop " << std::endl;
-		std::string retour(myVoice.recognizeFromMicrophoneWhileTime(10));
+		std::string retour(myVoice.recognizeFromMicrophoneWhileTime(5));
 		std::cout << "reconnu : " << retour << std::endl;
 		std::cout << "test again ? y/n " << std::endl;
 		std::cin >> again;
@@ -241,7 +241,7 @@
 
 				if (myRecognizer.getLastConfidence() > 3000 && !myRecognizer.askForAddImageInProcess())//If we are not sur of the recognition and we are not already asking for add image if we ask in an other thread
 				{
-					myRecognizer.askForAddImageToCurrentTrainingAndSave(*face);//Function ask the user if he want to add his face to the database and do it if the answer is positif
+					myRecognizer.askForAddImageToCurrentTrainingAndSave(*face, "customDatabase/");//Function ask the user if he want to add his face to the database and do it if the answer is positif
 					//t[2] = std::thread([&] {myRecognizer.askForAddImageToCurrentTrainingAndSave(*face); }); // if you want to use multi threading but you need to use this differently to use when you implement your GUI (maybe a other windows specially created fot that or the question under the face displayed for informations)
 				}
 				else
@@ -252,7 +252,7 @@
 						std::cin >> goodName;
 						if (goodName == "n" || goodName == "N")//If the user said that the name isn't correct ask him if he want to add the correct name to the face in the database
 						{
-							myRecognizer.askForAddImageToCurrentTrainingAndSave(*face);
+							myRecognizer.askForAddImageToCurrentTrainingAndSave(*face,"customDatabase/");
 						}
 					}
 				}
@@ -371,7 +371,6 @@ int main(int argc, const char** argv)
 			}
 		}
 	}
-
 	getchar();
 	return 0;
 }

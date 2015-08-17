@@ -18,8 +18,10 @@
 #define TMP_FOLDER "../../../data/tmp/"
 //#define CSV_FACE_RECO "..\\..\\..\\data\\dataForRec\\faceCsv.txt"
 //#define CSV_FACE_RECO "..\\..\\..\\data\\dataForRec\\customFaceCsv.txt"
-#define CSV_FACE_RECO "..\\..\\..\\data\\dataForRec\\customDatabaseCsvTest.txt"
-#define IMG_DIR "..\\..\\..\\data\\dataForRec\\"
+//#define CSV_FACE_RECO "..\\..\\..\\data\\dataForRec\\customDatabaseCsvTest.txt"
+//#define IMG_DIR "..\\..\\..\\data\\dataForRec\\"
+#define CSV_FACE_RECO "../../../data/dataForRec/customDatabaseCsvTest.txt"
+#define IMG_DIR "../../../data/dataForRec/"
 
 
 #endif

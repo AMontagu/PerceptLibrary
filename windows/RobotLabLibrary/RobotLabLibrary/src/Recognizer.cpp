@@ -128,19 +128,19 @@ void Recognizer::train()
 }
 
 //save the frame used for recognition into a specified folder into IMG_DIR (Constantes.h) with a specified name 
-void Recognizer::saveImg(std::string folderName, std::string nameOfFile, cv::Mat faceToSave)
+void Recognizer::saveImg(std::string folderName, std::string nameOfImage, cv::Mat faceToSave)
 {
 	cv::Mat tmp = processFrame(faceToSave); //make sur the image format is good
-	std::cout << "path :" << IMG_DIR + folderName + nameOfFile << std::endl;
-	bool save = cv::imwrite(IMG_DIR + folderName + nameOfFile, tmp); //save the image
+	std::cout << "path :" << IMG_DIR + folderName + nameOfImage << std::endl;
+	bool save = cv::imwrite(IMG_DIR + folderName + nameOfImage, tmp); //save the image
 	if (!save)
 	{
 		createDirectory(folderName);//if save doesn't work it's because the path is wrong so we try to create the specified folder
-		save = cv::imwrite(IMG_DIR + folderName + nameOfFile, faceToSave);//save again
+		save = cv::imwrite(IMG_DIR + folderName + nameOfImage, faceToSave);//save again
 	}
 	if (save)
 	{
-		std::cout << "file " << nameOfFile << " saved" << std::endl;
+		std::cout << "file " << nameOfImage << " saved" << std::endl;
 		saveCsv(CSV_FACE_RECO);
 	}
 	else
@@ -174,7 +174,7 @@ void Recognizer::askForAddImageToCurrentTrainingAndSave(cv::Mat noRecognizedFace
 	_askForAddImageInProcess = true;
 	std::string answer, fileName;
 	int i;
-	std::cout << "The confidence is high this is maybe because you are not in our database. Would you like to join our Database (the image to save is in the new windows) ? y/n" << std::endl;
+	std::cout << "Maybe the name displayed is not yours. Would you like to join our Database (the image to save is in the new windows) ? y/n" << std::endl;
 	std::cin >> answer;
 	if (answer == "y" || answer == "Y")
 	{

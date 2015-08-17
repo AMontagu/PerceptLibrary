@@ -64,6 +64,10 @@ int Video::start()
 				}
 			}
 		}
+		else
+		{
+			_averageFacesRect.clear();
+		}
 		_tracking = faceTracking(faceToTrack, frame);
 		if (_detectEyeOn)
 		{
@@ -72,6 +76,10 @@ int Video::start()
 				draw(*r, frame, CV_RGB(255, 0, 255));
 			}
 		}
+		else
+		{
+			_averageEyesRect.clear();
+		}
 		if (_detectSmileOn)
 		{
 			for (std::vector<cv::Rect>::iterator r = _averageSmilesRect.begin(); r != _averageSmilesRect.end(); r++)
@@ -79,12 +87,20 @@ int Video::start()
 				draw(*r, frame, CV_RGB(255, 255, 0));
 			}
 		}
+		else
+		{
+			_averageSmilesRect.clear();
+		}
 		if (_detectCustomOn)
 		{
 			for (std::vector<cv::Rect>::iterator r = _averageCustomRect.begin(); r != _averageCustomRect.end(); r++)
 			{
 				draw(*r, frame, CV_RGB(100, 100, 100));
 			}
+		}
+		else
+		{
+			_averageCustomRect.clear();
 		}
 		if (_labelOn)
 		{
@@ -95,7 +111,7 @@ int Video::start()
 			{
 				if (labelIndex.empty())
 				{
-					std::cout << "a strange error occur please add a condition here !" << std::endl;
+					std::cout << "a strange error appear please add a condition here !" << std::endl;
 				}
 				if ((int)_lastFacesDetected.size() > labelIndex[i])
 				{
@@ -160,7 +176,7 @@ int Video::faceDetect(cv::Mat& img)
 		_posY.push_back(r->y);
 		if (_detectSmileOn)
 		{
-			_smileNumber = smileDetect(_lastFacesDetected[faceNumberTemp], img, r->x, r->y);
+			_smileNumber = smileDetect(_lastFacesDetected[faceNumberTemp], r->x, r->y);
 			if (_smileNumber > 0)
 			{
 				_faceAreSmiling.push_back(true);
@@ -172,7 +188,7 @@ int Video::faceDetect(cv::Mat& img)
 		}
 		if (_detectEyeOn)
 		{
-			_eyeNumber = eyeDetect(_lastFacesDetected[faceNumberTemp], img, r->x, r->y);
+			_eyeNumber = eyeDetect(_lastFacesDetected[faceNumberTemp], r->x, r->y);
 		}
 		//for see what image we send to te function you can uncomment this line
 		//cv::imshow("test4", smallImgROI);
@@ -183,7 +199,7 @@ int Video::faceDetect(cv::Mat& img)
 }
 
 //For the comment see faceDetect() juste some parameter for precision change
-int Video::smileDetect(cv::Mat& img, cv::Mat& principalFrame, int width, int height)
+int Video::smileDetect(cv::Mat& img, int width, int height)
 {
 	int smileNumberTemp = 0;
 	std::vector<cv::Rect> averageSmilesRectTemp;
@@ -203,7 +219,7 @@ int Video::smileDetect(cv::Mat& img, cv::Mat& principalFrame, int width, int hei
 }
 
 //For the comment see faceDetect() juste some parameter for precision change
-int Video::eyeDetect(cv::Mat& img, cv::Mat& principalFrame, int width, int height)
+int Video::eyeDetect(cv::Mat& img, int width, int height)
 {
 	int eyeNumberTemp = 0;
 	std::vector<cv::Rect> averageEyesRectTemp;
@@ -299,7 +315,6 @@ void Video::startFaceDetect()
 void Video::stopFaceDetect()
 {
 	_detectFaceOn = false;
-	_averageFacesRect.clear();
 }
 
 void Video::startSmileDetect()
@@ -327,7 +342,6 @@ void Video::startSmileDetect()
 void Video::stopSmileDetect()
 {
 	_detectSmileOn = false;
-	_averageSmilesRect.clear();
 }
 
 void Video::startEyeDetect()
@@ -355,7 +369,6 @@ void Video::startEyeDetect()
 void Video::stopEyeDetect()
 {
 	_detectEyeOn = false;
-	_averageEyesRect.clear();
 }
 
 //We assign the custom cascade and launch the detection
@@ -369,7 +382,6 @@ void Video::startCustomDetect(cv::CascadeClassifier& cascade, int precision)
 void Video::stopCustomDetect()
 {
 	_detectCustomOn = false;
-	_averageCustomRect.clear();
 }
 
 void Video::addLabel(std::string label, int index)
