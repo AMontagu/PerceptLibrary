@@ -115,43 +115,12 @@ public:
     {}
 
     void load(const FileStorage& fs)
-    {
-        //read matrices
-        fs["num_components"] >> _num_components;
-        fs["mean"] >> _mean;
-        fs["eigenvalues"] >> _eigenvalues;
-        fs["eigenvectors"] >> _eigenvectors;
-        // read sequences
-        readFileNodeList(fs["projections"], _projections);
-        fs["labels"] >> _labels;
-        const FileNode& fn = fs["labelsInfo"];
-        if (fn.type() == FileNode::SEQ)
-        {
-           _labelsInfo.clear();
-           for (FileNodeIterator it = fn.begin(); it != fn.end();)
-           {
-               LabelInfo item;
-               it >> item;
-               _labelsInfo.insert(std::make_pair(item.label, item.value));
-           }
-        }
-    }
+    {}
 
     void save(FileStorage& fs) const
-    {
-        // write matrices
-        fs << "num_components" << _num_components;
-        fs << "mean" << _mean;
-        fs << "eigenvalues" << _eigenvalues;
-        fs << "eigenvectors" << _eigenvectors;
-        // write sequences
-        writeFileNodeList(fs, "projections", _projections);
-        fs << "labels" << _labels;
-        fs << "labelsInfo" << "[";
-        for (std::map<int, String>::const_iterator it = _labelsInfo.begin(); it != _labelsInfo.end(); it++)
-            fs << LabelInfo(it->first, it->second);
-        fs << "]";
-    }
+    {}
+
+	int NumComponents = _num_components;
 
     CV_IMPL_PROPERTY(int, NumComponents, _num_components)
     CV_IMPL_PROPERTY(double, Threshold, _threshold)

@@ -69,7 +69,7 @@ public:
 	*
 	* @param faceToRecognize: Frame that contains a detected face we want to try to recognize.
 	*/
-	std::string Recognizer::recognize(cv::Mat faceToRecognize);
+	std::string recognize(cv::Mat faceToRecognize);
 
 	/* @brief Train the current model. That is used for transform image in data associate to a label for the next comparaison with an image.
 	*
