@@ -1,5 +1,5 @@
-﻿#include "Video.h"
-#include "Constantes.h"
+﻿#include "../include/Video.h"
+
 
 Video::Video()
 {
@@ -21,17 +21,22 @@ int Video::start()
 	}
 	cv::Rect faceToTrack;
 	cv::Mat frame, frameCopy;
+	int i = 0;
+
+	std::vector<std::string> label;
+	std::vector<int>  labelIndex;
+
 	while (true)
 	{
 		_capture >> frame; //The cam frames are stored in frame variable
 
 		if (frame.empty())
 		{
-			std::cout << "no camera found" << std::endl;
+			std::cout << "your camera is not found or is not functional" << std::endl;
 			return -1;
 		}
 		//cout << (double)cvGetTickCount() - time << endl;
-		if ((double)cvGetTickCount() - time > 150000)
+		if ((double)cvGetTickCount() - time > 400000)
 		{
 			frame.copyTo(frameCopy);
 			if (_detectFaceOn)
@@ -59,6 +64,10 @@ int Video::start()
 				}
 			}
 		}
+		else
+		{
+			_averageFacesRect.clear();
+		}
 		_tracking = faceTracking(faceToTrack, frame);
 		if (_detectEyeOn)
 		{
@@ -67,6 +76,10 @@ int Video::start()
 				draw(*r, frame, CV_RGB(255, 0, 255));
 			}
 		}
+		else
+		{
+			_averageEyesRect.clear();
+		}
 		if (_detectSmileOn)
 		{
 			for (std::vector<cv::Rect>::iterator r = _averageSmilesRect.begin(); r != _averageSmilesRect.end(); r++)
@@ -74,14 +87,48 @@ int Video::start()
 				draw(*r, frame, CV_RGB(255, 255, 0));
 			}
 		}
+		else
+		{
+			_averageSmilesRect.clear();
+		}
 		if (_detectCustomOn)
 		{
 			for (std::vector<cv::Rect>::iterator r = _averageCustomRect.begin(); r != _averageCustomRect.end(); r++)
 			{
-				draw(*r, frame, CV_RGB(255, 255, 0));
+				draw(*r, frame, CV_RGB(100, 100, 100));
+			}
+		}
+		else
+		{
+			_averageCustomRect.clear();
+		}
+		if (_labelOn)
+		{
+			label = _label; //For avoid to use the value when the vector is clean in a other thread
+			labelIndex = _labelIndex; //For avoid to use the value when the vector is clean in a other thread
+			i = 0;
+			for (std::vector<std::string>::iterator lab = label.begin(); lab != label.end(); lab++, i++)
+			{
+				if (labelIndex.empty())
+				{
+					std::cout << "a strange error appear please add a condition here !" << std::endl;
+				}
+				if ((int)_lastFacesDetected.size() > labelIndex[i])
+				{
+					cv::putText(frame, *lab, cv::Point(_posX[labelIndex[i]], _posY[labelIndex[i]]), cv::FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0, 255, 255), 2);
+				}
 			}
 		}
 		cv::imshow(WINDOWSNAME, frame);
+
+		if (!_imgToPrint.empty())
+		{
+			cv::imshow("Face to save", _imgToPrint);
+		}
+		else
+		{
+			cv::destroyWindow("Face to save");
+		}
 
 		cv::waitKey(1);
 	}
@@ -107,24 +154,29 @@ int Video::faceDetect(cv::Mat& img)
 	//t = (double)cvGetTickCount();
 	//detectMultiScale() fund the matching objet with the cascadeClassifier (_faceCascade here) and add Rect type variable into the vector faces here.
 	//for the options go to http://stackoverflow.com/questions/20801015/recommended-values-for-opencv-detectmultiscale-parameters
-	_faceCascade.detectMultiScale(smallImg, _averageFacesRect, 1.1, 3, 1, cv::Size(30, 30), cv::Size(400, 400));
+	_faceCascade.detectMultiScale(smallImg, _averageFacesRect, 1.1, 2, 1, cv::Size(30, 30), cv::Size(400, 400));
 
 	//t = (double)cvGetTickCount() - t;
 	//printf("detection time = %g ms\n", t / ((double)cvGetTickFrequency()*1000.));
 
 	_faceAreSmiling.clear();
+	_lastFacesDetected.clear();
+	_posX.clear();
+	_posY.clear();
 
 	//foreach object find with detectMultiScale() we will draw a circle or a rectangle for show what detectMultiScale() have find
 	for (std::vector<cv::Rect>::const_iterator r = _averageFacesRect.begin(); r != _averageFacesRect.end(); r++, faceNumberTemp++)
 	{
 		//cout << "find a face" << endl;
-		cv::Mat smallImgROI;
 
 		//We transform r into a Mat variable for reuse it for detect eye and smile 
-		smallImgROI = smallImg(*r);
+		_lastFacesDetected.push_back(smallImg(*r));
+		//we save the face postion for maybe add a label
+		_posX.push_back(r->x);
+		_posY.push_back(r->y);
 		if (_detectSmileOn)
 		{
-			_smileNumber = smileDetect(smallImgROI, img, r->x, r->y);
+			_smileNumber = smileDetect(_lastFacesDetected[faceNumberTemp], r->x, r->y);
 			if (_smileNumber > 0)
 			{
 				_faceAreSmiling.push_back(true);
@@ -136,7 +188,7 @@ int Video::faceDetect(cv::Mat& img)
 		}
 		if (_detectEyeOn)
 		{
-			_eyeNumber = eyeDetect(smallImgROI, img, r->x, r->y);
+			_eyeNumber = eyeDetect(_lastFacesDetected[faceNumberTemp], r->x, r->y);
 		}
 		//for see what image we send to te function you can uncomment this line
 		//cv::imshow("test4", smallImgROI);
@@ -147,12 +199,12 @@ int Video::faceDetect(cv::Mat& img)
 }
 
 //For the comment see faceDetect() juste some parameter for precision change
-int Video::smileDetect(cv::Mat& img, cv::Mat& principalFrame, int width, int height)
+int Video::smileDetect(cv::Mat& img, int width, int height)
 {
 	int smileNumberTemp = 0;
 	std::vector<cv::Rect> averageSmilesRectTemp;
 
-	_smileCascade.detectMultiScale(img, averageSmilesRectTemp, 1.4, 30, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30));
+	_smileCascade.detectMultiScale(img, averageSmilesRectTemp, 1.3, 10, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(20, 20));
 
 	for (std::vector<cv::Rect>::iterator r = averageSmilesRectTemp.begin(); r != averageSmilesRectTemp.end(); r++, smileNumberTemp++)
 	{
@@ -163,76 +215,30 @@ int Video::smileDetect(cv::Mat& img, cv::Mat& principalFrame, int width, int hei
 			_averageSmilesRect.push_back(*r);
 		}
 	}
-
-	/*if (!_timeToDraw)
-	{
-		vector<Rect> smileDetected;
-		for each (Rect rect in averageSmilesRectTemp)
-		{
-			smileDetected.push_back(rect);
-		}
-		_storeSmileDetected.push_back(smileDetected);
-	}
-	else
-	{
-		_averageSmilesRect.clear();
-		vector<int> averageX, averageY, averageWidth, averageHeight, smileNumberInCaptation;
-		int captationNumber = 0, smileCaptationNumber = 0, MaxNumberOfSmileDetecting = 0;
-		for each (vector<Rect> vectorRect in _storeSmileDetected)
-		{
-			for each (Rect smile in vectorRect)
-			{
-				if (smileCaptationNumber == MaxNumberOfSmileDetecting)
-				{
-					averageHeight.push_back(smile.height);
-					averageWidth.push_back(smile.width);
-					averageX.push_back(smile.x);
-					averageY.push_back(smile.y);
-				}
-				else
-				{
-					averageHeight[smileCaptationNumber] += smile.height;
-					averageWidth[smileCaptationNumber] += smile.width;
-					averageX[smileCaptationNumber] += smile.x;
-					averageY[smileCaptationNumber] += smile.y;
-				}
-				smileCaptationNumber++;
-			}
-			smileNumberInCaptation.push_back(smileCaptationNumber);
-			smileCaptationNumber = 0;
-			captationNumber++;
-			for (int i = 0; i < MaxNumberOfSmileDetecting; i++)
-			{
-				//Rect rectTemp(averageX[i] / captationNumber, averageY[i] / captationNumber, averageWidth[i] / captationNumber, averageHeight[i] / captationNumber);
-				//cout << " le sourire numero " << MaxNumberOfSmileDetecting << " a pour coordonnees :" << endl;
-				//cout << " X : " << rectTemp.x << "  Y : " << rectTemp.y << "  widht : " << rectTemp.width << "  height : " << rectTemp.height << endl;
-				//cout << endl;
-				//_averageSmilesRect.push_back(rectTemp);
-			}
-		}
-		_timeToDraw = false;
-	}*/
-	
 	return smileNumberTemp;
 }
 
 //For the comment see faceDetect() juste some parameter for precision change
-int Video::eyeDetect(cv::Mat& img, cv::Mat& principalFrame, int width, int height)
+int Video::eyeDetect(cv::Mat& img, int width, int height)
 {
 	int eyeNumberTemp = 0;
 	std::vector<cv::Rect> averageEyesRectTemp;
 
-	_eyeCascade.detectMultiScale(img, averageEyesRectTemp, 1.3, 12, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(20, 20)); // We only change the minNeighbors parameters
+	_eyeCascade.detectMultiScale(img, averageEyesRectTemp, 1.2, 10, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(5, 5)); // We only change the minNeighbors parameters
 
-	for (std::vector<cv::Rect>::iterator r = averageEyesRectTemp.begin(); r != averageEyesRectTemp.end(); r++, eyeNumberTemp++)
+	for (std::vector<cv::Rect>::iterator r = averageEyesRectTemp.begin(); r != averageEyesRectTemp.end(); r++)
 	{
 		//cout << "find a eye !" << endl;
 		// if the detected objet is under the half of the face
-		if (r->y < img.size().height / 2)
+		if (eyeNumberTemp < 2)
 		{
-			r->x += width;
-			r->y += height;
-			_averageEyesRect.push_back(*r);
+			if (r->y < img.size().height / 2)
+			{
+				r->x += width;
+				r->y += height;
+				_averageEyesRect.push_back(*r);
+				eyeNumberTemp++;
+			}
 		}
 	}
 	return eyeNumberTemp;
@@ -309,7 +315,6 @@ void Video::startFaceDetect()
 void Video::stopFaceDetect()
 {
 	_detectFaceOn = false;
-	_averageFacesRect.clear();
 }
 
 void Video::startSmileDetect()
@@ -337,7 +342,6 @@ void Video::startSmileDetect()
 void Video::stopSmileDetect()
 {
 	_detectSmileOn = false;
-	_averageSmilesRect.clear();
 }
 
 void Video::startEyeDetect()
@@ -365,7 +369,6 @@ void Video::startEyeDetect()
 void Video::stopEyeDetect()
 {
 	_detectEyeOn = false;
-	_averageEyesRect.clear();
 }
 
 //We assign the custom cascade and launch the detection
@@ -379,8 +382,25 @@ void Video::startCustomDetect(cv::CascadeClassifier& cascade, int precision)
 void Video::stopCustomDetect()
 {
 	_detectCustomOn = false;
-	_averageCustomRect.clear();
 }
+
+void Video::addLabel(std::string label, int index)
+{
+	_label.push_back(label);
+	_labelIndex.push_back(index);
+	_labelOn = true;
+}
+
+void Video::clearLabel()
+{
+	_label.clear();
+	_labelIndex.clear();
+	_labelOn = false;
+}
+
+
+
+
 
 
 int Video::getFaceNumber()
@@ -403,6 +423,11 @@ int Video::getObjectNumber()
 	return _objectNumber;
 }
 
+bool Video:: getDetectFaceOn()
+{
+	return _detectFaceOn;
+}
+
 std::vector<bool> Video::getVectorSmiling()
 {
 	return _faceAreSmiling;
@@ -411,6 +436,11 @@ std::vector<bool> Video::getVectorSmiling()
 int Video::getTracking()
 {
 	return _tracking;
+}
+
+std::vector<cv::Mat> Video::getLastFacesDetected()
+{
+	return _lastFacesDetected;
 }
 
 //Simple function for print who smile
@@ -467,6 +497,17 @@ void Video::draw(cv::Rect r, cv::Mat& img, cv::Scalar color)
 	{
 		rectangle(img, cvPoint(cvRound(r.x*_scale), cvRound(r.y*_scale)), cvPoint(cvRound((r.x + r.width - 1)*_scale), cvRound((r.y + r.height - 1)*_scale)), color, 3, 8, 0); //Draw circle
 	}
+}
+
+
+void Video::setImgToPrint(cv::Mat img)
+{
+	_imgToPrint = img;
+}
+
+cv::Mat Video::getImgToPrint()
+{
+	return _imgToPrint;
 }
 
 
