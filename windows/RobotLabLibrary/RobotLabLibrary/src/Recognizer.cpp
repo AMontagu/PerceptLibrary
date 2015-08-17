@@ -316,7 +316,8 @@ void Recognizer::createDirectory(std::string folderName)
 #ifdef __linux__ 
 void Recognizer::createDirectory(std::string pathName)
 {
-	mkdir(IMG_DIR + pathName, 01777);
+	std::string tmp = IMG_DIR + pathName;
+	mkdir(tmp.c_str(), 01777);
 }
 #endif
 
