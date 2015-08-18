@@ -6,7 +6,7 @@ Here we are to talk more about the RobotLabLibrary and how to use it. For the mo
 
 The library help you in your development of voice recognition, image detection and face recognition. It based on openCV and PocketSphinx and provides some classes for does it quickly.
 
-The library is constitued to 3 classes : [Video](https://github.com/AMontagu/RobotLabLibrary/wiki/Video), [Recognizer](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice) and [Voice](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer)
+The library consists of 3 classes : [Video](https://github.com/AMontagu/RobotLabLibrary/wiki/Video), [Recognizer](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice) and [Voice](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer)
 
 **For documentation please see the links above and go to our [wiki](https://github.com/AMontagu/RobotLabLibrary/wiki)**
 
@@ -25,9 +25,9 @@ See our video at this adress : (coming soon)
 
 # How to install it
 
-First you need to install on your computer OpenCV and PocketSphinx\PocketBase.   
-
 ### Windows
+
+First you need to install on your computer OpenCV and PocketSphinx\PocketBase.   
 To do that follow this instructions for openCV : 
 
 
@@ -84,10 +84,24 @@ opencv_world300.lib;opencv_ts300.lib;%(AdditionalDependencies);sphinxbase.lib;po
 
 Now uncomment the sample program in main.cpp that you want to launch and build !
 
-If you have an error go to [troubleshooting](https://github.com/AMontagu/RobotLabLibrary/wiki/Home#troubleshooting) 
+If you have an error go to [troubleshooting](https://github.com/AMontagu/RobotLabLibrary/wiki/Home#troubleshooting) or contact me.
 
 ### Linux 
 
+First of all install OpenCv ans PocketSphinx :
+
+[http://rodrigoberriel.com/2014/10/installing-opencv-3-0-0-on-ubuntu-14-04/](http://rodrigoberriel.com/2014/10/installing-opencv-3-0-0-on-ubuntu-14-04/)
+
+
+[http://cmusphinx.sourceforge.net/wiki/tutorialpocketsphinx](http://cmusphinx.sourceforge.net/wiki/tutorialpocketsphinx)
+
+I recommended to try the sample of both library before using the RobotLabLibrary. If the both library work download the data and linux folders. Go to linux -> RobotLabLibrary -> RobotLabLibry folder and lunch the make command.
+
+Then launch the RobotLabLibrary executable file : ./RobotLabLibrary. 
+
+For testing all the sample you just need to edit the main.cpp file, uncomment the sample you want and launch the make command again.
+
+If you have an error go to [troubleshooting](https://github.com/AMontagu/RobotLabLibrary/wiki/Home#troubleshooting) or contact me.
 
 ### Troubleshooting
 
