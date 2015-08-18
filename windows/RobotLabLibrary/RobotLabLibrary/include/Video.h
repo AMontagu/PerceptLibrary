@@ -29,26 +29,40 @@ public:
 	/** @brief Start to get frame from the camera and print them in a windows. If some detection is activated start() will print the circle or the rectangle around the detected object. It need to be launched in threads.	*/
 	int start();
 
-	/** @brief Start the detection of faces, eyes and smiles in the video stream. start() function need to be in execution.*/
-	void startAllDetect();
+	/** @brief Start the detection of faces, eyes and smiles in the video stream. start() function need to be in execution.
+	*
+	* @param cascadeFacePath: Path to the face cascade.
+	* @param cascadeSmilePath: Path to the smile cascade.
+	* @param cascadeEyePath: Path to the eye cascade.
+	*/
+	void startAllDetect(const char* cascadeFacePath = CASCADE_FACE_PATH, const char* cascadeSmilePath = CASCADE_SMILE_PATH, const char* cascadeEyePath = CASCADE_EYE_PATH);
 
 	/** @brief Stop all the detection running in the video stream.*/
 	void stopAllDetect();
 
-	/** @brief Start the detection of faces in the video stream. start() function need to be in execution.*/
-	void startFaceDetect();
+	/** @brief Start the detection of faces in the video stream. start() function need to be in execution.
+	*
+	* @param cascadeFacePath: Path to the face cascade.
+	*/
+	void startFaceDetect(const char* cascadeFacePath = CASCADE_FACE_PATH);
 
 	/** @brief Stop the face detection running in the video stream.*/
 	void stopFaceDetect();
 
-	/** @brief Start the detection of smiles in the video stream. start() function need to be in execution.*/
-	void startSmileDetect();
+	/** @brief Start the detection of smiles in the video stream. start() function need to be in execution.
+	*
+	* @param cascadeSmilePath: Path to the smile cascade.
+	*/
+	void startSmileDetect(const char* cascadeSmilePath = CASCADE_SMILE_PATH);
 
 	/** @brief Stop the smile detection running in the video stream.*/
 	void stopSmileDetect();
 
-	/** @brief Start the detection of eyes in the video stream. start() function need to be in execution.*/
-	void startEyeDetect();
+	/** @brief Start the detection of eyes in the video stream. start() function need to be in execution.
+	*
+	* @param cascadeEyePath: Path to the eye cascade.
+	*/
+	void startEyeDetect(const char* cascadeEyePath = CASCADE_EYE_PATH);
 
 	/** @brief Stop the Eye detection running in the video stream.*/
 	void stopEyeDetect();

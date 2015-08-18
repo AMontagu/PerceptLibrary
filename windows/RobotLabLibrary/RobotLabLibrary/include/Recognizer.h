@@ -86,7 +86,7 @@ public:
 
 	/* @brief Take the value of the path of the frame, the label and the name associated to a frame stored in the current training vector and save them in a single line separated with ";".
 	*
-	* @param fileName: The name of the file in wich we want to save the data.
+	* @param pathToFile: The name of the file in wich we want to save the data.
 	*/
 	void saveCsv(std::string pathToFile = CSV_FACE_RECO);
 
@@ -95,8 +95,10 @@ public:
 	* @param folderName: Name of the folder in wich we want to save the image.
 	* @param nameOfImage: Name given to the registered image.
 	* @param faceToSave: Image to save.
+	* @param imgDir: Path to the image directory
+	* @param csvPath: Path to the csv file
 	*/
-	void saveImg(std::string folderName, std::string nameOfImage, cv::Mat faceToSave);
+	void saveImg(std::string folderName, std::string nameOfImage, cv::Mat faceToSave, const char* imgDir = IMG_DIR, const char* csvPath = CSV_FACE_RECO);
 
 	/* @brief Rezize and change the color of a frame if needed for use regularized variables for the comparaison of two images.
 	*
@@ -171,14 +173,16 @@ public:
 	*
 	* @param name: Name of the image we want to check the existence.
 	* @param folderName: The name of the folder that contains the image.
+	* @param imgDir: Path to the image directory
 	*/
-	bool imageExist(const std::string name, const std::string folderName = "face/");
+	bool imageExist(const std::string name, const std::string folderName = "face/", const char* imgDir = IMG_DIR);
 
 	/* @brief Create a directory in IMG_DIR (Constantes.h) for create a new database. Function used in windows and linux.
 	*
 	* @param folderName: The name of the folder we want to create.
+	* @param imgDir: Path to the image directory
 	*/
-	void createDirectory(std::string folderName);
+	void createDirectory(std::string folderName, const char* imgDir = IMG_DIR);
 
 private :
 	std::vector<cv::Mat> _trainingFrames, _trainingFramesInTrain;

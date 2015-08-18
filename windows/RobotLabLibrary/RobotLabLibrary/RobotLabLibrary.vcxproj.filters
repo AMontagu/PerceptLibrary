@@ -51,9 +51,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Constantes.h">
-      <Filter>Fichiers sources\include</Filter>
-    </ClInclude>
     <ClInclude Include="include\Recognizer.h">
       <Filter>Fichiers sources\include</Filter>
     </ClInclude>
@@ -74,6 +71,9 @@
     </ClInclude>
     <ClInclude Include="faceRecognizerContrib\src\precomp.hpp">
       <Filter>faceRecognizerContrib\src</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Constantes.h">
+      <Filter>Fichiers sources\include</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

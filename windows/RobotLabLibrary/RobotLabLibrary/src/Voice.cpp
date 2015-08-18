@@ -1,37 +1,6 @@
 ﻿#include "../include/Voice.h"
 #include <pocketsphinx.h>
 
-//Default constructor
-Voice::Voice()
-{
-	err_set_logfp(NULL); //Toggle the pocketShpinx log info. Comment this line for see the log
-
-	//Command for set all the config. Here it's for my windows realtek recorder and my roboticModel. All the _PATH are in Constantes.h
-	config = cmd_ln_init(NULL, ps_args(), TRUE,
-		"-hmm", HMM_PATH,
-		"-lm", LM_PATH,
-		"-dict", DICT_PATH,
-		/*"-hmm", MODELDIR "/en-us/en-us",
-		"-lm", MODELDIR "/en-us/en-us.lm.dmp",
-		"-dict", MODELDIR "/en-us/cmudict-en-us.dict",*/
-		/*"-hmm", MODELDIR "/fr-fr/fr-fr",
-		"-lm", MODELDIR "/fr-fr/french3g62K.lm.dmp",
-		"-dict", MODELDIR "/fr-fr/frenchWords62K.dic",*/
-		"-samprate", "44100", "-nfft", "2048",
-		//"-rawlogdir", TMP_FOLDER,//This is for save the data you say in a file for listen it after
-		NULL);
-
-	if (config == NULL)
-	{
-		std::cout << "config is null" << std::endl;
-	}
-	ps = ps_init(config);
-	if (ps == NULL)
-	{
-		std::cout << "ps is null" << std::endl;
-		getchar();
-	}
-}
 
 //Personnalizable constructor
 Voice::Voice(const char* hmm, const char* lm, const char* dict, const char* samprate, const char* nfft)

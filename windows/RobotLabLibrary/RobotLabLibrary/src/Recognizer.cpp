@@ -128,20 +128,20 @@ void Recognizer::train()
 }
 
 //save the frame used for recognition into a specified folder into IMG_DIR (Constantes.h) with a specified name 
-void Recognizer::saveImg(std::string folderName, std::string nameOfImage, cv::Mat faceToSave)
+void Recognizer::saveImg(std::string folderName, std::string nameOfImage, cv::Mat faceToSave, const char* imgDir, const char* csvPath)
 {
 	cv::Mat tmp = processFrame(faceToSave); //make sur the image format is good
-	std::cout << "path :" << IMG_DIR + folderName + nameOfImage << std::endl;
-	bool save = cv::imwrite(IMG_DIR + folderName + nameOfImage, tmp); //save the image
+	std::cout << "path :" << imgDir + folderName + nameOfImage << std::endl;
+	bool save = cv::imwrite(imgDir + folderName + nameOfImage, tmp); //save the image
 	if (!save)
 	{
 		createDirectory(folderName);//if save doesn't work it's because the path is wrong so we try to create the specified folder
-		save = cv::imwrite(IMG_DIR + folderName + nameOfImage, faceToSave);//save again
+		save = cv::imwrite(imgDir + folderName + nameOfImage, faceToSave);//save again
 	}
 	if (save)
 	{
 		std::cout << "file " << nameOfImage << " saved" << std::endl;
-		saveCsv(CSV_FACE_RECO);
+		saveCsv(csvPath);
 	}
 	else
 	{
@@ -282,9 +282,9 @@ void Recognizer::printConf()
 }
 
 //check if an image exist with her name and the folder inside IMG_DIR given
-bool Recognizer::imageExist(const std::string name, const std::string folderName) 
+bool Recognizer::imageExist(const std::string name, const std::string folderName, const char* imgDir) 
 {
-	cv::Mat image = cv::imread(IMG_DIR + folderName + name, 0);
+	cv::Mat image = cv::imread(imgDir + folderName + name, 0);
 
 	if (image.data)
 	{
@@ -298,9 +298,9 @@ bool Recognizer::imageExist(const std::string name, const std::string folderName
 
 //function for create a directory depending on the operating system
 #ifdef _WIN32
-void Recognizer::createDirectory(std::string folderName)
+void Recognizer::createDirectory(std::string folderName, const char* imgDir)
 {
-	std::string tmp = IMG_DIR + folderName;
+	std::string tmp = imgDir + folderName;
 	int len;
 	int slength = (int)tmp.length() + 1;
 	len = MultiByteToWideChar(CP_ACP, 0, tmp.c_str(), slength, 0, 0);
@@ -314,9 +314,9 @@ void Recognizer::createDirectory(std::string folderName)
 #endif
 
 #ifdef __linux__ 
-void Recognizer::createDirectory(std::string pathName)
+void Recognizer::createDirectory(std::string pathName, const char* imgDir)
 {
-	std::string tmp = IMG_DIR + pathName;
+	std::string tmp = imgDir + pathName;
 	mkdir(tmp.c_str(), 01777);
 }
 #endif

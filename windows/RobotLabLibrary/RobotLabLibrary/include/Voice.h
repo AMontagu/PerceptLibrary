@@ -24,10 +24,6 @@
 class Voice
 {
 public:
-	/* @brief The more simple constructor. All the config variable are pre-written. Use my roboticModel language model and the french hmm (stored in data/modelPocketSphinx/roboticModel) and the config of my windows microphone.
-	*
-	*/
-	Voice();
 
 	/* @brief Constructor that allow you to use your own hmm and language model for vocal recoginition.
 	*
@@ -37,7 +33,7 @@ public:
 	* @param samprate: The samprate used by your microphone. If you don't know record some sentence and open the .raw data with audacity to find wich samprate your microphone use.
 	* @param nfft: adapting the buffer based on the samprate.
 	*/
-	Voice(const char* hmm, const char* lm, const char* dict, const char* samprate, const char* nfft);
+	Voice(const char* hmm = HMM_PATH, const char* lm = LM_PATH, const char* dict = DICT_PATH, const char* samprate = "44100", const char* nfft = "2048");
 
 	/* @brief Constructor that allow you to use your own hmm and language model for vocal recoginition and to store your vocal recording in a specified folder. usefull for check in which samprate your microphone work.
 	*
@@ -48,7 +44,7 @@ public:
 	* @param nfft: adapting the buffer based on the samprate.
 	* @param _pathToDirForData: Path to a directory where you could save your record for find some error in recorder.
 	*/
-	Voice(const char* hmm, const char* lm, const char* dict, const char* samprate, const char* nfft, const char* pathToDirForData = TMP_FOLDER);
+	Voice(const char* hmm = HMM_PATH, const char* lm = LM_PATH, const char* dict = DICT_PATH, const char* samprate = "44100", const char* nfft = "2048", const char* pathToDirForData = TMP_FOLDER);
 	
 	/* @brief The sample function of pocketSphinx renamed. Wait until you talk begin to recording until you stop and print what he recognized of what you said.
 	*

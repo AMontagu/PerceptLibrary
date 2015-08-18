@@ -13,13 +13,8 @@
 #define HMM_PATH "../../../data/modelPocketSphinx/roboticModel/fr-fr"
 #define LM_PATH "../../../data/modelPocketSphinx/roboticModel/roboticOrder.lm"
 #define DICT_PATH "../../../data/modelPocketSphinx/roboticModel/roboticOrder.dic"
-//#define DICT_PATH "../../../data/modelPocketSphinx/roboticModel/frenchWords62K.dic"
 
 #define TMP_FOLDER "../../../data/tmp/"
-//#define CSV_FACE_RECO "..\\..\\..\\data\\dataForRec\\faceCsv.txt"
-//#define CSV_FACE_RECO "..\\..\\..\\data\\dataForRec\\customFaceCsv.txt"
-//#define CSV_FACE_RECO "..\\..\\..\\data\\dataForRec\\customDatabaseCsvTest.txt"
-//#define IMG_DIR "..\\..\\..\\data\\dataForRec\\"
 #define CSV_FACE_RECO "../../../data/dataForRec/customDatabaseCsvTest.txt"
 #define IMG_DIR "../../../data/dataForRec/"
 

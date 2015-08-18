@@ -275,11 +275,11 @@ int Video::customDetect(cv::Mat& img)
 
 
 //Launch all faces detections
-void Video::startAllDetect()
+void Video::startAllDetect(const char* cascadeFacePath, const char* cascadeSmilePath, const char* cascadeEyePath)
 {
-	startFaceDetect();
-	startSmileDetect();
-	startEyeDetect();
+	startFaceDetect(cascadeFacePath);
+	startSmileDetect(cascadeSmilePath);
+	startEyeDetect(cascadeEyePath);
 }
 
 void Video::stopAllDetect()
@@ -290,11 +290,11 @@ void Video::stopAllDetect()
 }
 
 //Load the cascade classifier and turn on the detection
-void Video::startFaceDetect()
+void Video::startFaceDetect(const char* cascadeFacePath)
 {
 	if (_faceCascade.empty())
 	{
-		if (!_faceCascade.load(CASCADE_FACE_PATH))//We load the Haar model here. Other is juste for form
+		if (!_faceCascade.load(cascadeFacePath))//We load the Haar model here. Other is juste for form
 		{
 			std::cerr << "ERROR: Could not load classifier Facecascade" << std::endl;
 		}
@@ -317,11 +317,11 @@ void Video::stopFaceDetect()
 	_detectFaceOn = false;
 }
 
-void Video::startSmileDetect()
+void Video::startSmileDetect(const char* cascadeSmilePath)
 {
 	if (_smileCascade.empty())
 	{
-		if (!_smileCascade.load(CASCADE_SMILE_PATH))
+		if (!_smileCascade.load(cascadeSmilePath))
 		{
 			std::cerr << "ERROR: Could not load classifier smileCascade" << std::endl;
 		}
@@ -344,11 +344,11 @@ void Video::stopSmileDetect()
 	_detectSmileOn = false;
 }
 
-void Video::startEyeDetect()
+void Video::startEyeDetect(const char* cascadeEyePath)
 {
 	if (_eyeCascade.empty())
 	{
-		if (!_eyeCascade.load(CASCADE_EYE_PATH))
+		if (!_eyeCascade.load(cascadeEyePath))
 		{
 			std::cerr << "ERROR: Could not load classifier eyeCascade" << std::endl;
 		}
