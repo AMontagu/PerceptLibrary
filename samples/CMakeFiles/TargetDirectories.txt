@@ -1,8 +1,0 @@
-C:/dev/git/RobotLabLibrary/library/samples/CMakeFiles/voiceRecognition.dir
-C:/dev/git/RobotLabLibrary/library/samples/CMakeFiles/voiceAndDetection.dir
-C:/dev/git/RobotLabLibrary/library/samples/CMakeFiles/ALL_BUILD.dir
-C:/dev/git/RobotLabLibrary/library/samples/CMakeFiles/globalSample.dir
-C:/dev/git/RobotLabLibrary/library/samples/CMakeFiles/ZERO_CHECK.dir
-C:/dev/git/RobotLabLibrary/library/samples/CMakeFiles/videoDetection.dir
-C:/dev/git/RobotLabLibrary/library/samples/CMakeFiles/faceRecognition.dir
-C:/dev/git/RobotLabLibrary/library/samples/CMakeFiles/createFaceDatabase.dir
