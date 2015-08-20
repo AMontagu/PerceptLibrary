@@ -2,10 +2,15 @@
 
 cmake_minimum_required(VERSION 2.8.8)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
 #project declaration
 project(RobotLabLibrary)
 
 option(BUILD_SAMPLE "if you want to build sample" ON)
+find_package(OpenCV)
+find_package(PocketSphinx)
+find_package(SphinxBase)
 
 #variable declaration
 set(LIB_NAME RobotLabLibrary)
@@ -16,11 +21,9 @@ set(POCKETSPHINX_LIB pocketsphinx sphinxbase)
 set(OPENCV_LIB opencv_ts300 opencv_world300)
 
 #add link for the lib
-include_directories(3rdparty/opencv/include)
-include_directories(3rdparty/pocketSphinx/include)
-include_directories(3rdparty/sphinxbase/include)
-link_directories(3rdparty/pocketSphinx/bin)
-link_directories(3rdparty/opencv/bin)
+include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${PocketSphinx_INCLUDE_DIRS})
+include_directories(${SphinxBase_INCLUDE_DIRS})
 
 #auto find file
 file(GLOB_RECURSE source_files src/*)
@@ -32,7 +35,7 @@ file(GLOB_RECURSE faceRecognizerContrib_files 3rdparty/faceRecognizerContrib/*)
 add_library(${LIB_NAME} STATIC ${source_files} ${include_files} ${faceRecognizerContrib_files})
 
 #message("opencv lib :" ${OPENCV_LIB})
-target_link_libraries( ${LIB_NAME} ${OPENCV_LIB} ${POCKETSPHINX_LIB})
+target_link_libraries( ${LIB_NAME} ${OpenCV_LIBRARIES} ${PocketSphinx_LIBRARIES} ${SphinxBase_LIBRARIES})
 
 
 #build sample
