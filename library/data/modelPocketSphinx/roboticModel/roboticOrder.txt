@@ -1,0 +1,9 @@
+﻿<s> avant </s>
+<s> derriere </s>
+<s> droite </s>
+<s> gauche </s>
+<s> video </s>
+<s> reconnaissance facial </s>
+<s> reconnaissance yeux </s>
+<s> reconnaissance sourires </s>
+<s> stop </s>
