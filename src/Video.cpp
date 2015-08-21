@@ -51,7 +51,7 @@ int Video::start()
 				_averageCustomRect.clear();
 				customDetect(frameCopy); // launch custom detection
 			}
-			time = (double)cvGetTickCount();
+			time = (double)cv::getTickCount();
 		}
 		if (_detectFaceOn)
 		{
@@ -115,7 +115,7 @@ int Video::start()
 				}
 				if ((int)_lastFacesDetected.size() > labelIndex[i])
 				{
-					cv::putText(frame, *lab, cv::Point(_posX[labelIndex[i]], _posY[labelIndex[i]]), cv::FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0, 255, 255), 2);
+					cv::putText(frame, *lab, cv::Point(_posX[labelIndex[i]], _posY[labelIndex[i]]), cv::FONT_HERSHEY_PLAIN, 1.0, cv::Scalar(0, 255, 255), 2);
 				}
 			}
 		}
