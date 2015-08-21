@@ -17,7 +17,7 @@ int Video::start()
 	{
 		_capture.open(_numberCam); //Open the cam connection
 		cv::namedWindow(WINDOWSNAME, cv::WINDOW_NORMAL);
-		time = (double)cvGetTickCount(); //initialize time
+		time = (double)cv::getTickCount(); //initialize time
 	}
 	cv::Rect faceToTrack;
 	cv::Mat frame, frameCopy;
@@ -36,7 +36,7 @@ int Video::start()
 			return -1;
 		}
 		//cout << (double)cvGetTickCount() - time << endl;
-		if ((double)cvGetTickCount() - time > 400000)
+		if ((double)cv::getTickCount() - time > 400000)
 		{
 			frame.copyTo(frameCopy);
 			if (_detectFaceOn)
@@ -57,7 +57,7 @@ int Video::start()
 		{
 			for (std::vector<cv::Rect>::iterator r = _averageFacesRect.begin(); r != _averageFacesRect.end(); r++)
 			{
-				draw(*r, frame, CV_RGB(0, 255, 255));
+				draw(*r, frame, cv::Scalar(0, 255, 255));
 				if (r->area() > faceToTrack.area())
 				{
 					faceToTrack = *r;
@@ -73,7 +73,7 @@ int Video::start()
 		{
 			for (std::vector<cv::Rect>::iterator r = _averageEyesRect.begin(); r != _averageEyesRect.end(); r++)
 			{
-				draw(*r, frame, CV_RGB(255, 0, 255));
+				draw(*r, frame, cv::Scalar(255, 0, 255));
 			}
 		}
 		else
@@ -84,7 +84,7 @@ int Video::start()
 		{
 			for (std::vector<cv::Rect>::iterator r = _averageSmilesRect.begin(); r != _averageSmilesRect.end(); r++)
 			{
-				draw(*r, frame, CV_RGB(255, 255, 0));
+				draw(*r, frame, cv::Scalar(255, 255, 0));
 			}
 		}
 		else
@@ -95,7 +95,7 @@ int Video::start()
 		{
 			for (std::vector<cv::Rect>::iterator r = _averageCustomRect.begin(); r != _averageCustomRect.end(); r++)
 			{
-				draw(*r, frame, CV_RGB(100, 100, 100));
+				draw(*r, frame, cv::Scalar(100, 100, 100));
 			}
 		}
 		else
@@ -488,14 +488,14 @@ void Video::draw(cv::Rect r, cv::Mat& img, cv::Scalar color)
 	double aspect_ratio = (double)r.width / r.height;
 	if (0.75 < aspect_ratio && aspect_ratio < 1.3) // if the ratio said that the object is more round
 	{
-		center.x = cvRound((r.x + r.width*0.5)*_scale);
-		center.y = cvRound((r.y + r.height*0.5)*_scale);
-		radius = cvRound((r.width + r.height)*0.25*_scale);
+		center.x = std::round((r.x + r.width*0.5)*_scale);
+		center.y = std::round((r.y + r.height*0.5)*_scale);
+		radius = std::round((r.width + r.height)*0.25*_scale);
 		circle(img, center, radius, color, 3, 8, 0); // draw circle
 	}
 	else // if the object is more rectangle
 	{
-		rectangle(img, cvPoint(cvRound(r.x*_scale), cvRound(r.y*_scale)), cvPoint(cvRound((r.x + r.width - 1)*_scale), cvRound((r.y + r.height - 1)*_scale)), color, 3, 8, 0); //Draw circle
+		rectangle(img, cv::Point(std::round(r.x*_scale), std::round(r.y*_scale)), cv::Point(std::round((r.x + r.width - 1)*_scale), std::round((r.y + r.height - 1)*_scale)), color, 3, 8, 0); //Draw circle
 	}
 }
 

@@ -65,7 +65,7 @@ void Recognizer::readCsv(const std::string& filename, char separator)
 	if (!file) 
 	{
 		std::string error_message = "No valid input file was given, please check the given filename. ";
-		CV_Error(CV_StsBadArg, error_message);
+		CV_Error(cv::Error::StsBadArg, error_message);
 	}
 	std::string line, path, classLabel, infoLabel;
 	cv::Mat tmp;
