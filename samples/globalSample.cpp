@@ -40,7 +40,7 @@ int main(int argc, const char** argv)
 
 	while (true)
 	{
-		std::cout << "You can say detection faciale, detection sourrire detection yeux, reconnaissance faciale and stop " << std::endl;
+		std::cout << "You can say detection faciale, detection sourire detection yeux, reconnaissance faciale and stop " << std::endl;
 		speech = myVoice.recognizeFromMicrophoneWhileTime(5);
 		std::cout << speech << std::endl;
 		if (speech == "detection faciale")
