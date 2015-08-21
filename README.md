@@ -1,16 +1,14 @@
 
 
-# Welcome to the RobotLabLibrary !
+Welcome to the RobotLabLibrary wiki!
 
 Here we are to talk more about the RobotLabLibrary and how to use it. For the moment only source are available and you will need to include directly the project or the file in your project. Soon a .lib will be available.
 
-The library help you in your development of voice recognition, image detection and face recognition. It based on openCV and PocketSphinx and provides some classes for does it quickly.
+The library is constitued to 3 classes : [Video](https://github.com/AMontagu/RobotLabLibrary/wiki/Video), [Recognizer](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice) and [Voice](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer)
 
-The library consists of 3 classes : [Video](https://github.com/AMontagu/RobotLabLibrary/wiki/Video), [Recognizer](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice) and [Voice](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer)
+**For documentation please see the links above.**
 
-**For documentation please see the links above and go to our [wiki](https://github.com/AMontagu/RobotLabLibrary/wiki)**
-
-# Sommaire : 
+# Sommarie : 
 
 * [Video Presentation](#video-presentation)
 * [How To Install it](#how-to-install-it)
@@ -25,9 +23,10 @@ See our video at this adress : (coming soon)
 
 # How to install it
 
+
 ### Windows
 
-First you need to install on your computer OpenCV and PocketSphinx\PocketBase.   
+First you need to install on your computer OpenCV 3 and PocketSphinx\PocketBase  5-prealpha.   
 To do that follow this instructions for openCV : 
 
 
@@ -36,72 +35,38 @@ To do that follow this instructions for openCV :
 
 And this instruction for pocketSphinx and pocketBase : 
 
-* [http://cmusphinx.sourceforge.net/wiki/download](http://cmusphinx.sourceforge.net/wiki/download)(You just need to download the source and uncompressed them. For use them after I recommend you to save them near to a root folder)
-
-The next and final step is to configure your visual project.
-Open the robotLab project and add your path to opencv and pocketSphinx : 
+* [http://cmusphinx.sourceforge.net/wiki/download](http://cmusphinx.sourceforge.net/wiki/download)(For use them after I recommend you to save them near to a root folder)
 
 
-**In C/C++ -> General -> Other include repertories :**
+Now you are ready to use the RobotLabLibrary. Clone the master github repository launch CMake-gui ([http://www.cmake.org/download/](http://www.cmake.org/download/)). The source code path are the RobotLabLibrary folder and the building path is RobotLabLibrary/build.
 
-< pocketsphinx_dir >\include;
+Press configure choose your compiler check for error then press generate. You just have to go withe your file explorer to the RobotLabLibrary/build folder and launch the project created. Build it and enjoy the sample.
 
-< sphinxbase_dir >\include\win32;
+**In Windows you need to copy the sphinxbase.dll and pocketSphinx.dll next to your .exe file for using it. You can find the dll in RobotLabLibrary/3rdParty/pocketsphinx/bin with the appropriate configuration.
 
-< sphinxbase_dir >\include;
+The video of the installation come soon.
 
-< opencv_dir >\build\include;
-
-
-
-**(In debug mode) In Link Editors -> General -> Additional library directories :**
-
-< pocketsphinx_dir >\bin\Debug;
-
-< opencv_dir >\build\x86\vc12\lib;
-
-
-
-**(In release mode) In Link Editors -> General -> Additional library directories :**
-
-< pocketsphinx_dir >\bin\Release;
-
-< opencv_dir >\build\x86\vc12\lib;
-
-
-
-**(In debug mode) In Link Editors -> Entry -> additional dependencies :**
-
-opencv_world300d.lib;opencv_ts300d.lib;%(AdditionalDependencies);sphinxbase.lib;pocketsphinx.lib
-
-
-
-**(In release mode ) In Link Editors -> Entry -> additional dependencies :**
-
-opencv_world300.lib;opencv_ts300.lib;%(AdditionalDependencies);sphinxbase.lib;pocketsphinx.lib
-
-
-
-Now uncomment the sample program in main.cpp that you want to launch and build !
-
-If you have an error go to [troubleshooting](https://github.com/AMontagu/RobotLabLibrary/wiki/Home#troubleshooting) or contact me.
+If you have an error go to [troubleshooting](https://github.com/AMontagu/RobotLabLibrary/wiki/Home#troubleshooting) 
 
 ### Linux 
 
-First of all install OpenCv ans PocketSphinx :
+You need to install Opencv 3  and sphinxbase/pocketsphinx 5prealpha.
 
-[http://rodrigoberriel.com/2014/10/installing-opencv-3-0-0-on-ubuntu-14-04/](http://rodrigoberriel.com/2014/10/installing-opencv-3-0-0-on-ubuntu-14-04/)
+For opencv 3 : 
+*[http://docs.opencv.org/3.0-beta/doc/tutorials/introduction/linux_install/linux_install.html](http://docs.opencv.org/3.0-beta/doc/tutorials/introduction/linux_install/linux_install.html)
+*[http://rodrigoberriel.com/2014/10/installing-opencv-3-0-0-on-ubuntu-14-04/](http://rodrigoberriel.com/2014/10/installing-opencv-3-0-0-on-ubuntu-14-04/)
 
+For sphinxbase/pocketsphinx : 
+*[http://cmusphinx.sourceforge.net/wiki/tutorialpocketsphinx](http://cmusphinx.sourceforge.net/wiki/tutorialpocketsphinx)
 
-[http://cmusphinx.sourceforge.net/wiki/tutorialpocketsphinx](http://cmusphinx.sourceforge.net/wiki/tutorialpocketsphinx)
+Now you can clone the RobotLabLibrary git repository and run the cmake command : 
+    cmake .
 
-I recommended to try the sample of both library before using the RobotLabLibrary. If the both library work download the data and linux folders. Go to linux -> RobotLabLibrary -> RobotLabLibry folder and lunch the make command.
+After run make command : 
+    make
 
-Then launch the RobotLabLibrary executable file : ./RobotLabLibrary. 
-
-For testing all the sample you just need to edit the main.cpp file, uncomment the sample you want and launch the make command again.
-
-If you have an error go to [troubleshooting](https://github.com/AMontagu/RobotLabLibrary/wiki/Home#troubleshooting) or contact me.
+Go to build directory (cd build) and launch the sample of your choice : 
+    ./globalSample
 
 ### Troubleshooting
 
@@ -111,7 +76,7 @@ Be sur in In Link Editors -> Entry -> additional dependencies you have all the d
 
 --------------------------------------------
 
-**If you have this error : error LNK1104: can't open the file '*.lib'.**   	
+**If you have this error : error LNK1104: can't open the file '*.lib'.**    
 This is because you don't have add the right path in In Link Editors -> General -> Additional library directories be careful of the two mode Debug and Release for pocketSphinx.
 
 -------------------------------------------
@@ -138,11 +103,11 @@ Try to change the ip of your cam device. Try Video myVideo(1); or Video myVideo(
 
 Above each sample you have an header like this : 
 
-	/*###############################################################################################################################
-	#																																#
-	#												Sample for video detection  													#
-	#																																#
-	#################################################################################################################################*/
+    /*###############################################################################################################################
+    #                                                                                                                               #
+    #                                               Sample for video detection                                                      #
+    #                                                                                                                               #
+    #################################################################################################################################*/
 
 This is the name of the sample and I will use this name for describe them.
 
@@ -180,39 +145,6 @@ A mix between the three classes. Is the same that the Sample for voice & video b
 **Sample for create custom face database :**
 
 I recommended you to launch this sample before any other sample using face recognition. It will allow you to use your own database and use the good size for the recognition. 
-
-
-# Wiki Sommarie :
-
-* [Home](https://github.com/AMontagu/RobotLabLibrary/wiki)
-    * [Video Presentation](https://github.com/AMontagu/RobotLabLibrary/wiki#video-presentation)
-    * [How To Install it](https://github.com/AMontagu/RobotLabLibrary/wiki#how-to-install-it)
-        * [Windows](https://github.com/AMontagu/RobotLabLibrary/wiki#windows)
-        * [Linux](https://github.com/AMontagu/RobotLabLibrary/wiki#linux)
-    * [Troubleshooting](https://github.com/AMontagu/RobotLabLibrary/wiki#troubleshooting)
-    * [What Do The Sample](https://github.com/AMontagu/RobotLabLibrary/wiki#what-do-the-sample) 
-
-* [Recognizer](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer)
-    * [Class Overview](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer#class-overview)
-    * [Public Constructors](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer#public-constructors)
-    * [Public Methods](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer#public-methods)
-    * [Sample](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer#sample)
-    * [How To Personnalize](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer#how-to-personnalize)
-
-* [Video](https://github.com/AMontagu/RobotLabLibrary/wiki/Video)
-    * [Class Overview](https://github.com/AMontagu/RobotLabLibrary/wiki/Video#class-overview)
-    * [Public Constructors](https://github.com/AMontagu/RobotLabLibrary/wiki/Video#public-constructors)
-    * [Public Methods](https://github.com/AMontagu/RobotLabLibrary/wiki/Video#public-methods)
-    * [Sample](https://github.com/AMontagu/RobotLabLibrary/wiki/Video#sample)
-    * [How To Personnalize](https://github.com/AMontagu/RobotLabLibrary/wiki/Video#how-to-personnalize)
-
-* [Voice](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice)
-    * [Class Overview](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice#class-overview)
-    * [Public Constructors](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice#public-constructors)
-    * [Public Methods](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice#public-methods)
-    * [Sample](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice#sample)
-    * [How To Personnalize](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice#how-to-personnalize)
-
 
 
 
