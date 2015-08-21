@@ -13,7 +13,6 @@
 x64/
 build/
 bld/
-[Bb]in/
 [Oo]bj/
 
 # MSTest test Results
@@ -172,6 +171,8 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+
+#personnalize
 windows/RobotLabLibrary/RobotLabLibrary.sdf
 data/dataForRec/faceCsv.txt
 data/dataForRec/customFaceCsv.txt
