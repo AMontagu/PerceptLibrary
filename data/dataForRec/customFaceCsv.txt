@@ -1,5 +1,0 @@
-C:/dev/git/RobotLabLibrary/data/dataForRec/face/person1.jpeg;1;person1
-C:/dev/git/RobotLabLibrary/data/dataForRec/face/person2.jpeg;2;person2
-C:/dev/git/RobotLabLibrary/data/dataForRec/face/person3.jpeg;3;person3
-C:/dev/git/RobotLabLibrary/data/dataForRec/face/person4.jpeg;4;person4
-C:/dev/git/RobotLabLibrary/data/dataForRec/face/person5.jpeg;5;person5

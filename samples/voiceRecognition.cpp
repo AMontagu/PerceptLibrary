@@ -12,6 +12,8 @@
 #################################################################################################################################*/
 
 
+//std::string processOnRecognitionPersonnalized(std::string dataToProcess);
+
 int main(int argc, const char** argv)
 {
 	std::string again = "y";
@@ -38,12 +40,93 @@ int main(int argc, const char** argv)
 
 	while (again == "y" || again =="Y")
 	{
-		std::cout << "The world recognized are avant, derierre, droite, gauche, detection, faciale, sourire, yeux, reconnaissance and stop " << std::endl;
-		std::string retour(myVoice.recognizeFromMicrophoneWhileTime(5));
-		std::cout << "reconnu : " << retour << std::endl;
+		std::cout << "The world recognized are avant, derierre, droite, gauche, detection, faciale, sourires, yeux, reconnaissance and stop " << std::endl;
+		std::string retour(myVoice.recognizeFromMicrophoneWhileTime(10));
+		std::cout << "recognized : " << retour << std::endl;
+		std::string retourProcess = myVoice.processOnRecognition(retour);
+		std::cout << "after process : " << retourProcess << std::endl;
 		std::cout << "test again ? y/n " << std::endl;
 		std::cin >> again;
 	}
 	return 0;
 }
+
+//If you use an other language model that mine you can change the process on recognition function for adapt it to your need.
+/*std::string processOnRecognitionPersonnalized(std::string dataToProcess)
+{
+	std::vector<std::string> vectorString;
+	std::string stringRetour;
+	bool robotlabSays = false, detectionSays = false, reconnaissanceSays = false;
+
+	std::string::size_type stTemp = dataToProcess.find(" ");
+
+	while (stTemp != std::string::npos)
+	{
+		vectorString.push_back(dataToProcess.substr(0, stTemp));
+		dataToProcess = dataToProcess.substr(stTemp + 1);
+		stTemp = dataToProcess.find(" ");
+	}
+	vectorString.push_back(dataToProcess);
+
+	//std::cout << "vector size: " << vectorString.size() << std::endl;
+
+	for (int i = 0; i < vectorString.size(); i++)
+	{
+		//std::cout << "value in treatment: " << vectorString[i].data() << std::endl;
+		if (vectorString[i] == "robotlab")
+		{
+			robotlabSays = true;
+			if (!stringRetour.empty())
+			{
+				stringRetour.clear();
+			}
+			stringRetour += vectorString[i];
+		}
+		else if (robotlabSays)
+		{
+			if (detectionSays)
+			{
+				if (vectorString[i] == "faciale" || vectorString[i] == "sourires" || vectorString[i] == "yeux")
+				{
+					stringRetour += " " + vectorString[i];
+				}
+				detectionSays = false;
+				robotlabSays = false;
+			}
+			else if (reconnaissanceSays)
+			{
+				if (vectorString[i] == "faciale")
+				{
+					stringRetour += " " + vectorString[i];
+				}
+				reconnaissanceSays = false;
+				robotlabSays = false;
+			}
+			else if (vectorString[i] == "reconnaissance")
+			{
+				stringRetour += " " + vectorString[i];
+				reconnaissanceSays = true;
+			}
+			else if (vectorString[i] == "detection")
+			{
+				stringRetour += " " + vectorString[i];
+				detectionSays = true;
+			}
+			else
+			{
+				stringRetour += " " + vectorString[i];
+				robotlabSays = false;
+			}
+		}
+	}
+
+	if (!stringRetour.empty())
+	{
+		return stringRetour;
+	}
+	else
+	{
+		return "invalide";
+	}
+}*/
 

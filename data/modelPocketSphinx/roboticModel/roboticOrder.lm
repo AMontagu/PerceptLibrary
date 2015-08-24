@@ -9,14 +9,14 @@
 ===============  This file was produced by the CMU-Cambridge  ===============
 ===============     Statistical Language Modeling Toolkit     ===============
 =============================================================================
-This is a 3-gram language model, based on a vocabulary of 15 words,
+This is a 3-gram language model, based on a vocabulary of 16 words,
   which begins "</s>", "<s>", "avant"...
 This is a CLOSED-vocabulary model
   (OOVs eliminated from training data and are forbidden in test data)
 Good-Turing discounting was applied.
-1-gram frequency of frequency : 11 
-2-gram frequency of frequency : 19 0 1 0 0 0 0 
-3-gram frequency of frequency : 27 0 1 0 0 0 0 
+1-gram frequency of frequency : 12 
+2-gram frequency of frequency : 21 0 1 0 0 0 0 
+3-gram frequency of frequency : 30 0 1 0 0 0 0 
 1-gram discounting ratios : 0.92 
 2-gram discounting ratios : 
 3-gram discounting ratios : 
@@ -48,57 +48,61 @@ p_3     wd_1 wd_2 wd_3
 end of data mark: \end\
 
 \data\
-ngram 1=15
-ngram 2=21
-ngram 3=28
+ngram 1=16
+ngram 2=23
+ngram 3=31
 
 \1-grams:
--0.5740 </s>	-0.8653
--0.5740 <s>	-1.0495
--1.5149 avant	-0.3424
--1.5149 derriere	-0.3424
--1.0000 detection	-0.8033
--1.5149 droite	-0.3424
--1.5149 faciale	-0.3424
--1.5149 faciale</s>	-0.3424
--1.5149 gauche	-0.3424
--1.5149 reconnaissance	-0.4636
--1.5149 sourires	-0.3424
--1.5149 stop	0.0000
--1.5149 video	-0.3424
--1.5149 yeux	-0.3424
--1.5149 ﻿<s>	-0.4636
+-0.5643 </s>	-0.9031
+-0.5643 <s>	-1.1004
+-1.5533 avant	-0.3388
+-1.5533 derriere	-0.3388
+-1.0414 detection	-0.8070
+-1.5533 droite	-0.3388
+-1.5533 faciale	-0.3388
+-1.5533 faciale</s>	-0.3388
+-1.5533 gauche	-0.3388
+-1.5533 reconnaissance	-0.4648
+-1.5533 robotlab	0.0000
+-1.5533 sourires	-0.3388
+-1.5533 stop	-0.3388
+-1.5533 video	-0.3388
+-1.5533 yeux	-0.3388
+-1.5533 ﻿<s>	-0.4648
 
 \2-grams:
--0.0458 </s> <s> 0.2218
--0.8751 <s> derriere 0.1761
--0.5740 <s> detection 0.2430
--0.8751 <s> droite 0.1761
--0.8751 <s> gauche 0.1761
--0.8751 <s> reconnaissance 0.1761
--0.8751 <s> video 0.1761
--0.1761 avant </s> 0.6990
--0.1761 derriere </s> 0.6990
+-0.0414 </s> <s> -0.2412
+-0.9294 <s> derriere 0.1761
+-0.6284 <s> detection 0.2430
+-0.9294 <s> droite 0.1761
+-0.9294 <s> gauche 0.1761
+-0.9294 <s> reconnaissance 0.1761
+-0.9294 <s> stop 0.1761
+-0.9294 <s> video 0.1761
+-0.1761 avant </s> 0.7404
+-0.1761 derriere </s> 0.7404
 -0.5441 detection faciale 0.1761
 -0.5441 detection sourires 0.1761
 -0.5441 detection yeux 0.1761
--0.1761 droite </s> 0.6990
--0.1761 faciale </s> 0.6990
--0.1761 faciale</s> <s> -0.2998
--0.1761 gauche </s> 0.6990
+-0.1761 droite </s> 0.7404
+-0.1761 faciale </s> 0.7404
+-0.1761 faciale</s> <s> -0.2467
+-0.1761 gauche </s> 0.7404
 -0.1761 reconnaissance faciale</s> 0.1761
--0.1761 sourires </s> 0.6990
--0.1761 video </s> 0.6990
--0.1761 yeux </s> 0.6990
+-0.1761 sourires </s> 0.7404
+-0.1761 stop </s> 0.7404
+-0.1761 video </s> 0.7404
+-0.1761 yeux </s> 0.7404
 -0.1761 ﻿<s> avant 0.1761
 
 \3-grams:
--0.9542 </s> <s> derriere 
--0.4771 </s> <s> detection 
--0.9542 </s> <s> droite 
--0.9542 </s> <s> gauche 
--0.9542 </s> <s> reconnaissance 
--0.9542 </s> <s> video 
+-1.0000 </s> <s> derriere 
+-0.5229 </s> <s> detection 
+-1.0000 </s> <s> droite 
+-1.0000 </s> <s> gauche 
+-1.0000 </s> <s> reconnaissance 
+-1.0000 </s> <s> robotlab 
+-1.0000 </s> <s> video 
 -0.3010 <s> derriere </s> 
 -0.6021 <s> detection faciale 
 -0.6021 <s> detection sourires 
@@ -106,6 +110,7 @@ ngram 3=28
 -0.3010 <s> droite </s> 
 -0.3010 <s> gauche </s> 
 -0.3010 <s> reconnaissance faciale</s> 
+-0.3010 <s> stop </s> 
 -0.3010 <s> video </s> 
 -0.3010 avant </s> <s> 
 -0.3010 derriere </s> <s> 
@@ -118,6 +123,7 @@ ngram 3=28
 -0.3010 gauche </s> <s> 
 -0.3010 reconnaissance faciale</s> <s> 
 -0.3010 sourires </s> <s> 
+-0.3010 stop </s> <s> 
 -0.3010 video </s> <s> 
 -0.3010 yeux </s> <s> 
 -0.3010 ﻿<s> avant </s> 

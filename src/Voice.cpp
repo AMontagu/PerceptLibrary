@@ -247,6 +247,84 @@ int Voice::check_wav_header(char *header, int expected_sr)
 	return 1;
 }
 
+std::string Voice::processOnRecognition(std::string dataToProcess)
+{
+	std::vector<std::string> vectorString;
+	std::string stringRetour;
+	bool robotlabSays = false, detectionSays = false, reconnaissanceSays = false;
+
+	std::string::size_type stTemp = dataToProcess.find(" ");
+
+	while (stTemp != std::string::npos)
+	{
+		vectorString.push_back(dataToProcess.substr(0, stTemp));
+		dataToProcess = dataToProcess.substr(stTemp + 1);
+		stTemp = dataToProcess.find(" ");
+	}
+	vectorString.push_back(dataToProcess);
+
+	//std::cout << "vector size: " << vectorString.size() << std::endl;
+
+	for (int i = 0; i < vectorString.size(); i++)
+	{
+		//std::cout << "value in treatment: " << vectorString[i].data() << std::endl;
+		if (vectorString[i] == "robotlab")
+		{
+			robotlabSays = true;
+			if (!stringRetour.empty())
+			{
+				stringRetour.clear();
+			}
+			stringRetour += vectorString[i];
+		}
+		else if (robotlabSays)
+		{
+			if (detectionSays)
+			{
+				if (vectorString[i] == "faciale" || vectorString[i] == "sourires" || vectorString[i] == "yeux")
+				{
+					stringRetour += " " + vectorString[i];
+				}
+				detectionSays = false;
+				robotlabSays = false;
+			}
+			else if (reconnaissanceSays)
+			{
+				if (vectorString[i] == "faciale")
+				{
+					stringRetour += " " + vectorString[i];
+				}
+				reconnaissanceSays = false;
+				robotlabSays = false;
+			}
+			else if (vectorString[i] == "reconnaissance")
+			{
+				stringRetour += " " + vectorString[i];
+				reconnaissanceSays = true;
+			}
+			else if (vectorString[i] == "detection")
+			{
+				stringRetour += " " + vectorString[i];
+				detectionSays = true;
+			}
+			else
+			{
+				stringRetour += " " + vectorString[i];
+				robotlabSays = false;
+			}
+		}
+	}
+
+	if (!stringRetour.empty())
+	{
+		return stringRetour;
+	}
+	else
+	{
+		return "invalide";
+	}
+}
+
 //Function for wait the programm in Ms
 void Voice::sleepMsec(int32 ms)
 {

@@ -91,3 +91,11 @@ stop(5) ss tt oo pp ei
 stop(6) ss tt oo pp ei rr
 stop(7) ss tt oo pp ei
 stop(8) ss tt oo pp ei
+robotlab rr oo bb au ll aa bb
+robotlab(2) rr oo bb au tt ll aa bb
+robotlab(3) rr au bb au ll aa bb
+robotlab(4) rr au bb au tt ll aa bb
+robotlab(5) rr oo bb oo ll aa bb
+robotlab(6) rr oo bb oo tt ll aa bb
+robotlab(7) rr au bb oo ll aa bb
+robotlab(8) rr au bb oo tt ll aa bb

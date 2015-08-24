@@ -11,10 +11,12 @@
 #																																#
 #################################################################################################################################*/
 
+//std::string processOnRecognitionPersonnalized(std::string dataToProcess);
+
 int main(int argc, const char** argv)
 {
 	std::thread t[1];
-	std::string speech;
+	std::string speech, wordRecognized;
 	std::string namePersonRecognized, goodName;
 	std::vector<cv::Mat> lastFacesDetected;
 
@@ -40,30 +42,31 @@ int main(int argc, const char** argv)
 
 	while (true)
 	{
-		std::cout << "You can say detection faciale, detection sourire detection yeux, reconnaissance faciale and stop " << std::endl;
-		speech = myVoice.recognizeFromMicrophoneWhileTime(5);
+		std::cout << "You can say robotlab followeb by: detection faciale, detection sourires, detection yeux, reconnaissance faciale and stop " << std::endl;
+		wordRecognized = myVoice.recognizeFromMicrophoneWhileTime(7);
+		speech = myVoice.processOnRecognition(wordRecognized);
 		std::cout << speech << std::endl;
-		if (speech == "detection faciale")
+		if (speech == "robotlab detection faciale")
 		{
 			std::cout << "Begin face detect" << std::endl;
 			myVideo.startFaceDetect();
 		}
-		if (speech == "detection sourires")
+		if (speech == "robotlab detection sourires")
 		{
 			std::cout << "Begin smile detect" << std::endl;
 			myVideo.startSmileDetect();
 		}
-		if (speech == "detection yeux")
+		if (speech == "robotlab detection yeux")
 		{
 			std::cout << "Begin eyes detect" << std::endl;
 			myVideo.startEyeDetect();
 		}
-		if (speech == "stop")
+		if (speech == "robotlab stop")
 		{
 			std::cout << "stop all detect" << std::endl;
 			myVideo.stopAllDetect();
 		}
-		if (speech == "reconnaissance faciale")
+		if (speech == "robotlab reconnaissance faciale")
 		{
 			if (!myRecognizer.isTrained() && !myVideo.getLastFacesDetected().empty() && !myRecognizer.equalTest(myVideo.getLastFacesDetected(), lastFacesDetected))
 			{
@@ -112,3 +115,82 @@ int main(int argc, const char** argv)
 	getchar();
 	return 0;
 }
+
+//If you use an other language model that mine you can change the process on recognition function for adapt it to your need.
+/*std::string processOnRecognitionPersonnalized(std::string dataToProcess)
+{
+	std::vector<std::string> vectorString;
+	std::string stringRetour;
+	bool robotlabSays = false, detectionSays = false, reconnaissanceSays = false;
+
+	std::string::size_type stTemp = dataToProcess.find(" ");
+
+	while (stTemp != std::string::npos)
+	{
+		vectorString.push_back(dataToProcess.substr(0, stTemp));
+		dataToProcess = dataToProcess.substr(stTemp + 1);
+		stTemp = dataToProcess.find(" ");
+	}
+	vectorString.push_back(dataToProcess);
+
+	//std::cout << "vector size: " << vectorString.size() << std::endl;
+
+	for (int i = 0; i < vectorString.size(); i++)
+	{
+		//std::cout << "value in treatment: " << vectorString[i].data() << std::endl;
+		if (vectorString[i] == "robotlab")
+		{
+			robotlabSays = true;
+			if (!stringRetour.empty())
+			{
+				stringRetour.clear();
+			}
+			stringRetour += vectorString[i];
+		}
+		else if (robotlabSays)
+		{
+			if (detectionSays)
+			{
+				if (vectorString[i] == "faciale" || vectorString[i] == "sourires" || vectorString[i] == "yeux")
+				{
+					stringRetour += " " + vectorString[i];
+				}
+				detectionSays = false;
+				robotlabSays = false;
+			}
+			else if (reconnaissanceSays)
+			{
+				if (vectorString[i] == "faciale")
+				{
+					stringRetour += " " + vectorString[i];
+				}
+				reconnaissanceSays = false;
+				robotlabSays = false;
+			}
+			else if (vectorString[i] == "reconnaissance")
+			{
+				stringRetour += " " + vectorString[i];
+				reconnaissanceSays = true;
+			}
+			else if (vectorString[i] == "detection")
+			{
+				stringRetour += " " + vectorString[i];
+				detectionSays = true;
+			}
+			else
+			{
+				stringRetour += " " + vectorString[i];
+				robotlabSays = false;
+			}
+		}
+	}
+
+	if (!stringRetour.empty())
+	{
+		return stringRetour;
+	}
+	else
+	{
+		return "invalide";
+	}
+}*/

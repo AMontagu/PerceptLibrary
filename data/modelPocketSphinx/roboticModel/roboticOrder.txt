@@ -3,7 +3,9 @@
 <s> droite </s>
 <s> gauche </s>
 <s> video </s>
-<s> reconnaissance facial </s>
-<s> reconnaissance yeux </s>
-<s> reconnaissance sourires </s>
+<s> detection faciale </s>
+<s> detection yeux </s>
+<s> detection sourires </s>
+<s> reconnaissance faciale</s>
 <s> stop </s>
+<s> robotlab </s>

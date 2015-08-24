@@ -12,6 +12,7 @@
 #include <ctime>
 #include <sphinxbase/err.h>
 #include <sphinxbase/ad.h>
+#include <vector>
 
 #include "Constantes.h"
 
@@ -63,6 +64,12 @@ public:
 	* @param fname: Name of the audio file we want to recognize.
 	*/
 	const char * recognizeFromFile(char *fname);
+
+	/* @brief Take all the word recognized and look for the world robotlab and the following command. If the command it's not possible it see it and return invalide or a commande that do nothing.
+	*
+	* @param dataToProcess: All the word recognized that need to be traited.
+	*/
+	std::string processOnRecognition(std::string dataToProcess);
 
 	~Voice();
 
