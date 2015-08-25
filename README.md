@@ -27,7 +27,7 @@ See our video at this adress : [http://youtu.be/6xhNB7MlQnM](http://youtu.be/6xh
 
 ### Windows
 
-Video d'installation : [http://youtu.be/c_OToOE8f0E](http://youtu.be/c_OToOE8f0E)
+Installation Video : [http://youtu.be/c_OToOE8f0E](http://youtu.be/c_OToOE8f0E)
 
 First you need to install on your computer OpenCV 3 and PocketSphinx\PocketBase  5-prealpha.   
 To do that follow this instructions for openCV : 
