@@ -19,7 +19,7 @@ The library is constitued to 3 classes : [Video](https://github.com/AMontagu/Rob
 
 #Video presentation
 
-See our video at this adress : (coming soon)
+See our video at this adress : [http://youtu.be/6xhNB7MlQnM](http://youtu.be/6xhNB7MlQnM)
 
 # How to install it
 

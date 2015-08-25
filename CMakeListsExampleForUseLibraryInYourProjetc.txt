@@ -3,6 +3,7 @@
 cmake_minimum_required(VERSION 2.8.8)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(ROBOTLABLIBRARY_PATH C:/dev/git/RobotLabLibrary)
 
 #project declaration
 project(YourProject)
@@ -19,7 +20,7 @@ if(NOT WIN32)
 endif(NOT WIN32)
 
 #variable declaration
-set(EXEC_NAME yourProjectExeName)
+set(EXEC_NAME YourProject)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -31,11 +32,11 @@ endif(WIN32)
 
 #add link for the lib
 if(WIN32)
-	include_directories(3rdparty/opencv/include)
-	include_directories(3rdparty/pocketSphinx/include)
-	include_directories(3rdparty/sphinxbase/include)
-	link_directories(3rdparty/pocketSphinx/bin)
-	link_directories(3rdparty/opencv/bin)
+	include_directories(${ROBOTLABLIBRARY_PATH}/3rdparty/opencv/include)
+	include_directories(${ROBOTLABLIBRARY_PATH}/3rdparty/pocketSphinx/include)
+	include_directories(${ROBOTLABLIBRARY_PATH}/3rdparty/sphinxbase/include)
+	link_directories(${ROBOTLABLIBRARY_PATH}/3rdparty/pocketSphinx/bin)
+	link_directories(${ROBOTLABLIBRARY_PATH}/3rdparty/opencv/bin)
 else(WIN32)
 	include_directories(${POCKETSPHINX_INCLUDE_DIRS})
 	include_directories(${SPHINXBASE_INCLUDE_DIRS})
@@ -43,8 +44,9 @@ endif(WIN32)
 
 
 #For RobotLabLibrary
-include_directories(include)
-link_directories(bin)
+set(ROBOTLAB_LIB RobotLabLibrary)
+include_directories(${ROBOTLABLIBRARY_PATH}/include)
+link_directories(${ROBOTLABLIBRARY_PATH}/bin)
 
 #executions config
 add_executable(
