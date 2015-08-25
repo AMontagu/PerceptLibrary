@@ -2,7 +2,7 @@
 
 Welcome to the RobotLabLibrary wiki!
 
-Here we are to talk more about the RobotLabLibrary and how to use it. For the moment only source are available and you will need to include directly the project or the file in your project. Soon a .lib will be available.
+Here we are to talk more about the RobotLabLibrary and how to install and use it.
 
 The library is constitued to 3 classes : [Video](https://github.com/AMontagu/RobotLabLibrary/wiki/Video), [Recognizer](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice) and [Voice](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer)
 
@@ -16,6 +16,7 @@ The library is constitued to 3 classes : [Video](https://github.com/AMontagu/Rob
     * [Linux](#linux)
 * [Troubleshooting](#troubleshooting)
 * [What Do The Sample](#what-do-the-sample)
+* [How To Use It](#how-to-use-it)
 
 #Video presentation
 
@@ -25,6 +26,8 @@ See our video at this adress : [http://youtu.be/6xhNB7MlQnM](http://youtu.be/6xh
 
 
 ### Windows
+
+Video d'installation : [http://youtu.be/c_OToOE8f0E](http://youtu.be/c_OToOE8f0E)
 
 First you need to install on your computer OpenCV 3 and PocketSphinx\PocketBase  5-prealpha.   
 To do that follow this instructions for openCV : 
@@ -101,6 +104,8 @@ Try to change the ip of your cam device. Try Video myVideo(1); or Video myVideo(
 
 # What do the sample
 
+Explanatory video : http://youtu.be/d_dq6_57-Zk
+
 Above each sample you have an header like this : 
 
     /*###############################################################################################################################
@@ -147,5 +152,7 @@ A mix between the three classes. Is the same that the Sample for voice & video b
 I recommended you to launch this sample before any other sample using face recognition. It will allow you to use your own database and use the good size for the recognition. 
 
 
+# How To Use It
 
+Video for create your own project using cmake : [http://youtu.be/lfBIypQax6A](http://youtu.be/lfBIypQax6A)
 
