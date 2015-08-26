@@ -155,7 +155,8 @@ const char * Voice::recognizeFromFile(char *fname)
 
 	if ((rawfd = fopen(fname, "rb")) == NULL)//open file
 	{
-		E_FATAL_SYSTEM("Failed to open file '%s' for reading", fname);
+		std::cout << "Failed to open file " << fname << " for reading" << std::endl;
+		//E_FATAL_SYSTEM("Failed to open file '%s' for reading", fname);
 		getchar();//Permit to read the error message
 	}
 
@@ -166,7 +167,8 @@ const char * Voice::recognizeFromFile(char *fname)
 		fread(waveheader, 1, 44, rawfd);
 		if (!check_wav_header(waveheader, (int)cmd_ln_float32_r(config, "-samprate")))
 		{
-			E_FATAL("Failed to process file '%s' due to format mismatch.\n", fname);
+			std::cout << "Failed to process file " << fname << " due to format mismatch." << std::endl;
+			//E_FATAL("Failed to process file '%s' due to format mismatch.\n", fname);
 			getchar();
 		}
 	}
@@ -174,7 +176,8 @@ const char * Voice::recognizeFromFile(char *fname)
 	//Check for file format
 	if (strlen(fname) > 4 && strcmp(fname + strlen(fname) - 4, ".mp3") == 0)
 	{
-		E_FATAL("Can not decode mp3 files, convert input file to WAV 16kHz 16-bit mono before decoding.\n");
+		std::cout << "Can not decode mp3 files, convert input file to WAV 16kHz 16-bit mono before decoding." << std::endl;
+		//E_FATAL("Can not decode mp3 files, convert input file to WAV 16kHz 16-bit mono before decoding.\n");
 		getchar();
 	}
 

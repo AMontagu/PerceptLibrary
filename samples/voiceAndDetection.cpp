@@ -16,7 +16,13 @@ int main(int argc, const char** argv)
 	std::thread t[1];
 	std::string speech, wordRecognized;
 
-	Voice myVoice;
+	//Voice myVoice;
+	/* -------------------------------- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!--------------------------------------
+	You may have problem here if you don't use the right settings for pocketsphinx. Please be sur of your frequency recorder.
+	In linux is often 16000 and in Windows 44100.
+	If you set frequency to 16000 set nfft to 542 else for 44100 set to 2048.
+	*/
+	Voice myVoice("../data/modelPocketSphinx/roboticModel/fr-fr", "../data/modelPocketSphinx/roboticModel/roboticOrder.lm", "../data/modelPocketSphinx/roboticModel/roboticOrder.dic", "16000", "542");
 	Video myVideo(0);
 
 	//Launch video in a thread
@@ -25,28 +31,28 @@ int main(int argc, const char** argv)
 	while (true)
 	{
 		std::cout << "You can say robotlab followed by: detection faciale, detection sourires, detection yeux and stop " << std::endl;
-		wordRecognized = myVoice.recognizeFromMicrophoneWhileTime(7);
-		speech = myVoice.processOnRecognition(wordRecognized);
-		std::cout << speech << std::endl;
+		wordRecognized = myVoice.recognizeFromMicrophoneWhileTime(7); //get all the world recognized in wordRecognized variable
+		speech = myVoice.processOnRecognition(wordRecognized); //get only a valide commande in all the words says. A valide commande is for example : robotlab detection faciale
+		std::cout << speech << std::endl; //print what are the valice command found
 		if (speech == "robotlab detection faciale")
 		{
 			std::cout << "Begin face detect" << std::endl;
-			myVideo.startFaceDetect();
+			myVideo.startFaceDetect(); //launch the face detection
 		}
 		if (speech == "robotlab detection sourires")
 		{
 			std::cout << "Begin smile detect" << std::endl;
-			myVideo.startSmileDetect();
+			myVideo.startSmileDetect(); //launch the smile detection
 		}
 		if (speech == "robotlab detection yeux")
 		{
 			std::cout << "Begin eyes detect" << std::endl;
-			myVideo.startEyeDetect();
+			myVideo.startEyeDetect(); //launch the eye detection
 		}
 		if (speech == "robotlab stop")
 		{
 			std::cout << "stop all detect" << std::endl;
-			myVideo.stopAllDetect();
+			myVideo.stopAllDetect(); //stop all detection
 		}
 	}
 	getchar();

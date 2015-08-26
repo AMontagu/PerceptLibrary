@@ -2,8 +2,9 @@
 
 cmake_minimum_required(VERSION 2.8.8)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(ROBOTLABLIBRARY_PATH C:/dev/git/RobotLabLibrary)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${ROBOTLABLIBRARY_PATH}/cmake/Modules/")
 
 #project declaration
 project(YourProject)
@@ -60,5 +61,5 @@ add_executable(
 if(WIN32)
 	target_link_libraries( ${EXEC_NAME} ${OPENCV_LIB} ${POCKETSPHINX_LIB} ${ROBOTLAB_LIB})
 else(WIN32)
-	target_link_libraries( ${EXEC_NAME} ${OpenCV_LIBS} ${POCKETSPHINX_LIB} ${SPHINXBASE_LIBRARIES} ${SPHINXAD_LIBRARIES} ${ROBOTLAB_LIB})
+	target_link_libraries( ${EXEC_NAME} ${OpenCV_LIBS} ${POCKETSPHINX_LIBRARIES} ${SPHINXBASE_LIBRARIES} ${SPHINXAD_LIBRARIES} ${ROBOTLAB_LIB})
 endif(WIN32)

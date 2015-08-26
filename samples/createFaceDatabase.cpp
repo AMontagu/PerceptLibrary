@@ -41,9 +41,9 @@ int main(int argc, const char** argv)
 			{
 				myVideo.setImgToPrint(*face); // display in another windows in the video thread the region of interest corresponding to the face detected
 
-				myRecognizer.askForAddImageToCurrentTrainingAndSave(*face, "customDatabase/");
+				myRecognizer.askForAddImageToCurrentTrainingAndSave(*face, "customDatabase/"); //Ask if you want to add the face
 
-				myVideo.setImgToPrint(imgNull);
+				myVideo.setImgToPrint(imgNull); //remove the second windows
 			}
 			//std::cout << "face analyzed = " << i << std::endl;
 			time(&timer);
