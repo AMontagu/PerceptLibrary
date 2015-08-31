@@ -1,3 +1,15 @@
 ../data/dataForRec/customDatabase/adrien9.jpeg;1;adrien
 ../data/dataForRec/customDatabase/adrien10.jpeg;1;adrien
 ../data/dataForRec/customDatabase/adrien11.jpeg;1;adrien
+../data/dataForRec/customDatabase/eric.jpeg;2;eric
+../data/dataForRec/customDatabase/eric2.jpeg;2;eric
+../data/dataForRec/customDatabase/eric3.jpeg;2;eric
+../data/dataForRec/customDatabase/eric4.jpeg;2;eric
+../data/dataForRec/customDatabase/etienne.jpeg;3;etienne
+../data/dataForRec/customDatabase/etienne2.jpeg;3;etienne
+../data/dataForRec/customDatabase/etienne3.jpeg;3;etienne
+../data/dataForRec/customDatabase/etienne4.jpeg;3;etienne
+../data/dataForRec/customDatabase/ouafae.jpeg;4;ouafae
+../data/dataForRec/customDatabase/ouafae2.jpeg;4;ouafae
+../data/dataForRec/customDatabase/ouafae3.jpeg;4;ouafae
+../data/dataForRec/customDatabase/ouafae4.jpeg;4;ouafae

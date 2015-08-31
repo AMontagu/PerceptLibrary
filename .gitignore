@@ -7,9 +7,7 @@
 *.sln.docstates
 
 # Build results
-[Dd]ebug/
 [Dd]ebugPublic/
-[Rr]elease/
 x64/
 build/
 bld/
@@ -173,8 +171,5 @@ UpgradeLog*.htm
 FakesAssemblies/
 
 #personnalize
-windows/RobotLabLibrary/RobotLabLibrary.sdf
 data/dataForRec/faceCsv.txt
 data/dataForRec/customFaceCsv.txt
-windows/RobotLabLibrary/RobotLabLibrary/testSave
-windows/RobotLabLibrary/RobotLabLibrary.sdf

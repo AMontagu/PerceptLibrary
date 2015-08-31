@@ -87,13 +87,6 @@ else(WIN32)
 endif(WIN32)
 
 
-
-message(${POCKETSPHINX_LIBRARIES})
-
-
-
-
-
 #For RobotLabLibrary
 
 set(ROBOTLAB_LIB RobotLabLibrary)
