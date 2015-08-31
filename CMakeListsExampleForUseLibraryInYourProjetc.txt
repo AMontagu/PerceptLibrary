@@ -93,12 +93,12 @@ set(ROBOTLAB_LIB RobotLabLibrary)
 
 include_directories(${ROBOTLABLIBRARY_PATH}/include)
 
-#link_directories(${ROBOTLABLIBRARY_PATH}/bin)
-
-SET(BUILD_SAMPLE OFF CACHE BOOL "Build RobotLabLibrary")
-
-add_subdirectory(${ROBOTLABLIBRARY_PATH} ${ROBOTLABLIBRARY_PATH}/bin)
-
+if(WIN32)
+	link_directories(${ROBOTLABLIBRARY_PATH}/bin)
+else(WIN32)
+	SET(BUILD_SAMPLE OFF CACHE BOOL "Build RobotLabLibrary")
+	add_subdirectory(${ROBOTLABLIBRARY_PATH} ${ROBOTLABLIBRARY_PATH}/bin/ubuntu)
+endif(WIN32)
 
 
 #executions config
