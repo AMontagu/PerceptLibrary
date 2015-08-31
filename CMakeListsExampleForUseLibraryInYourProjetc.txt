@@ -1,65 +1,144 @@
 ######################CMAKE FOR BUILD PROJECT WITH ROBOTLABLIBRARY#####################
 
+
+
 cmake_minimum_required(VERSION 2.8.8)
 
-set(ROBOTLABLIBRARY_PATH C:/dev/git/RobotLabLibrary)
+
+
+set(ROBOTLABLIBRARY_PATH /home/adrien/Documents/testAPI/RobotLabLibrary)
+
+
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${ROBOTLABLIBRARY_PATH}/cmake/Modules/")
 
+
+
 #project declaration
-project(YourProject)
+
+project(myProject)
+
+
+
 
 
 if(NOT WIN32)
+
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 endif(NOT WIN32)
 
+
+
 if(NOT WIN32)
+
 	find_package(OpenCV)
+
 	find_package(PocketSphinx)
+
 	find_package(SphinxBase)
+
 endif(NOT WIN32)
+
+
 
 #variable declaration
-set(EXEC_NAME YourProject)
+
+set(EXEC_NAME myProject)
+
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+
+
 if(WIN32)
+
 	set(POCKETSPHINX_LIB pocketsphinx sphinxbase)
+
 	set(OPENCV_LIB opencv_ts300 opencv_world300)
+
 endif(WIN32)
 
+
+
 #add link for the lib
+
 if(WIN32)
+
 	include_directories(${ROBOTLABLIBRARY_PATH}/3rdparty/opencv/include)
+
 	include_directories(${ROBOTLABLIBRARY_PATH}/3rdparty/pocketSphinx/include)
+
 	include_directories(${ROBOTLABLIBRARY_PATH}/3rdparty/sphinxbase/include)
+
 	link_directories(${ROBOTLABLIBRARY_PATH}/3rdparty/pocketSphinx/bin)
+
 	link_directories(${ROBOTLABLIBRARY_PATH}/3rdparty/opencv/bin)
+
 else(WIN32)
+
 	include_directories(${POCKETSPHINX_INCLUDE_DIRS})
+
 	include_directories(${SPHINXBASE_INCLUDE_DIRS})
+
 endif(WIN32)
+
+
+
+message(${POCKETSPHINX_LIBRARIES})
+
+
+
 
 
 #For RobotLabLibrary
+
 set(ROBOTLAB_LIB RobotLabLibrary)
+
 include_directories(${ROBOTLABLIBRARY_PATH}/include)
-link_directories(${ROBOTLABLIBRARY_PATH}/bin)
+
+#link_directories(${ROBOTLABLIBRARY_PATH}/bin)
+
+SET(BUILD_SAMPLE OFF CACHE BOOL "Build RobotLabLibrary")
+
+add_subdirectory(${ROBOTLABLIBRARY_PATH} ${ROBOTLABLIBRARY_PATH}/bin)
+
+
 
 #executions config
+
 add_executable(
+
+
 
         ${EXEC_NAME}
 
-        YourFile.cpp
+
+
+        myProject.cpp
+
+
 
 )
 
+
+
 if(WIN32)
+
 	target_link_libraries( ${EXEC_NAME} ${OPENCV_LIB} ${POCKETSPHINX_LIB} ${ROBOTLAB_LIB})
+
 else(WIN32)
-	target_link_libraries( ${EXEC_NAME} ${OpenCV_LIBS} ${POCKETSPHINX_LIBRARIES} ${SPHINXBASE_LIBRARIES} ${SPHINXAD_LIBRARIES} ${ROBOTLAB_LIB})
+
+	target_link_libraries( ${EXEC_NAME} ${POCKETSPHINX_LIBRARIES} ${SPHINXBASE_LIBRARIES} ${SPHINXAD_LIBRARIES} ${OpenCV_LIBS} ${ROBOTLAB_LIB})
+
 endif(WIN32)
+
+
+
+
+
+
+
