@@ -1,10 +1,10 @@
 
 
-Welcome to the RobotLabLibrary wiki!
+Welcome to the PerceptLibrary Repository!
 
-Here we are to talk more about the RobotLabLibrary and how to install and use it.
+Here we are to talk more about the PerceptLibrary and how to install and use it.
 
-The library is constitued to 3 classes : [Video](https://github.com/AMontagu/RobotLabLibrary/wiki/Video), [Recognizer](https://github.com/AMontagu/RobotLabLibrary/wiki/Voice) and [Voice](https://github.com/AMontagu/RobotLabLibrary/wiki/Recognizer)
+The library is constitued to 3 classes : [Video](https://github.com/AMontagu/PerceptLibrary/wiki/Video), [Recognizer](https://github.com/AMontagu/PerceptLibrary/wiki/Voice) and [Voice](https://github.com/AMontagu/PerceptLibrary/wiki/Recognizer)
 
 **For documentation please see the links above.**
 
@@ -41,15 +41,15 @@ And this instruction for pocketSphinx and pocketBase :
 * [http://cmusphinx.sourceforge.net/wiki/download](http://cmusphinx.sourceforge.net/wiki/download)(For use them after I recommend you to save them near to a root folder)
 
 
-Now you are ready to use the RobotLabLibrary. Clone the master github repository launch CMake-gui ([http://www.cmake.org/download/](http://www.cmake.org/download/)). The source code path are the RobotLabLibrary folder and the building path is RobotLabLibrary/build.
+Now you are ready to use the PerceptLibrary. Clone the master github repository launch CMake-gui ([http://www.cmake.org/download/](http://www.cmake.org/download/)). The source code path are the PerceptLibrary folder and the building path is PerceptLibrary/build.
 
-Press configure choose your compiler check for error then press generate. You just have to go withe your file explorer to the RobotLabLibrary/build folder and launch the project created. Build it and enjoy the sample.
+Press configure choose your compiler check for error then press generate. You just have to go withe your file explorer to the PerceptLibrary/build folder and launch the project created. Build it and enjoy the sample.
 
-**In Windows you need to copy the sphinxbase.dll and pocketSphinx.dll next to your .exe file for using it. You can find the dll in RobotLabLibrary/3rdParty/pocketsphinx/bin with the appropriate configuration.
+**In Windows you need to copy the sphinxbase.dll and pocketSphinx.dll next to your .exe file for using it. You can find the dll in PerceptLibrary/3rdParty/pocketsphinx/bin with the appropriate configuration.
 
 The video of the installation come soon.
 
-If you have an error go to [troubleshooting](https://github.com/AMontagu/RobotLabLibrary/wiki/Home#troubleshooting) 
+If you have an error go to [troubleshooting](https://github.com/AMontagu/PerceptLibrary/wiki/Home#troubleshooting) 
 
 ### Linux 
 
@@ -62,7 +62,7 @@ For opencv 3 :
 For sphinxbase/pocketsphinx : 
 *[http://cmusphinx.sourceforge.net/wiki/tutorialpocketsphinx](http://cmusphinx.sourceforge.net/wiki/tutorialpocketsphinx)
 
-Now you can clone the RobotLabLibrary git repository and run the cmake command : 
+Now you can clone the PerceptLibrary git repository and run the cmake command : 
     cmake .
 
 After run make command : 
